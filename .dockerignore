@@ -1,0 +1,8 @@
+.config
+.husky
+.vscode
+coverage
+dist
+node_modules
+Docker*
+docker*

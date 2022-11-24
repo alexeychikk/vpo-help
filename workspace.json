@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "projects": {
+    "api": "apps/api",
+    "model": "libs/model",
+    "server": "libs/server",
+    "testing": "libs/testing",
+    "utils": "libs/utils"
+  }
+}

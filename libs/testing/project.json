@@ -1,0 +1,21 @@
+{
+  "root": "libs/testing",
+  "sourceRoot": "libs/testing/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/testing/**/*.ts"]
+      }
+    },
+    "ts": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["tsc -p libs/testing/tsconfig.json --noEmit"]
+      }
+    }
+  },
+  "tags": []
+}

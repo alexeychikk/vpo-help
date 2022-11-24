@@ -1,0 +1,27 @@
+services:
+  mongodb:
+    container_name: mongo
+    image: mongo:5.0
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo_db_data:/data/db
+
+  api:
+    container_name: api
+    image: api
+    depends_on:
+      - 'mongodb'
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: api_dev
+    volumes:
+      - ./apps/api:/app/apps/api
+      - ./libs:/app/libs
+      - ./dist/apps/api:/app/dist/apps/api
+    env_file:
+      - ./apps/api/.env.dev
+    ports:
+      - '3332:3332'
+      - '9228:9228'

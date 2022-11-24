@@ -1,0 +1,32 @@
+{
+  "root": "libs/utils",
+  "sourceRoot": "libs/utils/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/utils/**/*.ts"]
+      }
+    },
+    "ts": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p libs/utils/tsconfig.lib.json --noEmit",
+          "tsc -p libs/utils/tsconfig.spec.json --noEmit"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/utils"],
+      "options": {
+        "jestConfig": "libs/utils/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

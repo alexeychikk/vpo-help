@@ -1,0 +1,39 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "strict": true,
+    "lib": ["es2019"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "paths": {
+      "@vpo-help/model": ["libs/model/src/index.ts"],
+      "@vpo-help/server": ["libs/server/src/index.ts"],
+      "@vpo-help/utils": ["libs/utils/src/index.ts"],
+      "@vpo-help/testing": ["libs/testing/src/index.ts"]
+    },
+    "rootDir": ".",
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "target": "es2015"
+  },
+  "exclude": [
+    "node_modules",
+    "tmp",
+    "assets",
+    "dist",
+    "coverage",
+    "mongo_db_data",
+    ".config",
+    ".husky",
+    ".vscode"
+  ]
+}

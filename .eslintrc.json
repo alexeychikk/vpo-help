@@ -1,0 +1,76 @@
+{
+  "root": true,
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nrwl/nx", "import", "eslint-comments"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "extends": ["plugin:eslint-comments/recommended"],
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ],
+        "eslint-comments/disable-enable-pair": [
+          "error",
+          {
+            "allowWholeFile": true
+          }
+        ],
+        "eslint-comments/no-unused-disable": "error",
+        "import/order": [
+          "error",
+          {
+            "newlines-between": "never",
+            "alphabetize": {
+              "order": "asc"
+            },
+            "pathGroups": [
+              {
+                "pattern": "@vpo-help/**",
+                "group": "external",
+                "position": "after"
+              }
+            ],
+            "pathGroupsExcludedImportTypes": ["builtin"]
+          }
+        ],
+        "no-return-await": "error",
+        "no-trailing-spaces": "error",
+        "sort-imports": [
+          "error",
+          {
+            "ignoreDeclarationSort": true,
+            "ignoreCase": true
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nrwl/nx/typescript", "plugin:import/typescript"],
+      "rules": {
+        "@typescript-eslint/consistent-type-imports": "error",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-duplicate-imports": "error",
+        "@typescript-eslint/no-floating-promises": "error",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-shadow": "error"
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nrwl/nx/javascript"],
+      "rules": {}
+    }
+  ]
+}
