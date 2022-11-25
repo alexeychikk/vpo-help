@@ -4,7 +4,7 @@ import { expectExtended, testApp } from '@vpo-help/testing';
 
 describe('POST /login', () => {
   test('rejects invalid body', async () => {
-    const { body } = await testApp.requestAuth
+    const { body } = await testApp.requestApi
       .post('/auth/login')
       .send({})
       .expect(400);
@@ -22,7 +22,7 @@ describe('POST /login', () => {
 
   test('creates new user for new email', async () => {
     const email = faker.internet.email(new ObjectId().toString());
-    const { body } = await testApp.requestAuth
+    const { body } = await testApp.requestApi
       .post('/auth/login')
       .send({ email })
       .expect(200);
@@ -43,7 +43,7 @@ describe('POST /login', () => {
   test('returns existing user for existing email', async () => {
     const user = await testApp.asNewUser().getCurrentUser();
 
-    const { body } = await testApp.requestAuth
+    const { body } = await testApp.requestApi
       .post('/auth/login')
       .send({ email: user.email })
       .expect(200);

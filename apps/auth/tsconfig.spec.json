@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../../dist/apps/auth",
-    "module": "commonjs",
-    "types": ["jest", "node"]
-  },
-  "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.d.ts"]
-}
