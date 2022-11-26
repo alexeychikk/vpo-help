@@ -2,6 +2,7 @@ import {
   IsDate,
   IsEmail,
   IsInt,
+  IsObject,
   IsOptional,
   IsPhoneNumber,
   Length,
@@ -12,6 +13,7 @@ import type { Optional } from 'utility-types';
 import type { IdType } from '../common';
 import { BaseModel } from '../common';
 import { IsVpoReferenceNumber } from './isVpoReferenceNumber.decorator';
+import { ReceivedGoodsDto } from './receivedGoods.dto';
 
 export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @Length(1, 50)
@@ -52,6 +54,10 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
 
   @IsDate()
   scheduleDate!: Date;
+
+  @IsObject()
+  @IsOptional()
+  receivedGoods?: ReceivedGoodsDto;
 
   @IsPhoneNumber()
   @IsOptional()
