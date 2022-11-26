@@ -2,6 +2,7 @@
   "version": 2,
   "projects": {
     "api": "apps/api",
+    "client": "apps/client",
     "model": "libs/model",
     "server": "libs/server",
     "testing": "libs/testing",

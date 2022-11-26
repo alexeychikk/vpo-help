@@ -16,8 +16,8 @@
     "paths": {
       "@vpo-help/model": ["libs/model/src/index.ts"],
       "@vpo-help/server": ["libs/server/src/index.ts"],
-      "@vpo-help/utils": ["libs/utils/src/index.ts"],
-      "@vpo-help/testing": ["libs/testing/src/index.ts"]
+      "@vpo-help/testing": ["libs/testing/src/index.ts"],
+      "@vpo-help/utils": ["libs/utils/src/index.ts"]
     },
     "rootDir": ".",
     "skipDefaultLibCheck": true,
