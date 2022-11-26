@@ -1,4 +1,3 @@
-export * from './accessToken.dto';
-export * from './login.dto';
-export * from './loginResponse.dto';
+export * from './loginAsUser.dto';
+export * from './loginAsUserResponse.dto';
 export * from './user.model';

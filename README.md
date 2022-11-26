@@ -23,7 +23,7 @@ This project has monolithic architecture and provides the following REST-full AP
     vpoReferenceNumber: String,
     scheduleDate: DateISOString,
   },
-  permissions: [Permission],
+  permissions: PermissionMap,
   accessToken: { access_token: String },
 }
 ```
@@ -43,7 +43,7 @@ This project has monolithic architecture and provides the following REST-full AP
     role: "ADMIN",
     email: String,
   },
-  permissions: [Permission],
+  permissions: PermissionMap,
   accessToken: { access_token: String }
 }
 ```
@@ -119,6 +119,7 @@ _Auth, Permissions:_ **["SCHEDULE.WRITE"]**
   id: String,
   role: "VPO",
   vpoReferenceNumber: String,
+  scheduleDate: DateISOString,
 }
 ```
 
