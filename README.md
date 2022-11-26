@@ -12,12 +12,12 @@ This project has monolithic architecture and provides the following REST-full AP
 
 ```ts
 // PAYLOAD
-{
+LoginAsVpoDto {
   vpoReferenceNumber: String,
 }
 // RESPONSE
-{
-  user: {
+LoginAsVpoResponseDto {
+  user: VpoUserModel {
     id: String,
     role: "VPO",
     vpoReferenceNumber: String,
@@ -32,13 +32,13 @@ This project has monolithic architecture and provides the following REST-full AP
 
 ```ts
 // PAYLOAD
-{
+LoginAsUserDto {
   email: String,
   password: String
 }
 // RESPONSE
-{
-  user: {
+LoginAsUserResponse {
+  user: UserModel {
     id: String,
     role: "ADMIN",
     email: String,
@@ -56,7 +56,7 @@ _Auth, Permissions:_ **["SCHEDULE.WRITE"]**
 
 ```ts
 // PAYLOAD
-{
+ScheduleDto {
   1: [
     {
       timeFrom: TimeString,
@@ -68,23 +68,23 @@ _Auth, Permissions:_ **["SCHEDULE.WRITE"]**
   7: [{...}],
 }
 // RESPONSE
-{ ...Schedule }
+{ ...ScheduleDto }
 ```
 
 ### GET /schedule
 
 ```ts
 // RESPONSE
-{ ...Schedule }
+{ ...ScheduleDto }
 ```
 
 ### GET /schedule/available
 
 ```ts
 // RESPONSE
-{
+ScheduleAvailableDto {
   items: [
-    {
+    ScheduleSlotAvailableDto {
       dateFrom: DateISOString,
       dateTo: DateISOString,
     },
@@ -98,7 +98,7 @@ _Auth, Permissions:_ **["SCHEDULE.WRITE"]**
 
 ```ts
 // PAYLOAD
-{
+VpoModel {
   firstName: String,
   lastName: String,
   middleName: String,
@@ -115,12 +115,7 @@ _Auth, Permissions:_ **["SCHEDULE.WRITE"]**
   email?: String,
 }
 // RESPONSE
-{
-  id: String,
-  role: "VPO",
-  vpoReferenceNumber: String,
-  scheduleDate: DateISOString,
-}
+{ ...VpoUserModel }
 ```
 
 ### GET /vpo?PaginationSearchSort
@@ -130,7 +125,7 @@ _Auth, Permissions:_ **["VPO_LIST.READ"]**
 ```ts
 // RESPONSE
 {
-  items: [Vpo],
+  items: [VpoModel],
   totalItems: Number,
 }
 ```
@@ -164,13 +159,13 @@ _Auth, Permissions:_ **["SETTINGS.WRITE"]**
 
 ```ts
 // PAYLOAD
-{
+UpdateSettingsDto {
   daysToNextVpoRegistration?: Number,
   endOfWarDate?: DateISOString,
   scheduleDaysAvailable?: Number,
 }
 // RESPONSE
-{ ...Settings }
+{ ...SettingsDto }
 ```
 
 ### GET /settings
@@ -179,31 +174,35 @@ _Auth, Permissions:_ **["SETTINGS.READ"]**
 
 ```ts
 // RESPONSE
-{ ...Settings }
+{ ...SettingsDto }
 ```
 
 ---
 
-### GET /html/:page
+### GET /html/:pageName
 
 ```ts
 // RESPONSE
-{
-  [fieldName]: String,
+HtmlPageModel {
+  id: String,
+  name: String,
+  content: {
+    [fieldName]: String,
+  }
 }
 ```
 
-### PUT /html/:page
+### PUT /html/:pageName
 
 _Auth, Permissions:_ **["HTML.WRITE"]**
 
 ```ts
 // PAYLOAD
 {
-  [fieldName]: String,
+  content: {
+    [fieldName]: String,
+  }
 }
 // RESPONSE
-{
-  [fieldName]: String,
-}
+{ ...HtmlPageModel }
 ```
