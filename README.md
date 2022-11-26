@@ -48,6 +48,8 @@ This project has monolithic architecture and provides the following REST-full AP
 }
 ```
 
+---
+
 ### PUT /schedule
 
 _Auth, Permissions:_ **["SCHEDULE.WRITE"]**
@@ -89,6 +91,8 @@ _Auth, Permissions:_ **["SCHEDULE.WRITE"]**
   ];
 }
 ```
+
+---
 
 ### POST /vpo
 
@@ -150,6 +154,34 @@ vpo_that_received_goods_table.csv;
 // RESPONSE
 200;
 ```
+
+---
+
+### PUT /settings
+
+_Auth, Permissions:_ **["SETTINGS.WRITE"]**
+
+```ts
+// PAYLOAD
+{
+  daysToNextVpoRegistration?: Number,
+  endOfWarDate?: DateISOString,
+  scheduleDaysAvailable?: Number,
+}
+// RESPONSE
+{ ...Settings }
+```
+
+### GET /settings
+
+_Auth, Permissions:_ **["SETTINGS.READ"]**
+
+```ts
+// RESPONSE
+{ ...Settings }
+```
+
+---
 
 ### GET /html/:page
 
