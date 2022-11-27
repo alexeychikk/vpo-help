@@ -3,7 +3,8 @@
   "compilerOptions": {
     "lib": ["DOM", "ES2015"],
     "outDir": "../../dist/out-tsc",
-    "types": ["node", "react", "react-dom"]
+    "types": ["node", "react", "react-dom"],
+    "typeRoots": ["../../node_modules/@devexpress"]
   },
   "files": [
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",

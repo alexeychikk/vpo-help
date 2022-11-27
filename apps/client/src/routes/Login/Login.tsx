@@ -11,9 +11,9 @@ import { useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { TextFieldElement } from '../../components';
-import { LOGIN_FORM } from '../../constants';
+import { LOGIN } from '../../constants';
 
-export type LoginFormFields = typeof LOGIN_FORM;
+export type LoginFormFields = typeof LOGIN.form;
 
 export const Login = () => {
   const form = useForm<LoginFormFields>();
@@ -35,7 +35,7 @@ export const Login = () => {
           <LockOutlined />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          {LOGIN.title}
         </Typography>
         <Box
           component="form"
@@ -49,7 +49,7 @@ export const Login = () => {
             required
             id="email"
             name="email"
-            label={LOGIN_FORM.email}
+            label={LOGIN.form.email}
             margin="normal"
             autoComplete="email"
             control={form.control}
@@ -59,7 +59,7 @@ export const Login = () => {
             required
             id="password"
             name="password"
-            label={LOGIN_FORM.password}
+            label={LOGIN.form.password}
             type="password"
             margin="normal"
             autoComplete="current-password"
