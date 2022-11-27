@@ -1,7 +1,7 @@
 import type { ObjectId } from 'mongodb';
 import { Column, Entity, Index } from 'typeorm';
 import type { Class } from 'utility-types';
-import { UserModel } from '@vpo-help/model';
+import { Role, UserModel } from '@vpo-help/model';
 import { baseEntityWith, EntityConstructorData } from '../../common';
 
 @Entity()
@@ -11,6 +11,9 @@ export class UserEntity extends baseEntityWith(
   @Index('idx_user_email', { unique: true })
   @Column()
   email!: string;
+
+  @Column()
+  role!: Role;
 
   constructor(data: EntityConstructorData<UserEntity>) {
     super(data);

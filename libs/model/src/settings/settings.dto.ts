@@ -24,3 +24,8 @@ export class SettingsDto {
 }
 
 export class UpdateSettingsDto extends PartialType(SettingsDto) {}
+
+export enum SettingsCategory {
+  Schedule = 'SCHEDULE',
+  Common = 'COMMON',
+}

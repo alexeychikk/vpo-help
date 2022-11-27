@@ -3,9 +3,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import mongodb from 'mongodb';
 import type { EnvBaseService } from '../env';
 import { EnvModule } from '../env';
+import {
+  HtmlPageEntity,
+  HtmlPageRepository,
+  SettingsEntity,
+  SettingsRepository,
+  SettingsService,
+} from './settings';
 import { UserEntity, UserRepository, UserService } from './user';
+import { VpoEntity, VpoRepository, VpoService } from './vpo';
 
-const entities = [UserEntity];
+const entities = [UserEntity, VpoEntity, SettingsEntity, HtmlPageEntity];
 
 @Global()
 @Module({
@@ -25,9 +33,12 @@ const entities = [UserEntity];
     TypeOrmModule.forFeature([
       ...entities,
       UserRepository,
+      VpoRepository,
+      SettingsRepository,
+      HtmlPageRepository,
     ]),
   ],
-  providers: [UserService],
-  exports: [UserService],
+  providers: [UserService, VpoService, SettingsService],
+  exports: [UserService, VpoService, SettingsService],
 })
 export class ModelModule {}
