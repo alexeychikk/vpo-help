@@ -16,13 +16,12 @@ export type TextFieldElementProps<T extends Record<string, unknown>> = Omit<
   name: Path<T>;
   control: Control<T>;
   rules?: ControllerProps['rules'];
-  parseError?: (error: FieldError) => string;
 };
 
 export const TextFieldElement = <T extends Record<string, unknown>>(
   props: TextFieldElementProps<T>,
 ): React.ReactElement => {
-  const { rules, parseError, type, name, control, required, ...rest } = props;
+  const { rules, type, name, control, required, ...rest } = props;
   const {
     field,
     fieldState: { error },
@@ -50,13 +49,7 @@ export const TextFieldElement = <T extends Record<string, unknown>>(
       required={!!rules?.required}
       type={type}
       error={!!error}
-      helperText={
-        error
-          ? typeof parseError === 'function'
-            ? parseError(error)
-            : error.message
-          : rest.helperText
-      }
+      helperText={error ? error.message : rest.helperText}
     />
   );
 };

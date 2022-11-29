@@ -12,6 +12,16 @@ export const LOGIN = {
   },
 };
 
+export const MAIN = {
+  separator: 'Або',
+  findBooking: {
+    title: 'Знайти бронювання за номером довідки ВПО',
+    label: 'Номер довідки ВПО',
+    button: 'Знайти',
+  },
+  startBooking: 'Забронювати місце в черзі',
+};
+
 export const SCHEDULER = {
   appointmentTooltip: {
     maxSlotCapacity: 'Максимальна кількість реєстрацій',
@@ -21,4 +31,9 @@ export const SCHEDULER = {
     endDate: 'Кінець прийому',
     maxSlotCapacity: 'Максимальна кількість реєстрацій',
   },
+};
+
+export const FOOTER = {
+  addresses: 'Адреси центрів допомоги',
+  schedule: 'Графік роботи',
 };
