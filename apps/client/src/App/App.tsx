@@ -14,7 +14,7 @@ export const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <LocalizationProvider dateAdapter={AdapterMoment}>
+      <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={'uk-UA'}>
         <BrowserRouter>
           <Routes>
             {Object.values(ROUTES).map((route) => {

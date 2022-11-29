@@ -1,20 +1,5 @@
-import { Adb as AdbIcon, Menu as MenuIcon } from '@mui/icons-material';
-import {
-  AppBar,
-  Avatar,
-  Box,
-  Button,
-  Container,
-  IconButton,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, Container, Typography, useTheme } from '@mui/material';
 import { FOOTER } from '../../../constants';
-import classes from './Footer.module.scss';
 
 export const Footer = () => {
   const theme = useTheme();
@@ -50,10 +35,7 @@ export const Footer = () => {
             {FOOTER.addresses}
           </Typography>
           <Typography component="div" variant="body1">
-            <pre
-              className={classes['pre']}
-              dangerouslySetInnerHTML={{ __html: addresses }}
-            />
+            <pre dangerouslySetInnerHTML={{ __html: addresses }} />
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -61,10 +43,7 @@ export const Footer = () => {
             {FOOTER.schedule}
           </Typography>
           <Typography component="div" variant="body1">
-            <pre
-              className={classes['pre']}
-              dangerouslySetInnerHTML={{ __html: schedule }}
-            />
+            <pre dangerouslySetInnerHTML={{ __html: schedule }} />
           </Typography>
         </Box>
       </Container>

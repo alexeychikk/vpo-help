@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { useCallback, useRef } from 'react';
 import { MAIN } from '../../constants';
+import { Routes, ROUTES } from '../routes.config';
 import { Footer } from './Footer';
 
 export const Main = () => {
@@ -95,7 +96,7 @@ export const Main = () => {
               size="large"
               endIcon={<ArrowForwardIosIcon />}
               sx={{ mt: 2, pl: 5, pr: 5 }}
-              href="/booking"
+              href={ROUTES[Routes.BOOKING].path}
             >
               {MAIN.startBooking}
             </Button>

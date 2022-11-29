@@ -1,7 +1,8 @@
 export const ACCESS_TOKEN = 'ACCESS_TOKEN';
 
 export const ERROR_MESSAGES = {
-  required: 'Це поле має бути заповнене',
+  required: 'Має бути заповнене',
+  requiredDate: 'Має бути датою формату ДД.ММ.РР',
 };
 
 export const LOGIN = {
@@ -20,6 +21,35 @@ export const MAIN = {
     button: 'Знайти',
   },
   startBooking: 'Забронювати місце в черзі',
+};
+
+export const BOOKING = {
+  title: 'Бронювання',
+  stepper: [
+    'Виберіть час бронювання',
+    'Заповніть персональну інформацію',
+    'Підтвердіть бронювання',
+  ] as const,
+  prevStep: 'Назад',
+  nextStep: 'Вперед',
+  gotoMain: 'На головну',
+  confirmBuuton: 'Підтверджую',
+  form: {
+    scheduleDate: 'Дата та час, коли потрібно прибути до Центру допомоги',
+    vpoReferenceDate: 'Дата видачі довідки',
+    vpoReferenceNumber: 'Номер довідки ВПО від 2022 року',
+    firstName: 'Ім‘я',
+    lastName: 'Прізвище',
+    middleName: 'По-батькові',
+    dateOfBirth: 'Дата народження',
+    addressOfRegistration: 'Місто реєстрації (згідно паспорту)',
+    addressOfResidence: 'Місто фактичного проживання (згідно Довідці ВПО)',
+    numberOfRelatives: 'Скільки членів вашої родини переїхали з вами?',
+    numberOfRelativesBelow16: 'Скільки з них дітей до 16 років?',
+    numberOfRelativesAbove65: 'Скільки з них дорослих, старшіх за 65 років?',
+  },
+  bookingInfoTitle: 'Ваше бронювання',
+  peopleSuffix: 'ос.',
 };
 
 export const SCHEDULER = {

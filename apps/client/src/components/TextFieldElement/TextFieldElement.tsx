@@ -46,7 +46,7 @@ export const TextFieldElement = <T extends Record<string, unknown>>(
         }
       }}
       onBlur={field.onBlur}
-      required={!!rules?.required}
+      required={!!rules?.required || required}
       type={type}
       error={!!error}
       helperText={error ? error.message : rest.helperText}

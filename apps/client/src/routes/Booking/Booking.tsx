@@ -10,16 +10,15 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { BookingInfo } from '../../components';
+import { BOOKING } from '../../constants';
 import { getCurrentUTCDate } from '../../utils';
-import { BookingInfo } from './BookingInfo';
+import { ROUTES, Routes } from '../routes.config';
+import { BookingConfirmation } from './BookingConfirmation';
 import { PersonalDataForm } from './PersonalDataForm';
 import { SelectTimeSlot } from './SelectTimeSlot';
 
-const steps = [
-  'Select time slot',
-  'Personal information',
-  'Review your booking',
-];
+const steps = BOOKING.stepper;
 
 function getStepContent(step: number) {
   switch (step) {
@@ -28,7 +27,7 @@ function getStepContent(step: number) {
     case 1:
       return <PersonalDataForm />;
     case 2:
-      return <BookingInfo />;
+      return <BookingConfirmation />;
     default:
       throw new Error('Unknown step');
   }
@@ -40,6 +39,7 @@ export const Booking = () => {
     mode: 'onBlur',
     defaultValues: {
       vpoReferenceDate: getCurrentUTCDate(),
+      dateOfBirth: getCurrentUTCDate(),
     },
   });
 
@@ -51,8 +51,6 @@ export const Booking = () => {
     setActiveStep(activeStep - 1);
   };
 
-  console.log(form.getValues());
-
   return (
     <Container component="main" maxWidth="lg">
       <Paper
@@ -60,7 +58,7 @@ export const Booking = () => {
         sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
       >
         <Typography component="h1" variant="h4" align="center">
-          Checkout
+          {BOOKING.title}
         </Typography>
         <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
           {steps.map((label) => (
@@ -69,38 +67,45 @@ export const Booking = () => {
             </Step>
           ))}
         </Stepper>
-        {activeStep === steps.length ? (
-          <>
-            <Typography variant="h5" gutterBottom>
-              Thank you for your order.
-            </Typography>
-            <Typography variant="subtitle1">
-              Your order number is #2001539. We have emailed your order
-              confirmation, and will send you an update when your order has
-              shipped.
-            </Typography>
-          </>
-        ) : (
-          <FormProvider {...form}>
-            <Box
-              noValidate
-              component="form"
-              onSubmit={form.handleSubmit(handleSubmit)}
-            >
-              {getStepContent(activeStep)}
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                {activeStep !== 0 && (
-                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                    Back
-                  </Button>
-                )}
-                <Button type="submit" variant="contained" sx={{ mt: 3, ml: 1 }}>
-                  {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+        <FormProvider {...form}>
+          <Box
+            noValidate
+            component="form"
+            onSubmit={form.handleSubmit(handleSubmit)}
+          >
+            {activeStep === steps.length ? (
+              <BookingInfo
+                vpoReferenceNumber={form.getValues().vpoReferenceNumber}
+                bookingDate={form.getValues().scheduleDate}
+                addresses={''}
+              />
+            ) : (
+              getStepContent(activeStep)
+            )}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              {activeStep !== 0 && activeStep !== steps.length && (
+                <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                  {BOOKING.prevStep}
                 </Button>
-              </Box>
+              )}
+              {activeStep === steps.length ? (
+                <Button
+                  variant="contained"
+                  href={ROUTES[Routes.MAIN].path}
+                  sx={{ mt: 3, ml: 1 }}
+                >
+                  {BOOKING.gotoMain}
+                </Button>
+              ) : (
+                <Button type="submit" variant="contained" sx={{ mt: 3, ml: 1 }}>
+                  {activeStep === steps.length - 1
+                    ? BOOKING.confirmBuuton
+                    : BOOKING.nextStep}
+                </Button>
+              )}
             </Box>
-          </FormProvider>
-        )}
+          </Box>
+        </FormProvider>
       </Paper>
     </Container>
   );
