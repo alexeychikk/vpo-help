@@ -3,6 +3,12 @@ import type { Optional } from 'utility-types';
 import { IsNestedArray } from '@vpo-help/utils';
 
 export class ScheduleDto {
+  /**
+   * Sunday
+   */
+  @IsNestedArray(() => ScheduleSlotDto)
+  0: ScheduleSlotDto[];
+
   @IsNestedArray(() => ScheduleSlotDto)
   1: ScheduleSlotDto[];
 
@@ -20,9 +26,6 @@ export class ScheduleDto {
 
   @IsNestedArray(() => ScheduleSlotDto)
   6: ScheduleSlotDto[];
-
-  @IsNestedArray(() => ScheduleSlotDto)
-  7: ScheduleSlotDto[];
 
   constructor(data: Optional<ScheduleDto>) {
     Object.assign(this, data);

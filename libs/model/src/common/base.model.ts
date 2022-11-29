@@ -1,3 +1,4 @@
+import type { FunctionKeys, Optional } from 'utility-types';
 import type { IdType } from './id.type';
 
 export class BaseModel<Id extends IdType = IdType> {
@@ -11,3 +12,8 @@ export class BaseModel<Id extends IdType = IdType> {
     this.updatedAt = new Date(date);
   }
 }
+
+export type ModelConstructorData<
+  Model extends BaseModel<IdType>,
+  OP extends keyof Omit<Model, FunctionKeys<Model>> = never,
+> = Omit<Optional<Model, keyof BaseModel<IdType> | OP>, FunctionKeys<Model>>;

@@ -14,9 +14,6 @@ export class SettingsDto {
   @Max(31)
   scheduleDaysAvailable!: number;
 
-  @IsInt()
-  helpCenterTimeZoneOffset = -120;
-
   constructor(data: Optional<SettingsDto>) {
     Object.assign(this, data);
   }
@@ -31,12 +28,9 @@ export class UpdateSettingsDto extends SettingsDto {
 
   @IsOptional()
   scheduleDaysAvailable!: number;
-
-  @IsOptional()
-  helpCenterTimeZoneOffset = -120;
 }
 
 export enum SettingsCategory {
-  Schedule = 'SCHEDULE',
-  Common = 'COMMON',
+  Schedule = 'schedule',
+  Common = 'common',
 }

@@ -99,17 +99,19 @@ ScheduleAvailableDto {
 ```ts
 // PAYLOAD
 VpoModel {
+  vpoIssueDate: DateISOString,
+  vpoReferenceNumber: String,
   firstName: String,
   lastName: String,
   middleName: String,
   dateOfBirth: DateISOString,
-  vpoReferenceNumber: String,
   addressOfRegistration: String,
   addressOfResidence: String,
   numberOfRelatives: Number,
   numberOfRelativesBelow16: Number,
   numberOfRelativesAbove65: Number,
   scheduleDate: DateISOString,
+  receivedHelpDate?: DateISOString,
   receivedGoods?: { [productName]: Number },
   phoneNumber?: String,
   email?: String,

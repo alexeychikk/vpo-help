@@ -9,6 +9,13 @@ export class VpoEntity extends baseEntityWith(
   VpoModel as Class<VpoModel<ObjectId>>,
 ) {
   @Column()
+  vpoIssueDate!: Date;
+
+  @Index('idx_vpo_reference_number', { unique: true })
+  @Column()
+  vpoReferenceNumber!: string;
+
+  @Column()
   firstName!: string;
 
   @Column()
@@ -19,10 +26,6 @@ export class VpoEntity extends baseEntityWith(
 
   @Column()
   dateOfBirth!: Date;
-
-  @Index('idx_vpo_reference_number', { unique: true })
-  @Column()
-  vpoReferenceNumber!: string;
 
   @Column()
   addressOfRegistration!: string;
@@ -42,6 +45,9 @@ export class VpoEntity extends baseEntityWith(
   @Index('idx_vpo_schedule_date')
   @Column()
   scheduleDate!: Date;
+
+  @Column()
+  receivedHelpDate?: Date;
 
   @Column()
   receivedGoods?: ReceivedGoodsDto;

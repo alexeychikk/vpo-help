@@ -1,6 +1,5 @@
 import { IsEmail, IsEnum } from 'class-validator';
-import type { Optional } from 'utility-types';
-import type { IdType } from '../common';
+import type { IdType, ModelConstructorData } from '../common';
 import { BaseModel, Role } from '../common';
 
 export class UserModel<Id extends IdType = IdType> extends BaseModel<Id> {
@@ -10,7 +9,7 @@ export class UserModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @IsEnum(Role)
   role!: Role;
 
-  constructor(data: Optional<UserModel<Id>, keyof BaseModel<Id>>) {
+  constructor(data: ModelConstructorData<UserModel<Id>>) {
     super();
     Object.assign(this, data);
   }

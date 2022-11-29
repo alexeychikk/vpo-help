@@ -1,4 +1,5 @@
-import { expectExtended, TEST_PASSWORD, TestApp } from '@vpo-help/testing';
+import { expectExtended } from '@vpo-help/testing';
+import { TEST_PASSWORD, TestApp } from '../../testing';
 
 describe('POST /login', () => {
   test('rejects invalid body', async () => {

@@ -22,10 +22,6 @@ export abstract class EnvBaseService {
     this.packageJson = JSON.parse(packageString);
   }
 
-  get API_SERVICE_URL(): string {
-    return this.getVar('API_SERVICE_URL', 'http://api:3332');
-  }
-
   get JWT_SECRET(): string {
     return this.getVar('JWT_SECRET');
   }
@@ -36,6 +32,10 @@ export abstract class EnvBaseService {
 
   get DB_URL(): string {
     return this.getVar('DB_URL', 'mongodb://mongodb:27017/vpo-help');
+  }
+
+  get TZ(): string {
+    return this.getVar('TZ');
   }
 
   get HOST(): string {

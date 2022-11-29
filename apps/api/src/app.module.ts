@@ -5,7 +5,11 @@ import {
   LoggerModule,
   ModelModule,
 } from '@vpo-help/server';
-import { AuthController, VpoController } from './controllers';
+import {
+  AuthController,
+  ScheduleController,
+  VpoController,
+} from './controllers';
 import { EnvService } from './services';
 
 @Module({
@@ -15,6 +19,6 @@ import { EnvService } from './services';
     ModelModule,
     AuthModule,
   ],
-  controllers: [AuthController, VpoController],
+  controllers: [AuthController, ScheduleController, VpoController],
 })
 export class AppModule {}

@@ -1,6 +1,6 @@
 export * from './composeDecorators';
 export * from './copyMetadata';
-export * from './filterMapInPairs';
+export * from './date';
 export * from './getClassGetters';
 export * from './getOwnPropertyNames';
 export * from './isClass';
@@ -8,5 +8,4 @@ export * from './promiseChain.decorator';
 export * from './resolveUntil';
 export * from './serialize';
 export * from './sleep';
-export * from './timer';
 export * from './types';

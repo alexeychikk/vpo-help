@@ -3,7 +3,7 @@ module.exports = {
 
   coverageDirectory: '../../coverage/apps/api',
   displayName: 'api',
-  setupFiles: ['../../libs/testing/src/setupTests.ts'],
+  setupFiles: ['./testing/setupTests.ts'],
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',

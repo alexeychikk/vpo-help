@@ -1,6 +1,6 @@
 import { IsAlphanumeric, IsObject, Length } from 'class-validator';
 import type { Optional } from 'utility-types';
-import type { IdType } from '../common';
+import type { IdType, ModelConstructorData } from '../common';
 import { BaseModel } from '../common';
 
 export type HtmlFieldsMap = Record<string, string>;
@@ -13,7 +13,7 @@ export class HtmlPageModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @IsObject()
   content!: HtmlFieldsMap;
 
-  constructor(data: Optional<HtmlPageModel<Id>, keyof BaseModel<Id>>) {
+  constructor(data: ModelConstructorData<HtmlPageModel<Id>>) {
     super();
     Object.assign(this, data);
   }

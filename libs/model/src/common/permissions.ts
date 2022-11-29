@@ -1,20 +1,20 @@
 export enum Role {
-  Vpo = 'VPO',
-  Admin = 'ADMIN',
+  Vpo = 'vpo',
+  Admin = 'admin',
 }
 
 export enum Permission {
-  Schedule = 'SCHEDULE',
-  VpoList = 'VPO_LIST',
-  VpoExport = 'VPO_EXPORT',
-  VpoImport = 'VPO_IMPORT',
-  Settings = 'SETTINGS',
-  Html = 'HTML',
+  Schedule = 'schedule',
+  VpoList = 'vpoList',
+  VpoExport = 'vpoExport',
+  VpoImport = 'vpoImport',
+  Settings = 'settings',
+  Html = 'html',
 }
 
 export enum AccessType {
-  Read = 'READ',
-  Write = 'WRITE',
+  Read = 'read',
+  Write = 'write',
 }
 
 export type PermissionMap = Partial<Record<Permission, AccessType[]>>;

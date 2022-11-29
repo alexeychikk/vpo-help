@@ -9,14 +9,15 @@ import { baseEntityWith, EntityConstructorData } from '../../common';
 export class SettingsEntity extends baseEntityWith(
   BaseModel as Class<BaseModel<ObjectId>>,
 ) {
-  @Index('idx_settings_name')
+  @Index('idx_settings_category')
   @Column()
-  name!: SettingsCategory;
+  category!: SettingsCategory;
 
   @Column()
   properties!: SettingsDto | ScheduleDto;
 
   constructor(data: EntityConstructorData<SettingsEntity>) {
     super(data);
+    Object.assign(this, data);
   }
 }

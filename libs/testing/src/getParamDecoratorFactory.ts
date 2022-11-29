@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 
 export function getParamDecoratorFactory<Value>(

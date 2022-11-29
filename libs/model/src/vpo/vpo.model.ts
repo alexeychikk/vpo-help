@@ -8,16 +8,21 @@ import {
   Length,
   Max,
   Min,
+  MinDate,
 } from 'class-validator';
-import type { Optional } from 'utility-types';
-import type { IdType } from '../common';
-import { Role } from '../common';
-import { BaseModel } from '../common';
+import type { IdType, ModelConstructorData } from '../common';
+import { BaseModel, Role } from '../common';
 import { IsVpoReferenceNumber } from './isVpoReferenceNumber.decorator';
 import { ReceivedGoodsDto } from './receivedGoods.dto';
 import { VpoUserModel } from './vpoUser.model';
 
 export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
+  @MinDate(new Date(`2022-01-01`))
+  vpoIssueDate!: Date;
+
+  @IsVpoReferenceNumber()
+  vpoReferenceNumber!: string;
+
   @Length(1, 50)
   firstName!: string;
 
@@ -29,9 +34,6 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
 
   @IsDate()
   dateOfBirth!: Date;
-
-  @IsVpoReferenceNumber()
-  vpoReferenceNumber!: string;
 
   @Length(1, 200)
   addressOfRegistration!: string;
@@ -47,15 +49,21 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @IsInt()
   @Min(0)
   @Max(50)
-  numberOfRelativesBelow16!: number;
+  @IsOptional()
+  numberOfRelativesBelow16 = 0;
 
   @IsInt()
   @Min(0)
   @Max(50)
-  numberOfRelativesAbove65!: number;
+  @IsOptional()
+  numberOfRelativesAbove65 = 0;
 
   @IsDate()
   scheduleDate!: Date;
+
+  @IsDate()
+  @IsOptional()
+  receivedHelpDate?: Date;
 
   @IsObject()
   @IsOptional()
@@ -80,7 +88,7 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
     });
   }
 
-  constructor(data: Optional<VpoModel<Id>, keyof BaseModel<Id>>) {
+  constructor(data: ModelConstructorData<VpoModel<Id>>) {
     super();
     Object.assign(this, data);
   }
