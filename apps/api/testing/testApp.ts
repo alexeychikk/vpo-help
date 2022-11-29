@@ -5,6 +5,7 @@ import { FastifyAdapter } from '@nestjs/platform-fastify';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getConnectionToken } from '@nestjs/typeorm';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { ObjectId } from 'mongodb';
 import supertest from 'supertest';
 import type {
@@ -12,14 +13,17 @@ import type {
   LoginAsUserResponseDto,
   LoginAsVpoDto,
   LoginAsVpoResponseDto,
+  ScheduleSlotAvailableDto,
   UserModel,
   VpoUserModel,
 } from '@vpo-help/model';
 import { Role, VpoModel } from '@vpo-help/model';
+import type { VpoEntity } from '@vpo-help/server';
 import {
   AuthService,
   ClassValidationPipe,
   EnvBaseService,
+  SettingsService,
   UserEntity,
   UserService,
   VpoService,
@@ -35,7 +39,7 @@ jest.setTimeout(10000);
 let nestApp: NestFastifyApplication;
 
 beforeEach(async () => {
-  const dbUrl = `mongodb://localhost:27017/vpo-test-${new ObjectId()}`;
+  const dbUrl = `mongodb://localhost:27017/vpo-test-${faker.datatype.uuid()}`;
   @Injectable()
   class TestEnvService extends EnvBaseService {
     get DB_URL() {
@@ -78,6 +82,22 @@ class TestApp {
     return supertest(this.app.getHttpServer());
   }
 
+  get userService() {
+    return this.app.get(UserService);
+  }
+
+  get vpoService() {
+    return this.app.get(VpoService);
+  }
+
+  get authService() {
+    return this.app.get(AuthService);
+  }
+
+  get settingsService() {
+    return this.app.get(SettingsService);
+  }
+
   async loginAsUser(
     dto: LoginAsUserDto,
   ): Promise<Serialized<LoginAsUserResponseDto>> {
@@ -85,7 +105,6 @@ class TestApp {
       .post('/auth/login')
       .send(dto)
       .expect(200);
-
     return body;
   }
 
@@ -96,18 +115,29 @@ class TestApp {
       .post('/auth/login/vpo')
       .send(dto)
       .expect(200);
-
     return body;
   }
 
+  async getAvailableScheduleSlot(index = 0): Promise<ScheduleSlotAvailableDto> {
+    const { items } = await this.vpoService.getAvailableSchedule();
+    return items[index];
+  }
+
+  async getAvailableDateSlot(index = 0): Promise<Date> {
+    return (await this.getAvailableScheduleSlot(index)).dateFrom;
+  }
+
+  async registerVpo(dto?: Partial<VpoModel>): Promise<VpoEntity> {
+    const model = await this.getFakeVpo(dto);
+    return this.vpoService.register(model);
+  }
+
   asUser(dto?: Partial<LoginAsUserDto> & { userId?: string }): TestApp {
-    const userService = this.app.get(UserService);
-    const authService = this.app.get(AuthService);
     const password = dto?.password || TEST_PASSWORD;
 
     if (dto?.userId) {
       this.loginResponsePromise = (async () => {
-        const { email } = await userService.findById(dto!.userId!);
+        const { email } = await this.userService.findById(dto!.userId!);
         return this.loginAsUser({
           email,
           password,
@@ -118,15 +148,17 @@ class TestApp {
         dto?.email || faker.internet.email(new ObjectId().toString());
 
       this.loginResponsePromise = (async () => {
-        let user = await userService.findByEmail(email).catch(() => undefined);
+        let user = await this.userService
+          .findByEmail(email)
+          .catch(() => undefined);
 
         if (!user) {
           const entity = new UserEntity({
             email,
-            passwordHash: await authService.hashPassword(password),
+            passwordHash: await this.authService.hashPassword(password),
             role: Role.Admin,
           });
-          user = await userService.create(entity);
+          user = await this.userService.create(entity);
         }
 
         return this.loginAsUser({
@@ -140,11 +172,9 @@ class TestApp {
   }
 
   asVpo(dto?: Partial<VpoModel>): TestApp {
-    const vpoService = this.app.get(VpoService);
-
     if (dto?.id) {
       this.loginResponsePromise = (async () => {
-        const vpo = await vpoService.findById(dto!.id!);
+        const vpo = await this.vpoService.findById(dto!.id!);
         return this.loginAsVpo({
           vpoReferenceNumber: vpo.vpoReferenceNumber,
         });
@@ -152,38 +182,12 @@ class TestApp {
     } else {
       this.loginResponsePromise = (async () => {
         let vpo = dto?.vpoReferenceNumber
-          ? await vpoService
+          ? await this.vpoService
               .findByReferenceNumber(dto.vpoReferenceNumber)
               .catch(() => undefined)
           : undefined;
 
-        if (!vpo) {
-          const schedule = await vpoService.getAvailableSchedule();
-          const model = new VpoModel({
-            addressOfRegistration: faker.address.city(),
-            addressOfResidence: faker.address.streetAddress(true),
-            dateOfBirth: faker.date.past(30),
-            firstName: faker.name.firstName(),
-            lastName: faker.name.lastName(),
-            middleName: faker.name.middleName(),
-            numberOfRelatives: faker.datatype.number({ min: 0, max: 10 }),
-            numberOfRelativesAbove65: faker.datatype.number({
-              min: 0,
-              max: 10,
-            }),
-            numberOfRelativesBelow16: faker.datatype.number({
-              min: 0,
-              max: 10,
-            }),
-            scheduleDate: schedule.items[0].dateFrom,
-            vpoIssueDate: faker.date.between(
-              new Date('2022-01-01'),
-              new Date(),
-            ),
-            vpoReferenceNumber: faker.datatype.string(5),
-          });
-          vpo = await vpoService.register(model);
-        }
+        if (!vpo) vpo = await this.registerVpo(dto);
 
         return this.loginAsVpo({
           vpoReferenceNumber: vpo.vpoReferenceNumber,
@@ -192,6 +196,32 @@ class TestApp {
     }
 
     return this;
+  }
+
+  async getFakeVpo(dto?: Partial<VpoModel>): Promise<VpoModel> {
+    return plainToInstance(VpoModel, {
+      addressOfRegistration: faker.address.city(),
+      addressOfResidence: faker.address.streetAddress(true),
+      dateOfBirth: faker.date.past(30),
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      middleName: faker.name.middleName(),
+      numberOfRelatives: faker.datatype.number({ min: 0, max: 10 }),
+      numberOfRelativesAbove65: faker.datatype.number({
+        min: 0,
+        max: 10,
+      }),
+      numberOfRelativesBelow16: faker.datatype.number({
+        min: 0,
+        max: 10,
+      }),
+      scheduleDate:
+        dto?.scheduleDate ||
+        (await this.vpoService.getAvailableSchedule()).items[0].dateFrom,
+      vpoIssueDate: faker.date.between(new Date('2022-01-01'), new Date()),
+      vpoReferenceNumber: faker.datatype.uuid(),
+      ...dto,
+    });
   }
 
   async requestApiWithAuth(
@@ -213,8 +243,14 @@ class TestApp {
     return this.getAuthenticatedUser();
   }
 
-  async getCurrentVpo(): Promise<Serialized<VpoUserModel>> {
+  async getCurrentVpoUser(): Promise<Serialized<VpoUserModel>> {
     return this.getAuthenticatedUser();
+  }
+
+  async getCurrentVpo(): Promise<Serialized<VpoModel>> {
+    const vpoUser = await this.getCurrentVpoUser();
+    const vpo = await this.vpoService.findById(vpoUser.id);
+    return instanceToPlain(vpo) as Serialized<VpoModel>;
   }
 
   private async getAuthenticatedUser<

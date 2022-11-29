@@ -39,9 +39,7 @@ export class VpoService {
       model.vpoReferenceNumber,
     ).catch(() => undefined);
 
-    if (entity) {
-      await this.validateExistingVpoRegistration(model, entity);
-    }
+    await this.validateVpoRegistration(model, entity);
 
     await this.lockByDate(model.scheduleDate, async () => {
       await this.ensureDateAvailable(model.scheduleDate);
@@ -131,23 +129,26 @@ export class VpoService {
     return result;
   }
 
-  private async validateExistingVpoRegistration(
-    model: VpoModel,
-    entity: VpoEntity,
-  ) {
-    if (entity.receivedHelpDate) {
-      const settings = await this.settingsService.getCommonSettings();
-      const daysSinceLastHelp = differenceInDays(
-        model.scheduleDate,
-        entity.receivedHelpDate,
+  private async validateVpoRegistration(model: VpoModel, entity?: VpoEntity) {
+    if (!isAfter(model.scheduleDate, new Date())) {
+      throw new BadRequestException(
+        `Registration must be scheduled for the future`,
       );
-      if (daysSinceLastHelp < settings.daysToNextVpoRegistration) {
-        throw new ConflictException(
-          `Help can be received once in ${settings.daysToNextVpoRegistration} days`,
+    }
+    if (entity) {
+      if (entity.receivedHelpDate) {
+        const settings = await this.settingsService.getCommonSettings();
+        const daysSinceLastHelp = differenceInDays(
+          model.scheduleDate,
+          entity.receivedHelpDate,
         );
+        if (daysSinceLastHelp < settings.daysToNextVpoRegistration) {
+          throw new ConflictException(
+            `Help can be received once in ${settings.daysToNextVpoRegistration} days`,
+          );
+        }
       }
-    } else {
-      if (isBefore(model.scheduleDate, entity.scheduleDate)) {
+      if (model.scheduleDate.getTime() === entity.scheduleDate.getTime()) {
         throw new ConflictException(`Registration has been already scheduled`);
       }
     }

@@ -5,6 +5,7 @@ export enum Role {
 
 export enum Permission {
   Schedule = 'schedule',
+  Vpo = 'vpo',
   VpoList = 'vpoList',
   VpoExport = 'vpoExport',
   VpoImport = 'vpoImport',
@@ -24,6 +25,7 @@ export const PERMISSIONS: {
 } = {
   [Role.Admin]: {
     [Permission.Schedule]: [AccessType.Read, AccessType.Write],
+    [Permission.Vpo]: [AccessType.Read, AccessType.Write],
     [Permission.VpoList]: [AccessType.Read, AccessType.Write],
     [Permission.VpoExport]: [AccessType.Read, AccessType.Write],
     [Permission.VpoImport]: [AccessType.Read, AccessType.Write],

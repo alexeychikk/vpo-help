@@ -107,11 +107,13 @@ export class SettingsService implements OnModuleInit {
     return this.getSettings(SettingsCategory.Schedule);
   }
 
-  async updateCommonSettings(dto: UpdateSettingsDto): Promise<SettingsDto> {
+  async updateCommonSettings(
+    dto: Partial<UpdateSettingsDto>,
+  ): Promise<SettingsDto> {
     return this.updateSettings(SettingsCategory.Common, dto);
   }
 
-  async updateSchedule(dto: ScheduleDto): Promise<ScheduleDto> {
+  async updateSchedule(dto: Partial<ScheduleDto>): Promise<ScheduleDto> {
     return this.updateSettings(SettingsCategory.Schedule, dto);
   }
 

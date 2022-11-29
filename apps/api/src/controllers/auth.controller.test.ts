@@ -98,7 +98,7 @@ describe('POST /auth/login/vpo', () => {
   });
 
   test('authenticates successfully', async () => {
-    const vpo = await testApp.asVpo().getCurrentVpo();
+    const vpo = await testApp.asVpo().getCurrentVpoUser();
 
     const { body } = await testApp.requestApi
       .post('/auth/login/vpo')

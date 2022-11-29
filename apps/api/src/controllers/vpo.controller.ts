@@ -5,12 +5,14 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
   AccessType,
+  FindByIdDto,
   PaginationSearchSortDto,
   Permission,
   VpoModel,
@@ -33,6 +35,14 @@ export class VpoController {
   async register(@Body() vpoModel: VpoModel) {
     const vpo = await this.vpoService.register(vpoModel);
     return vpo.toVpoUserModel();
+  }
+
+  @Get(':id')
+  @UsePermissions({ [Permission.Vpo]: [AccessType.Read] })
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async getById(@Param() dto: FindByIdDto) {
+    return this.vpoService.findById(dto.id);
   }
 
   @Get()

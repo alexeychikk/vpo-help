@@ -79,7 +79,7 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
 
   toVpoUserModel(): VpoUserModel<string> {
     return new VpoUserModel({
-      id: this.id.toString(),
+      id: this.id?.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       role: Role.Vpo,

@@ -27,7 +27,6 @@ const entities = [UserEntity, VpoEntity, SettingsEntity, HtmlPageEntity];
         synchronize: !env.IS_PROD,
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        forceServerObjectId: true,
         driver: mongodb,
       }),
     }),
