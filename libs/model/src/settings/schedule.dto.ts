@@ -7,25 +7,25 @@ export class ScheduleDto {
    * Sunday
    */
   @IsNestedArray(() => ScheduleSlotDto)
-  0: ScheduleSlotDto[];
+  0: ScheduleSlotDto[] = [];
 
   @IsNestedArray(() => ScheduleSlotDto)
-  1: ScheduleSlotDto[];
+  1: ScheduleSlotDto[] = [];
 
   @IsNestedArray(() => ScheduleSlotDto)
-  2: ScheduleSlotDto[];
+  2: ScheduleSlotDto[] = [];
 
   @IsNestedArray(() => ScheduleSlotDto)
-  3: ScheduleSlotDto[];
+  3: ScheduleSlotDto[] = [];
 
   @IsNestedArray(() => ScheduleSlotDto)
-  4: ScheduleSlotDto[];
+  4: ScheduleSlotDto[] = [];
 
   @IsNestedArray(() => ScheduleSlotDto)
-  5: ScheduleSlotDto[];
+  5: ScheduleSlotDto[] = [];
 
   @IsNestedArray(() => ScheduleSlotDto)
-  6: ScheduleSlotDto[];
+  6: ScheduleSlotDto[] = [];
 
   constructor(data: Optional<ScheduleDto>) {
     Object.assign(this, data);

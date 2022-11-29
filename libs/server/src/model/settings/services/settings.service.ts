@@ -67,13 +67,9 @@ export class SettingsService implements OnModuleInit {
       new SettingsEntity({
         category: SettingsCategory.Schedule,
         properties: new ScheduleDto({
-          0: [],
-          1: [],
           2: DEFAULT_DAY_SCHEDULE,
           3: DEFAULT_DAY_SCHEDULE,
           4: DEFAULT_DAY_SCHEDULE,
-          5: [],
-          6: [],
         }),
       }),
     );

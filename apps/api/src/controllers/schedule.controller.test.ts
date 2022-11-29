@@ -40,7 +40,7 @@ describe('GET /schedule/available', () => {
     const groupedItems = groupBy(body.items, (slot) =>
       format(new Date(slot.dateFrom), 'yyyy-MM-dd'),
     );
-    expect(Object.keys(groupedItems).length).toEqual(2);
+    expect(Object.keys(groupedItems).length).toBeGreaterThanOrEqual(2);
   });
 });
 
@@ -73,21 +73,26 @@ describe('PUT /schedule', () => {
   });
 
   test('rejects invalid schedule', async () => {
-    const { body } = await testApp
-      .asUser()
-      .requestApiWithAuth((req) => req.put('/schedule').send({}).expect(400));
+    const { body } = await testApp.asUser().requestApiWithAuth((req) =>
+      req
+        .put('/schedule')
+        .send({
+          0: '',
+          1: [{}],
+        })
+        .expect(400),
+    );
 
     expect(body).toMatchInlineSnapshot(`
       Object {
         "error": "Bad Request",
         "message": Array [
-          "0 must be an array",
-          "1 must be an array",
-          "2 must be an array",
-          "3 must be an array",
-          "4 must be an array",
-          "5 must be an array",
-          "6 must be an array",
+          "0.each value in nested property 0 must be either object or array",
+          "1.0.timeFrom must be longer than or equal to 5 characters",
+          "1.0.timeTo must be longer than or equal to 5 characters",
+          "1.0.numberOfPersons must not be greater than 10000",
+          "1.0.numberOfPersons must not be less than 1",
+          "1.0.numberOfPersons must be an integer number",
         ],
         "statusCode": 400,
       }
@@ -96,11 +101,6 @@ describe('PUT /schedule', () => {
 
   test('updates schedule', async () => {
     const dto = new ScheduleDto({
-      0: [],
-      1: [],
-      2: [],
-      3: [],
-      4: [],
       5: [
         new ScheduleSlotDto({
           numberOfPersons: 100,
@@ -108,7 +108,6 @@ describe('PUT /schedule', () => {
           timeTo: '17:50',
         }),
       ],
-      6: [],
     });
 
     const { body } = await testApp

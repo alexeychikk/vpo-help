@@ -156,12 +156,6 @@ describe('POST /vpo', () => {
     await testApp.settingsService.updateSchedule(
       new ScheduleDto({
         0: [{ timeFrom: '13:00', timeTo: '14:00', numberOfPersons: vpoCount }],
-        1: [],
-        2: [],
-        3: [],
-        4: [],
-        5: [],
-        6: [],
       }),
     );
 
