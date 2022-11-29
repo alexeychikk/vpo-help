@@ -38,7 +38,7 @@ export const Booking = () => {
   const form = useForm<BookingModel>({
     mode: 'onBlur',
     defaultValues: {
-      vpoReferenceDate: getCurrentUTCDate(),
+      vpoIssueDate: getCurrentUTCDate(),
       dateOfBirth: getCurrentUTCDate(),
     },
   });
@@ -116,7 +116,7 @@ export type BookingModel = {
   lastName: string;
   middleName: string;
   dateOfBirth: string;
-  vpoReferenceDate: string;
+  vpoIssueDate: string;
   vpoReferenceNumber: string;
   addressOfRegistration: string;
   addressOfResidence: string;
@@ -124,7 +124,4 @@ export type BookingModel = {
   numberOfRelativesBelow16: number;
   numberOfRelativesAbove65: number;
   scheduleDate: string;
-  receivedGoods?: { [productName: string]: number };
-  phoneNumber?: string;
-  email?: string;
 };

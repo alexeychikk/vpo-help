@@ -22,8 +22,8 @@ export const BookingConfirmation: React.FC = () => {
         sx={{ my: 3 }}
       >
         <BookingInfoItem
-          label={BOOKING.form.vpoReferenceDate}
-          data={moment(formValues.vpoReferenceDate).utc().format('DD.MM.YY')}
+          label={BOOKING.form.vpoIssueDate}
+          data={moment(formValues.vpoIssueDate).utc().format('DD.MM.YY')}
         />
         <BookingInfoItem
           label={BOOKING.form.vpoReferenceNumber}

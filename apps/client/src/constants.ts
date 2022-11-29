@@ -36,7 +36,7 @@ export const BOOKING = {
   confirmBuuton: 'Підтверджую',
   form: {
     scheduleDate: 'Дата та час, коли потрібно прибути до Центру допомоги',
-    vpoReferenceDate: 'Дата видачі довідки',
+    vpoIssueDate: 'Дата видачі довідки',
     vpoReferenceNumber: 'Номер довідки ВПО від 2022 року',
     firstName: 'Ім‘я',
     lastName: 'Прізвище',

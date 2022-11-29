@@ -20,8 +20,8 @@ export const PersonalDataForm: React.FC = () => {
         <DesktopDatePickerElement
           required
           ignoreInvalidInputs
-          name="vpoReferenceDate"
-          label={BOOKING.form.vpoReferenceDate}
+          name="vpoIssueDate"
+          label={BOOKING.form.vpoIssueDate}
           control={control}
           transform={formatISOOnlyDate}
         />
