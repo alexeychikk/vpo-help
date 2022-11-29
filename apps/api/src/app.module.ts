@@ -8,6 +8,7 @@ import {
 import {
   AuthController,
   ScheduleController,
+  SettingsController,
   VpoController,
 } from './controllers';
 import { EnvService } from './services';
@@ -19,6 +20,11 @@ import { EnvService } from './services';
     ModelModule,
     AuthModule,
   ],
-  controllers: [AuthController, ScheduleController, VpoController],
+  controllers: [
+    AuthController,
+    ScheduleController,
+    SettingsController,
+    VpoController,
+  ],
 })
 export class AppModule {}
