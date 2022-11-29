@@ -1,5 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsDate, IsInt, Max, Min } from 'class-validator';
+import { IsDate, IsInt, IsOptional, Max, Min } from 'class-validator';
 import type { Optional } from 'utility-types';
 
 export class SettingsDto {
@@ -23,7 +22,19 @@ export class SettingsDto {
   }
 }
 
-export class UpdateSettingsDto extends PartialType(SettingsDto) {}
+export class UpdateSettingsDto extends SettingsDto {
+  @IsOptional()
+  daysToNextVpoRegistration!: number;
+
+  @IsOptional()
+  endOfWarDate!: Date;
+
+  @IsOptional()
+  scheduleDaysAvailable!: number;
+
+  @IsOptional()
+  helpCenterTimeZoneOffset = -120;
+}
 
 export enum SettingsCategory {
   Schedule = 'SCHEDULE',

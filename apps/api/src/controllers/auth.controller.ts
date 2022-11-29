@@ -4,13 +4,10 @@ import {
   Controller,
   HttpCode,
   Post,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { LoginDto, LoginResponseDto, UserModel } from '@vpo-help/model';
-import { CurrentUser, UserEntity, UserService } from '@vpo-help/server';
-import { JwtAuthGuard } from '../guards';
-import { AuthService } from '../services';
+import { LoginAsUserDto, LoginAsVpoDto } from '@vpo-help/model';
+import { AuthService, UserService, VpoService } from '@vpo-help/server';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'auth' })
@@ -18,23 +15,23 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private vpoService: VpoService,
   ) {}
 
   @Post('login')
   @HttpCode(200)
-  async login(@Body() loginDto: LoginDto) {
-    const user = await this.userService.upsertByEmail(loginDto.email);
-    const accessToken = await this.authService.createAccessToken(user);
-    return new LoginResponseDto({
-      user: new UserModel<string>({ ...user, id: user.id.toString() }),
-      accessToken,
-    });
+  async loginAsUser(@Body() dto: LoginAsUserDto) {
+    const user = await this.userService.findByEmail(dto.email);
+    await this.authService.validatePassword(dto.password, user.passwordHash);
+    return this.authService.loginAsUser(user);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('verify')
+  @Post('login/vpo')
   @HttpCode(200)
-  async verify(@CurrentUser() user: UserEntity) {
-    return user;
+  async loginAsVpo(@Body() dto: LoginAsVpoDto) {
+    const vpo = await this.vpoService.findByReferenceNumber(
+      dto.vpoReferenceNumber,
+    );
+    return this.authService.loginAsVpo(vpo);
   }
 }

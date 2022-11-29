@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import type { IdType } from '@vpo-help/model';
 import type { UserEntity } from '../entities';
 import { UserRepository } from './user.repository';
@@ -13,5 +13,11 @@ export class UserService {
 
   async findById(id: IdType): Promise<UserEntity> {
     return this.userRepository.findById(id);
+  }
+
+  async findByEmail(email: string): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) throw new NotFoundException();
+    return user;
   }
 }

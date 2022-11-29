@@ -6,85 +6,118 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { ObjectId } from 'mongodb';
 import supertest from 'supertest';
-import type { LoginDto, LoginResponseDto, UserModel } from '@vpo-help/model';
+import type {
+  LoginAsUserDto,
+  LoginAsUserResponseDto,
+  UserModel,
+} from '@vpo-help/model';
+import { Role } from '@vpo-help/model';
 import {
+  AuthModule,
+  AuthService,
   EnvBaseService,
   EnvModule,
   ModelModule,
-  UserRepository,
+  UserEntity,
+  UserService,
 } from '@vpo-help/server';
 import type { Serialized } from '@vpo-help/utils';
+
+export const TEST_PASSWORD = '11111';
 
 jest.setTimeout(10000);
 
 const testApps: TestApp[] = [];
-let dbApp: NestFastifyApplication;
+let nestApp: NestFastifyApplication;
 
 @Injectable()
 class TestEnvService extends EnvBaseService {}
 
 beforeAll(async () => {
   const moduleFixture: TestingModule = await Test.createTestingModule({
-    imports: [EnvModule.register(TestEnvService), ModelModule],
+    imports: [EnvModule.register(TestEnvService), ModelModule, AuthModule],
   }).compile();
 
-  dbApp = moduleFixture.createNestApplication<NestFastifyApplication>(
+  nestApp = moduleFixture.createNestApplication<NestFastifyApplication>(
     new FastifyAdapter(),
   );
 
-  await dbApp.init();
+  await nestApp.init();
 });
 
 afterAll(async () => {
   await Promise.all(testApps.map((app) => app.teardown()));
-  await dbApp.close();
+  await nestApp.close();
 });
 
 export class TestApp {
-  private loginResponsePromise: Promise<Serialized<LoginResponseDto>>;
+  private loginResponsePromise: Promise<Serialized<LoginAsUserResponseDto>>;
 
   constructor(options: {
-    loginResponsePromise: Promise<Serialized<LoginResponseDto>>;
+    loginResponsePromise: Promise<Serialized<LoginAsUserResponseDto>>;
   }) {
     this.loginResponsePromise = options.loginResponsePromise;
   }
 
-  private static get requestApi() {
+  static get requestApi() {
     return supertest(process.env['API_SERVICE_URL']);
   }
 
-  private static async createUser(
-    dto?: Partial<LoginDto>,
-  ): Promise<Serialized<LoginResponseDto>> {
+  static async loginAsUser(
+    dto: LoginAsUserDto,
+  ): Promise<Serialized<LoginAsUserResponseDto>> {
     const { body } = await TestApp.requestApi
       .post('/auth/login')
-      .send({ email: faker.internet.email(new ObjectId().toString()), ...dto })
+      .send(dto)
       .expect(200);
 
     return body;
   }
 
-  static asNewUser(dto?: Partial<LoginDto> & { userId?: string }): TestApp {
-    let loginResponsePromise: Promise<Serialized<LoginResponseDto>>;
+  static asUser(dto?: Partial<LoginAsUserDto> & { userId?: string }): TestApp {
+    let loginResponsePromise: Promise<Serialized<LoginAsUserResponseDto>>;
+    const userService = nestApp.get(UserService);
+    const authService = nestApp.get(AuthService);
+    const password = dto?.password || TEST_PASSWORD;
+
     if (dto?.userId) {
-      loginResponsePromise = dbApp
-        .get(UserRepository)
-        .findById(dto.userId)
-        .then(({ email }) => TestApp.createUser({ email }));
+      loginResponsePromise = (async () => {
+        const { email } = await userService.findById(dto!.userId!);
+        return TestApp.loginAsUser({
+          email,
+          password,
+        });
+      })();
     } else {
-      loginResponsePromise = TestApp.createUser(dto);
+      const email =
+        dto?.email || faker.internet.email(new ObjectId().toString());
+
+      loginResponsePromise = (async () => {
+        let user = await userService.findByEmail(email).catch(() => undefined);
+
+        if (!user) {
+          const entity = new UserEntity({
+            email,
+            passwordHash: await authService.hashPassword(password),
+            role: Role.Admin,
+          });
+          user = await userService.create(entity);
+        }
+
+        return TestApp.loginAsUser({
+          email,
+          password,
+        });
+      })();
     }
+
     const app = new TestApp({ loginResponsePromise });
     testApps.push(app);
     return app;
   }
 
-  asNewUser = TestApp.asNewUser;
+  asUser = TestApp.asUser;
   requestApi = TestApp.requestApi;
-
-  get userRepository() {
-    return dbApp.get(UserRepository);
-  }
 
   async requestApiAsUser(
     fn: (request: supertest.SuperTest<supertest.Test>) => supertest.Test,
@@ -106,5 +139,3 @@ export class TestApp {
     /* */
   }
 }
-
-export const testApp = TestApp.asNewUser();

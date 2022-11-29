@@ -10,13 +10,18 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {
+  AccessType,
   PaginationSearchSortDto,
-  Role,
+  Permission,
   VpoModel,
-  VpoUserModel,
 } from '@vpo-help/model';
 import type { VpoEntity } from '@vpo-help/server';
-import { PaginationSearchSort, VpoService } from '@vpo-help/server';
+import {
+  JwtAuthGuard,
+  PaginationSearchSort,
+  UsePermissions,
+  VpoService,
+} from '@vpo-help/server';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'vpo' })
@@ -27,23 +32,20 @@ export class VpoController {
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() vpoModel: VpoModel) {
     const vpo = await this.vpoService.register(vpoModel);
-    return new VpoUserModel({
-      id: vpo.id,
-      createdAt: vpo.createdAt,
-      updatedAt: vpo.updatedAt,
-      role: Role.Vpo,
-      scheduleDate: vpo.scheduleDate,
-      vpoReferenceNumber: vpo.vpoReferenceNumber,
-    });
+    return vpo.toVpoUserModel();
   }
 
   @Get()
+  @UsePermissions({ [Permission.VpoList]: [AccessType.Read] })
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async list(@PaginationSearchSort() dto: PaginationSearchSortDto<VpoEntity>) {
     return this.vpoService.paginate(dto);
   }
 
   @Get('export')
+  @UsePermissions({ [Permission.VpoExport]: [AccessType.Read] })
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async export(
     @PaginationSearchSort() dto: PaginationSearchSortDto<VpoEntity>,
@@ -51,7 +53,9 @@ export class VpoController {
     // TODO
   }
 
-  @Get('import')
+  @Post('import')
+  @UsePermissions({ [Permission.VpoImport]: [AccessType.Write] })
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async import() {
     // TODO

@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import type { PaginationSearchSortDto, VpoModel } from '@vpo-help/model';
+import type {
+  IdType,
+  PaginationSearchSortDto,
+  VpoModel,
+} from '@vpo-help/model';
 import { VpoEntity } from '../entities';
 import { VpoRepository } from './vpo.repository';
 
@@ -17,8 +21,12 @@ export class VpoService {
     return this.vpoRepository.save(entity);
   }
 
+  async findById(id: IdType): Promise<VpoEntity> {
+    return this.vpoRepository.findById(id);
+  }
+
   async findByReferenceNumber(vpoReferenceNumber: string): Promise<VpoEntity> {
-    return this.vpoRepository.findOneByOrFail({ vpoReferenceNumber });
+    return this.vpoRepository.findOneOrFail({ where: { vpoReferenceNumber } });
   }
 
   async paginate(dto: PaginationSearchSortDto<VpoEntity>) {

@@ -12,7 +12,6 @@ export async function createApp({ env }: { env: EnvService }) {
     new FastifyAdapter({ logger: false }),
     { bufferLogs: true, logger: false },
   );
-
   const logger = app.get(LoggerService);
   app.useLogger(logger);
   app.enableCors({ origin: env.CORS_ORIGIN });

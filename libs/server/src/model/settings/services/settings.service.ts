@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { HtmlPageRepository } from '@vpo-help/server';
+import { HtmlPageRepository } from './htmlPage.repository';
 import { SettingsRepository } from './settings.repository';
 
 @Injectable()

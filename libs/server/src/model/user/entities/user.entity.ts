@@ -15,6 +15,9 @@ export class UserEntity extends baseEntityWith(
   @Column()
   role!: Role;
 
+  @Column()
+  passwordHash!: string;
+
   constructor(data: EntityConstructorData<UserEntity>) {
     super(data);
   }

@@ -3,9 +3,7 @@ import { omit } from 'lodash';
 import { ObjectId } from 'mongodb';
 import type {
   DeepPartial,
-  FindOptionsOrder,
-  FindOptionsWhere,
-  ObjectID,
+  FindConditions,
   ObjectLiteral,
   ReplaceOneOptions,
   SaveOptions,
@@ -59,9 +57,9 @@ export class BaseEntityRepository<
       | number[]
       | Date
       | Date[]
-      | ObjectID
-      | ObjectID[]
-      | FindOptionsWhere<Entity>,
+      | IdType
+      | IdType[]
+      | FindConditions<Entity>,
     partialEntity: QueryDeepPartialEntity<Entity>,
   ): Promise<UpdateResult> {
     return super.update(criteria, {
@@ -100,7 +98,7 @@ export class BaseEntityRepository<
 
   async findById(id: IdType): Promise<Entity> {
     if (!ObjectId.isValid(id)) throw new BadRequestException('Invalid id');
-    const entity = await this.findOneBy({ id: id.toString() });
+    const entity = await this.findOne(id.toString());
     if (!entity) throw new NotFoundException();
     return entity;
   }
@@ -115,7 +113,7 @@ export class BaseEntityRepository<
       where,
       skip: (page - 1) * limit,
       take: limit,
-      order: sort as FindOptionsOrder<Entity>,
+      order: sort,
     });
     return { items, totalItems };
   }

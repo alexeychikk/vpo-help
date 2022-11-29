@@ -8,6 +8,26 @@ Client is a [React](https://reactjs.org/) application.
 
 This project has monolithic architecture and provides the following REST-full API:
 
+### POST /auth/login
+
+```ts
+// PAYLOAD
+LoginAsUserDto {
+  email: String,
+  password: String
+}
+// RESPONSE
+LoginAsUserResponse {
+  user: UserModel {
+    id: String,
+    role: "ADMIN",
+    email: String,
+  },
+  permissions: PermissionMap,
+  accessToken: { access_token: String }
+}
+```
+
 ### POST /auth/login/vpo
 
 ```ts
@@ -25,26 +45,6 @@ LoginAsVpoResponseDto {
   },
   permissions: PermissionMap,
   accessToken: { access_token: String },
-}
-```
-
-### POST /auth/login/admin
-
-```ts
-// PAYLOAD
-LoginAsUserDto {
-  email: String,
-  password: String
-}
-// RESPONSE
-LoginAsUserResponse {
-  user: UserModel {
-    id: String,
-    role: "ADMIN",
-    email: String,
-  },
-  permissions: PermissionMap,
-  accessToken: { access_token: String }
 }
 ```
 

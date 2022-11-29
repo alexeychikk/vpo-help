@@ -11,9 +11,11 @@ import {
 } from 'class-validator';
 import type { Optional } from 'utility-types';
 import type { IdType } from '../common';
+import { Role } from '../common';
 import { BaseModel } from '../common';
 import { IsVpoReferenceNumber } from './isVpoReferenceNumber.decorator';
 import { ReceivedGoodsDto } from './receivedGoods.dto';
+import { VpoUserModel } from './vpoUser.model';
 
 export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @Length(1, 50)
@@ -66,6 +68,17 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @IsEmail()
   @IsOptional()
   email?: string;
+
+  toVpoUserModel(): VpoUserModel<string> {
+    return new VpoUserModel({
+      id: this.id.toString(),
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      role: Role.Vpo,
+      scheduleDate: this.scheduleDate,
+      vpoReferenceNumber: this.vpoReferenceNumber,
+    });
+  }
 
   constructor(data: Optional<VpoModel<Id>, keyof BaseModel<Id>>) {
     super();

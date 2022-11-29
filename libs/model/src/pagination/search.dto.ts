@@ -1,5 +1,5 @@
-import type { FindOptionsWhere } from 'typeorm';
+import type { FindConditions } from 'typeorm';
 
 export type SearchDto<Entity = unknown> = {
-  where?: FindOptionsWhere<Entity>;
+  where?: FindConditions<Entity>;
 };

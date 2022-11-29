@@ -26,6 +26,10 @@ export abstract class EnvBaseService {
     return this.getVar('API_SERVICE_URL', 'http://api:3332');
   }
 
+  get JWT_SECRET(): string {
+    return this.getVar('JWT_SECRET');
+  }
+
   get CORS_ORIGIN(): string {
     return this.getVar('CORS_ORIGIN', '*');
   }
