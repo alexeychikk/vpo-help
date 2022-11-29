@@ -7,8 +7,10 @@
     "build": "nx build",
     "test": "nx test",
     "ts": "nx run-many --target=ts --all=true",
+    "ts:affected": "nx affected --target=ts",
     "prepare": "run-p prepare:husky",
     "prepare:husky": "husky install",
+    "lint:precommit": "run-s ts:affected lint:staged",
     "lint:staged": "lint-staged",
     "lint:commit": "commitlint --edit"
   },

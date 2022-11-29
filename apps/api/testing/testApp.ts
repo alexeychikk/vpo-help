@@ -4,6 +4,7 @@ import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
+import { getConnectionToken } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
 import supertest from 'supertest';
 import type {
@@ -31,7 +32,6 @@ export const TEST_PASSWORD = '11111';
 
 jest.setTimeout(10000);
 
-const testApps: TestApp[] = [];
 let nestApp: NestFastifyApplication;
 
 beforeEach(async () => {
@@ -59,32 +59,29 @@ beforeEach(async () => {
   await nestApp.getHttpAdapter().getInstance().ready();
 });
 
-afterAll(async () => {
-  await Promise.all(testApps.map((app) => app.teardown()));
+afterEach(async () => {
+  const connection = nestApp.get(getConnectionToken('default'));
+  await connection.dropDatabase();
   await nestApp.close();
 });
 
-export class TestApp {
-  private loginResponsePromise: Promise<
+class TestApp {
+  private loginResponsePromise?: Promise<
     Serialized<LoginAsUserResponseDto> | Serialized<LoginAsVpoResponseDto>
   >;
 
-  constructor(options: {
-    loginResponsePromise: Promise<
-      Serialized<LoginAsUserResponseDto> | Serialized<LoginAsVpoResponseDto>
-    >;
-  }) {
-    this.loginResponsePromise = options.loginResponsePromise;
+  private get app() {
+    return nestApp;
   }
 
-  static get requestApi() {
-    return supertest(nestApp.getHttpServer());
+  get requestApi() {
+    return supertest(this.app.getHttpServer());
   }
 
-  static async loginAsUser(
+  async loginAsUser(
     dto: LoginAsUserDto,
   ): Promise<Serialized<LoginAsUserResponseDto>> {
-    const { body } = await TestApp.requestApi
+    const { body } = await this.requestApi
       .post('/auth/login')
       .send(dto)
       .expect(200);
@@ -92,10 +89,10 @@ export class TestApp {
     return body;
   }
 
-  static async loginAsVpo(
+  async loginAsVpo(
     dto: LoginAsVpoDto,
   ): Promise<Serialized<LoginAsVpoResponseDto>> {
-    const { body } = await TestApp.requestApi
+    const { body } = await this.requestApi
       .post('/auth/login/vpo')
       .send(dto)
       .expect(200);
@@ -103,16 +100,15 @@ export class TestApp {
     return body;
   }
 
-  static asUser(dto?: Partial<LoginAsUserDto> & { userId?: string }): TestApp {
-    let loginResponsePromise: Promise<Serialized<LoginAsUserResponseDto>>;
-    const userService = nestApp.get(UserService);
-    const authService = nestApp.get(AuthService);
+  asUser(dto?: Partial<LoginAsUserDto> & { userId?: string }): TestApp {
+    const userService = this.app.get(UserService);
+    const authService = this.app.get(AuthService);
     const password = dto?.password || TEST_PASSWORD;
 
     if (dto?.userId) {
-      loginResponsePromise = (async () => {
+      this.loginResponsePromise = (async () => {
         const { email } = await userService.findById(dto!.userId!);
-        return TestApp.loginAsUser({
+        return this.loginAsUser({
           email,
           password,
         });
@@ -121,7 +117,7 @@ export class TestApp {
       const email =
         dto?.email || faker.internet.email(new ObjectId().toString());
 
-      loginResponsePromise = (async () => {
+      this.loginResponsePromise = (async () => {
         let user = await userService.findByEmail(email).catch(() => undefined);
 
         if (!user) {
@@ -133,31 +129,28 @@ export class TestApp {
           user = await userService.create(entity);
         }
 
-        return TestApp.loginAsUser({
+        return this.loginAsUser({
           email,
           password,
         });
       })();
     }
 
-    const app = new TestApp({ loginResponsePromise });
-    testApps.push(app);
-    return app;
+    return this;
   }
 
-  static asVpo(dto?: Partial<VpoModel>): TestApp {
-    let loginResponsePromise: Promise<Serialized<LoginAsVpoResponseDto>>;
-    const vpoService = nestApp.get(VpoService);
+  asVpo(dto?: Partial<VpoModel>): TestApp {
+    const vpoService = this.app.get(VpoService);
 
     if (dto?.id) {
-      loginResponsePromise = (async () => {
+      this.loginResponsePromise = (async () => {
         const vpo = await vpoService.findById(dto!.id!);
-        return TestApp.loginAsVpo({
+        return this.loginAsVpo({
           vpoReferenceNumber: vpo.vpoReferenceNumber,
         });
       })();
     } else {
-      loginResponsePromise = (async () => {
+      this.loginResponsePromise = (async () => {
         let vpo = dto?.vpoReferenceNumber
           ? await vpoService
               .findByReferenceNumber(dto.vpoReferenceNumber)
@@ -192,30 +185,27 @@ export class TestApp {
           vpo = await vpoService.register(model);
         }
 
-        return TestApp.loginAsVpo({
+        return this.loginAsVpo({
           vpoReferenceNumber: vpo.vpoReferenceNumber,
         });
       })();
     }
 
-    const app = new TestApp({ loginResponsePromise });
-    testApps.push(app);
-    return app;
+    return this;
   }
-
-  asUser = TestApp.asUser;
-  asVpo = TestApp.asVpo;
-  requestApi = TestApp.requestApi;
 
   async requestApiWithAuth(
     fn: (request: supertest.SuperTest<supertest.Test>) => supertest.Test,
   ): Promise<supertest.Test> {
-    return fn(TestApp.requestApi).auth(await this.getCurrentAccessToken(), {
+    return fn(this.requestApi).auth(await this.getCurrentAccessToken(), {
       type: 'bearer',
     });
   }
 
   async getCurrentAccessToken(): Promise<string> {
+    if (!this.loginResponsePromise) {
+      throw new Error('User is not authenticated');
+    }
     return (await this.loginResponsePromise).accessToken?.access_token;
   }
 
@@ -230,10 +220,11 @@ export class TestApp {
   private async getAuthenticatedUser<
     T extends Serialized<UserModel> | Serialized<VpoUserModel>,
   >(): Promise<T> {
+    if (!this.loginResponsePromise) {
+      throw new Error('User is not authenticated');
+    }
     return (await this.loginResponsePromise).user as T;
   }
-
-  async teardown() {
-    /* */
-  }
 }
+
+export const testApp = new TestApp();

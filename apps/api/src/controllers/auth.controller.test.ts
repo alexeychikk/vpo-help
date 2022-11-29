@@ -1,9 +1,9 @@
 import { expectExtended } from '@vpo-help/testing';
-import { TEST_PASSWORD, TestApp } from '../../testing';
+import { TEST_PASSWORD, testApp } from '../../testing';
 
 describe('POST /login', () => {
   test('rejects invalid body', async () => {
-    const { body } = await TestApp.requestApi
+    const { body } = await testApp.requestApi
       .post('/auth/login')
       .send({})
       .expect(400);
@@ -21,9 +21,9 @@ describe('POST /login', () => {
   });
 
   test('rejects invalid password', async () => {
-    const user = await TestApp.asUser().getCurrentUser();
+    const user = await testApp.asUser().getCurrentUser();
 
-    const { body } = await TestApp.requestApi
+    const { body } = await testApp.requestApi
       .post('/auth/login')
       .send({
         email: user.email,
@@ -40,9 +40,9 @@ describe('POST /login', () => {
   });
 
   test('authenticates successfully', async () => {
-    const user = await TestApp.asUser().getCurrentUser();
+    const user = await testApp.asUser().getCurrentUser();
 
-    const { body } = await TestApp.requestApi
+    const { body } = await testApp.requestApi
       .post('/auth/login')
       .send({ email: user.email, password: TEST_PASSWORD })
       .expect(200);

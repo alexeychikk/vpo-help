@@ -5,11 +5,11 @@ import { ScheduleDto, ScheduleSlotDto } from '@vpo-help/model';
 import { expectExtended } from '@vpo-help/testing';
 import type { Serialized } from '@vpo-help/utils';
 import { serialize } from '@vpo-help/utils';
-import { TestApp } from '../../testing';
+import { testApp } from '../../testing';
 
 describe('GET /schedule', () => {
   test('returns week schedule of help center', async () => {
-    const { body } = await TestApp.requestApi.get('/schedule').expect(200);
+    const { body } = await testApp.requestApi.get('/schedule').expect(200);
 
     expect(body).toMatchObject({
       0: [],
@@ -25,7 +25,7 @@ describe('GET /schedule', () => {
 
 describe('GET /schedule/available', () => {
   test('returns closest available date-time slots of help center', async () => {
-    const res = await TestApp.requestApi.get('/schedule/available').expect(200);
+    const res = await testApp.requestApi.get('/schedule/available').expect(200);
     const body = res.body as Serialized<ScheduleAvailableDto>;
 
     expect(body).toMatchObject({
@@ -46,7 +46,7 @@ describe('GET /schedule/available', () => {
 
 describe('PUT /schedule', () => {
   test('rejects unauthorized user', async () => {
-    const { body } = await TestApp.requestApi
+    const { body } = await testApp.requestApi
       .put('/schedule')
       .send({})
       .expect(401);
@@ -60,9 +60,9 @@ describe('PUT /schedule', () => {
   });
 
   test('rejects user with insufficient permissions', async () => {
-    const { body } = await TestApp.asVpo().requestApiWithAuth((req) =>
-      req.put('/schedule').send({}).expect(403),
-    );
+    const { body } = await testApp
+      .asVpo()
+      .requestApiWithAuth((req) => req.put('/schedule').send({}).expect(403));
 
     expect(body).toMatchInlineSnapshot(`
       Object {
@@ -73,9 +73,9 @@ describe('PUT /schedule', () => {
   });
 
   test('rejects invalid schedule', async () => {
-    const { body } = await TestApp.asUser().requestApiWithAuth((req) =>
-      req.put('/schedule').send({}).expect(400),
-    );
+    const { body } = await testApp
+      .asUser()
+      .requestApiWithAuth((req) => req.put('/schedule').send({}).expect(400));
 
     expect(body).toMatchInlineSnapshot(`
       Object {
@@ -111,9 +111,9 @@ describe('PUT /schedule', () => {
       6: [],
     });
 
-    const { body } = await TestApp.asUser().requestApiWithAuth((req) =>
-      req.put('/schedule').send(dto).expect(200),
-    );
+    const { body } = await testApp
+      .asUser()
+      .requestApiWithAuth((req) => req.put('/schedule').send(dto).expect(200));
 
     expect(body).toEqual(serialize(dto));
   });
