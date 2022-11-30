@@ -31,6 +31,9 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @Length(1, 50)
   middleName!: string;
 
+  @IsPhoneNumber()
+  phoneNumber!: string;
+
   @IsDate()
   dateOfBirth!: Date;
 
@@ -67,10 +70,6 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @IsObject()
   @IsOptional()
   receivedGoods?: ReceivedGoodsDto;
-
-  @IsPhoneNumber()
-  @IsOptional()
-  phoneNumber?: string;
 
   @IsEmail()
   @IsOptional()

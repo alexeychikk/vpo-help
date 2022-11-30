@@ -16,6 +16,7 @@ describe('POST /vpo', () => {
           "firstName must be longer than or equal to 1 characters",
           "lastName must be longer than or equal to 1 characters",
           "middleName must be longer than or equal to 1 characters",
+          "phoneNumber must be a valid phone number",
           "dateOfBirth must be a Date instance",
           "addressOfRegistration must be longer than or equal to 1 characters",
           "addressOfResidence must be longer than or equal to 1 characters",

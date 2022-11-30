@@ -221,6 +221,7 @@ class TestApp {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       middleName: faker.name.middleName(),
+      phoneNumber: faker.phone.phoneNumber(`+38067#######`),
       numberOfRelatives: faker.datatype.number({ min: 0, max: 10 }),
       numberOfRelativesAbove65: faker.datatype.number({
         min: 0,

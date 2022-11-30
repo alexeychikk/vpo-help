@@ -104,6 +104,7 @@ VpoModel {
   firstName: String,
   lastName: String,
   middleName: String,
+  phoneNumber: String,
   dateOfBirth: DateISOString,
   addressOfRegistration: String,
   addressOfResidence: String,
@@ -113,7 +114,6 @@ VpoModel {
   scheduleDate: DateISOString,
   receivedHelpDate?: DateISOString,
   receivedGoods?: { [productName]: Number },
-  phoneNumber?: String,
   email?: String,
 }
 // RESPONSE

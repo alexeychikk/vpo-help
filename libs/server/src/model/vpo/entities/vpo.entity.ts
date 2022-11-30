@@ -25,6 +25,9 @@ export class VpoEntity extends baseEntityWith(
   middleName!: string;
 
   @Column()
+  phoneNumber!: string;
+
+  @Column()
   dateOfBirth!: Date;
 
   @Column()
@@ -51,9 +54,6 @@ export class VpoEntity extends baseEntityWith(
 
   @Column()
   receivedGoods?: ReceivedGoodsDto;
-
-  @Column()
-  phoneNumber?: string;
 
   @Column()
   email?: string;
