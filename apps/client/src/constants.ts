@@ -53,6 +53,21 @@ export const BOOKING = {
   },
   bookingInfoTitle: 'Ваше бронювання',
   peopleSuffix: 'ос.',
+  helpRestriction: {
+    regexp: /Help can be received once in (\d+?) days/,
+    getText: (days: number) =>
+      `Ви вже отримували допомогу. Повторно записатися можливо раз у ${days} д.`,
+  },
+  errorMessages: {
+    'Registration has been already scheduled':
+      'Ви вже зареєстровані. Ви можете знайти інформацію про ваше бронювання на головній сторінці за номером довідки ВПО',
+    'Registration must be scheduled for the future':
+      'Вибраний час бронювання не доступний. Перезавантажте сторінку та спробуйте знову',
+    'Slot with such time was not found in schedule':
+      'Вибраний час бронювання не дійсний. Перезавантажте сторінку та спробуйте знову',
+    'Selected time slot is no longer available':
+      'Вибраний час бронювання вже зайнятий. Перезавантажте сторінку та спробуйте знову',
+  } as Record<string, string>,
 };
 
 export const SCHEDULER = {

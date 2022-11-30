@@ -9,13 +9,16 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
+import { AxiosError } from 'axios';
 import { useCallback, useState } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Navigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
-import { BookingInfo } from '../../components';
+import { BookingInfo, ButtonWithLoading } from '../../components';
 import { BOOKING } from '../../constants';
-import { scheduleService } from '../../services';
+import { scheduleService, vpoService } from '../../services';
+import type { VpoUserModel } from '../../services/auth';
 import type { ScheduleSlotAvailableDto } from '../../services/schedule';
 import { getCurrentUTCDate } from '../../utils';
 import { ROUTES } from '../routes.config';
@@ -27,6 +30,9 @@ const steps = BOOKING.stepper;
 
 export const Booking = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [vpoUser, setVpoUser] = useState<VpoUserModel | null>(null);
   const form = useForm<BookingModel>({
     mode: 'onBlur',
     defaultValues: {
@@ -61,8 +67,38 @@ export const Booking = () => {
     [availableSlotsResponse.value],
   );
 
-  const handleSubmit = () => {
-    setActiveStep(activeStep + 1);
+  const nextStepOrSubmit: SubmitHandler<BookingModel> = async (formValues) => {
+    if (activeStep === steps.length - 1) {
+      try {
+        setSubmitting(true);
+        const data = await vpoService.register(formValues);
+        setVpoUser(data);
+        setActiveStep(activeStep + 1);
+      } catch (error) {
+        setSubmitting(false);
+        if (error instanceof AxiosError) {
+          if (
+            error.response?.status === 400 ||
+            error.response?.status === 409
+          ) {
+            const serverMessage: string = error.response?.data.message;
+            let clientMessage = '';
+            if (BOOKING.helpRestriction.regexp.test(serverMessage)) {
+              const match = serverMessage.match(
+                BOOKING.helpRestriction.regexp,
+              )!;
+              const days = parseInt(match[1]);
+              clientMessage = BOOKING.helpRestriction.getText(days);
+            } else {
+              clientMessage = BOOKING.errorMessages[serverMessage];
+            }
+            setErrorMessage(clientMessage);
+          }
+        }
+      }
+    } else {
+      setActiveStep(activeStep + 1);
+    }
   };
 
   const handleBack = () => {
@@ -93,12 +129,12 @@ export const Booking = () => {
           <Box
             noValidate
             component="form"
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={form.handleSubmit(nextStepOrSubmit)}
           >
-            {activeStep === steps.length ? (
+            {activeStep === steps.length && vpoUser ? (
               <BookingInfo
-                vpoReferenceNumber={form.getValues().vpoReferenceNumber}
-                bookingDate={form.getValues().scheduleDate}
+                vpoReferenceNumber={vpoUser.vpoReferenceNumber}
+                bookingDate={vpoUser.scheduleDate}
                 addresses={''}
               />
             ) : availableSlotsResponse.loading ? (
@@ -123,16 +159,17 @@ export const Booking = () => {
                   {BOOKING.gotoMain}
                 </Button>
               ) : (
-                <Button
+                <ButtonWithLoading
                   type="submit"
                   variant="contained"
                   sx={{ mt: 3, ml: 1 }}
-                  disabled={availableSlotsResponse.loading}
+                  disabled={availableSlotsResponse.loading || submitting}
+                  loading={submitting}
                 >
                   {activeStep === steps.length - 1
                     ? BOOKING.confirmBuuton
                     : BOOKING.nextStep}
-                </Button>
+                </ButtonWithLoading>
               )}
             </Box>
           </Box>
