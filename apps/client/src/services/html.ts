@@ -6,7 +6,7 @@ export class Html {
   private http: AxiosInstance;
 
   constructor(baseUrl: string) {
-    this.http = axios.create({ url: `${baseUrl}/html` });
+    this.http = axios.create({ baseURL: `${baseUrl}/html` });
   }
 
   async getPage(name: string): Promise<HtmlPageModel> {

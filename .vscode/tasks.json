@@ -17,5 +17,12 @@
       "args": ["container", "logs", "api", "-f"],
       "problemMatcher": []
     },
+    {
+      "label": "Nx serve client",
+      "type": "shell",
+      "command": "./node_modules/.bin/nx",
+      "args": ["run", "client:serve"],
+      "problemMatcher": []
+    }
   ]
 }

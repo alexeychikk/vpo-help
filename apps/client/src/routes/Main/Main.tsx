@@ -10,18 +10,50 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useCallback, useRef } from 'react';
+import { AxiosError } from 'axios';
+import { useCallback, useRef, useState } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import {
+  BookingInfo,
+  ButtonWithLoading,
+  TextFieldElement,
+} from '../../components';
 import { MAIN } from '../../constants';
-import { Routes, ROUTES } from '../routes.config';
+import { authService } from '../../services';
+import type { VpoUserModel } from '../../services/auth';
+import { ROUTES } from '../routes.config';
 import { Footer } from './Footer';
 
 export const Main = () => {
   const theme = useTheme();
-  const referenceNumberRef = useRef<HTMLInputElement>();
+  const form = useForm<{ referenceNumber: string }>();
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<VpoUserModel>();
 
-  const searchVPO = useCallback(() => {
-    console.log(referenceNumberRef.current?.value);
-  }, []);
+  const searchVpo: SubmitHandler<{ referenceNumber: string }> = useCallback(
+    async ({ referenceNumber }) => {
+      if (referenceNumber) {
+        try {
+          setLoading(true);
+          const vpoUser = await authService.loginVpo(referenceNumber);
+          setUser(vpoUser);
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            if (error.response?.status === 404) {
+              form.setError('referenceNumber', {
+                message: MAIN.findBooking.error,
+              });
+            }
+          }
+        } finally {
+          setLoading(false);
+        }
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   return (
     <Container
@@ -37,71 +69,88 @@ export const Main = () => {
         maxWidth="xl"
         sx={{ p: 4, display: 'flex', flexGrow: 1, justifyContent: 'center' }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
+        {user ? (
           <Box>
-            <Typography variant="h5" marginBottom={2}>
-              {MAIN.findBooking.title}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <TextField
-                fullWidth
-                inputRef={referenceNumberRef}
-                id="referenceNumber"
-                name="referenceNumber"
-                label={MAIN.findBooking.label}
-                sx={{ mr: 2 }}
-              />
-              <Button
-                variant="contained"
-                startIcon={<SearchIcon />}
-                sx={{ pl: 5, pr: 5 }}
-                onClick={searchVPO}
+            <BookingInfo
+              vpoReferenceNumber={user.vpoReferenceNumber}
+              bookingDate={user.scheduleDate}
+              addresses={''}
+            />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Box>
+              <Typography variant="h5" marginBottom={2}>
+                {MAIN.findBooking.title}
+              </Typography>
+              <Box
+                component="form"
+                noValidate
+                onSubmit={form.handleSubmit(searchVpo)}
+                sx={{ display: 'flex' }}
               >
-                {MAIN.findBooking.button}
-              </Button>
-            </Box>
-            <Box
-              sx={{
-                borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                color: theme.palette.grey[400],
-                textAlign: 'center',
-                height: '1rem',
-                mt: 3,
-                mb: 3,
-              }}
-            >
-              <Typography
-                variant="subtitle1"
+                <TextFieldElement
+                  fullWidth
+                  required
+                  id="referenceNumber"
+                  name="referenceNumber"
+                  label={MAIN.findBooking.label}
+                  sx={{ mr: 2 }}
+                  control={form.control}
+                />
+                <ButtonWithLoading
+                  type="submit"
+                  variant="contained"
+                  startIcon={<SearchIcon />}
+                  sx={{ px: 5, mt: '10px' }}
+                  loading={loading}
+                >
+                  {MAIN.findBooking.button}
+                </ButtonWithLoading>
+              </Box>
+              <Box
                 sx={{
-                  display: 'inline',
-                  backgroundColor: theme.palette.background.default,
-                  pr: 3,
-                  pl: 3,
+                  borderBottom: `1px solid ${theme.palette.grey[300]}`,
+                  color: theme.palette.grey[400],
+                  textAlign: 'center',
+                  height: '1rem',
+                  mt: 3,
+                  mb: 3,
                 }}
               >
-                {MAIN.separator}
-              </Typography>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    display: 'inline',
+                    backgroundColor: theme.palette.background.default,
+                    pr: 3,
+                    pl: 3,
+                  }}
+                >
+                  {MAIN.separator}
+                </Typography>
+              </Box>
+            </Box>
+            <Box>
+              <Button
+                variant="contained"
+                size="large"
+                endIcon={<ArrowForwardIosIcon />}
+                sx={{ mt: 2, pl: 5, pr: 5 }}
+                href={ROUTES.BOOKING.path}
+              >
+                {MAIN.startBooking}
+              </Button>
             </Box>
           </Box>
-          <Box>
-            <Button
-              variant="contained"
-              size="large"
-              endIcon={<ArrowForwardIosIcon />}
-              sx={{ mt: 2, pl: 5, pr: 5 }}
-              href={ROUTES[Routes.BOOKING].path}
-            >
-              {MAIN.startBooking}
-            </Button>
-          </Box>
-        </Box>
+        )}
       </Container>
       <Footer />
     </Container>

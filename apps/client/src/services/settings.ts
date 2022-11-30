@@ -7,7 +7,7 @@ export class Settings {
   private http: AxiosInstance;
 
   constructor(baseUrl: string) {
-    this.http = axios.create({ url: `${baseUrl}/settings` });
+    this.http = axios.create({ baseURL: `${baseUrl}/settings` });
   }
 
   async getSettings(): Promise<SettingsDto> {

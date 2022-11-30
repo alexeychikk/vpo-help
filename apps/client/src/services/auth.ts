@@ -6,7 +6,7 @@ export class Auth {
   private http: AxiosInstance;
 
   constructor(baseUrl: string) {
-    this.http = axios.create({ url: `${baseUrl}/auth` });
+    this.http = axios.create({ baseURL: `${baseUrl}/auth` });
   }
 
   async loginVpo(vpoReferenceNumber: string): Promise<VpoUserModel> {

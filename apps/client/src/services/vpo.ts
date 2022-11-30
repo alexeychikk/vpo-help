@@ -7,7 +7,7 @@ export class Vpo {
   private http: AxiosInstance;
 
   constructor(baseUrl: string) {
-    this.http = axios.create({ url: `${baseUrl}/vpo` });
+    this.http = axios.create({ baseURL: `${baseUrl}/vpo` });
   }
 
   async register(vpoModel: VpoModel): Promise<VpoUserModel> {

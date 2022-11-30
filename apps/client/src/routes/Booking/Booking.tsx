@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Paper,
   Step,
@@ -8,30 +9,21 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { Navigate } from 'react-router-dom';
+import { useAsync } from 'react-use';
 import { BookingInfo } from '../../components';
 import { BOOKING } from '../../constants';
+import { scheduleService } from '../../services';
+import type { ScheduleSlotAvailableDto } from '../../services/schedule';
 import { getCurrentUTCDate } from '../../utils';
-import { ROUTES, Routes } from '../routes.config';
+import { ROUTES } from '../routes.config';
 import { BookingConfirmation } from './BookingConfirmation';
 import { PersonalDataForm } from './PersonalDataForm';
 import { SelectTimeSlot } from './SelectTimeSlot';
 
 const steps = BOOKING.stepper;
-
-function getStepContent(step: number) {
-  switch (step) {
-    case 0:
-      return <SelectTimeSlot />;
-    case 1:
-      return <PersonalDataForm />;
-    case 2:
-      return <BookingConfirmation />;
-    default:
-      throw new Error('Unknown step');
-  }
-}
 
 export const Booking = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -43,6 +35,32 @@ export const Booking = () => {
     },
   });
 
+  const availableSlotsResponse = useAsync(async () => {
+    const slots = await scheduleService.getAvailableSlots();
+    return slots.reduce((acc, value) => {
+      const key = value.dateFrom.format('dddd (DD.MM.yy)');
+      acc[key] ??= [];
+      acc[key].push(value);
+      return acc;
+    }, {} as Record<string, ScheduleSlotAvailableDto[]>);
+  }, []);
+
+  const getStepContent = useCallback(
+    (step: number) => {
+      switch (step) {
+        case 0:
+          return <SelectTimeSlot slots={availableSlotsResponse.value!} />;
+        case 1:
+          return <PersonalDataForm />;
+        case 2:
+          return <BookingConfirmation />;
+        default:
+          throw new Error('Unknown step');
+      }
+    },
+    [availableSlotsResponse.value],
+  );
+
   const handleSubmit = () => {
     setActiveStep(activeStep + 1);
   };
@@ -50,6 +68,10 @@ export const Booking = () => {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+
+  if (availableSlotsResponse.error) {
+    return <Navigate to={ROUTES.MAIN.path} />;
+  }
 
   return (
     <Container component="main" maxWidth="lg">
@@ -79,6 +101,10 @@ export const Booking = () => {
                 bookingDate={form.getValues().scheduleDate}
                 addresses={''}
               />
+            ) : availableSlotsResponse.loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress size={50} />
+              </Box>
             ) : (
               getStepContent(activeStep)
             )}
@@ -91,13 +117,18 @@ export const Booking = () => {
               {activeStep === steps.length ? (
                 <Button
                   variant="contained"
-                  href={ROUTES[Routes.MAIN].path}
+                  href={ROUTES.MAIN.path}
                   sx={{ mt: 3, ml: 1 }}
                 >
                   {BOOKING.gotoMain}
                 </Button>
               ) : (
-                <Button type="submit" variant="contained" sx={{ mt: 3, ml: 1 }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 3, ml: 1 }}
+                  disabled={availableSlotsResponse.loading}
+                >
                   {activeStep === steps.length - 1
                     ? BOOKING.confirmBuuton
                     : BOOKING.nextStep}

@@ -1,25 +1,41 @@
 import { LockOutlined } from '@mui/icons-material';
-import {
-  Avatar,
-  Box,
-  Button,
-  Container,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { useCallback } from 'react';
+import { Avatar, Box, Button, Container, Typography } from '@mui/material';
+import { AxiosError } from 'axios';
+import { useCallback, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
-import { TextFieldElement } from '../../components';
+import { useNavigate } from 'react-router-dom';
+import { ButtonWithLoading, TextFieldElement } from '../../components';
 import { LOGIN } from '../../constants';
+import { authService } from '../../services';
+import { ROUTES } from '../routes.config';
 
 export type LoginFormFields = typeof LOGIN.form;
 
 export const Login = () => {
+  const navigate = useNavigate();
   const form = useForm<LoginFormFields>();
-  const handleSubmit: SubmitHandler<LoginFormFields> = useCallback((data) => {
-    console.log(data);
-  }, []);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit: SubmitHandler<LoginFormFields> = useCallback(
+    async (data) => {
+      try {
+        setLoading(true);
+        await authService.loginAdmin(data);
+        navigate(ROUTES.ADMIN.path);
+      } catch (error) {
+        setLoading(false);
+        if (error instanceof AxiosError) {
+          if (error.response?.status === 404) {
+            form.setError('email', { message: LOGIN.error });
+            form.setError('password', { message: LOGIN.error });
+          }
+        }
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   return (
     <Container component="main" maxWidth="xs">
@@ -65,14 +81,15 @@ export const Login = () => {
             autoComplete="current-password"
             control={form.control}
           />
-          <Button
-            type="submit"
+          <ButtonWithLoading
             fullWidth
+            type="submit"
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ my: 2 }}
+            loading={loading}
           >
-            Sign In
-          </Button>
+            {LOGIN.button}
+          </ButtonWithLoading>
         </Box>
       </Box>
     </Container>

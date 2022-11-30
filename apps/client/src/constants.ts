@@ -7,10 +7,12 @@ export const ERROR_MESSAGES = {
 
 export const LOGIN = {
   title: 'Вхід',
+  button: 'Увійти',
   form: {
     email: 'Електронна пошта',
     password: 'Пароль',
   },
+  error: 'Невірна пошта чи пароль',
 };
 
 export const MAIN = {
@@ -19,6 +21,7 @@ export const MAIN = {
     title: 'Знайти бронювання за номером довідки ВПО',
     label: 'Номер довідки ВПО',
     button: 'Знайти',
+    error: 'За таким номером довідки бронювання не знайдене',
   },
   startBooking: 'Забронювати місце в черзі',
 };

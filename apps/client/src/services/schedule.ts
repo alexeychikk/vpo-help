@@ -1,11 +1,12 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
+import moment from 'moment';
 
 export class Schedule {
   private http: AxiosInstance;
 
   constructor(baseUrl: string) {
-    this.http = axios.create({ url: `${baseUrl}/schedule` });
+    this.http = axios.create({ baseURL: `${baseUrl}/schedule` });
   }
 
   async getSchedule(): Promise<ScheduleDto> {
@@ -22,7 +23,10 @@ export class Schedule {
     const { data } = await this.http.get<{ items: ScheduleSlotAvailableDto[] }>(
       '/available',
     );
-    return data.items;
+    return data.items.map(({ dateFrom, dateTo }) => ({
+      dateFrom: moment(dateFrom),
+      dateTo: moment(dateTo),
+    }));
   }
 }
 
@@ -36,6 +40,6 @@ export type ScheduleDto = Record<
 >;
 
 export type ScheduleSlotAvailableDto = {
-  dateFrom: string;
-  dateTo: string;
+  dateFrom: moment.Moment;
+  dateTo: moment.Moment;
 };
