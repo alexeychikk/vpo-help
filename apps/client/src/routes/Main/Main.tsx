@@ -29,7 +29,7 @@ export const Main = () => {
   const theme = useTheme();
   const form = useForm<{ referenceNumber: string }>();
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState<VpoUserModel>();
+  const [user, setUser] = useState<VpoUserModel | null>(null);
 
   const searchVpo: SubmitHandler<{ referenceNumber: string }> = useCallback(
     async ({ referenceNumber }) => {
@@ -37,6 +37,7 @@ export const Main = () => {
         try {
           setLoading(true);
           const vpoUser = await authService.loginVpo(referenceNumber);
+          form.reset();
           setUser(vpoUser);
         } catch (error) {
           if (error instanceof AxiosError) {
@@ -70,12 +71,21 @@ export const Main = () => {
         sx={{ p: 4, display: 'flex', flexGrow: 1, justifyContent: 'center' }}
       >
         {user ? (
-          <Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+          >
             <BookingInfo
               vpoReferenceNumber={user.vpoReferenceNumber}
               bookingDate={user.scheduleDate}
               addresses={''}
             />
+            <Button variant="contained" onClick={() => setUser(null)}>
+              {MAIN.backToMain}
+            </Button>
           </Box>
         ) : (
           <Box

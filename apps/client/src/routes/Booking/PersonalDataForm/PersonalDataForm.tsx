@@ -2,9 +2,10 @@ import { Box, Stack } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import {
   DesktopDatePickerElement,
+  PhoneNumberField,
   TextFieldElement,
 } from '../../../components';
-import { BOOKING } from '../../../constants';
+import { BOOKING, ERROR_MESSAGES } from '../../../constants';
 import { formatISOOnlyDate } from '../../../utils';
 import type { BookingModel } from '../Booking';
 
@@ -30,6 +31,10 @@ export const PersonalDataForm: React.FC = () => {
           name="vpoReferenceNumber"
           label={BOOKING.form.vpoReferenceNumber}
           control={control}
+          rules={{
+            minLength: { value: 3, message: ERROR_MESSAGES.minLength },
+            maxLength: { value: 50, message: ERROR_MESSAGES.maxLength },
+          }}
           sx={{ width: '300px' }}
         />
       </Stack>
@@ -43,17 +48,32 @@ export const PersonalDataForm: React.FC = () => {
           name="lastName"
           label={BOOKING.form.lastName}
           control={control}
+          rules={{
+            maxLength: { value: 50, message: ERROR_MESSAGES.maxLength },
+          }}
         />
         <TextFieldElement
           required
           name="firstName"
           label={BOOKING.form.firstName}
           control={control}
+          rules={{
+            maxLength: { value: 50, message: ERROR_MESSAGES.maxLength },
+          }}
         />
         <TextFieldElement
           required
           name="middleName"
           label={BOOKING.form.middleName}
+          control={control}
+          rules={{
+            maxLength: { value: 50, message: ERROR_MESSAGES.maxLength },
+          }}
+        />
+        <PhoneNumberField
+          required
+          name="phoneNumber"
+          label={BOOKING.form.phoneNumber}
           control={control}
         />
       </Stack>
@@ -75,6 +95,9 @@ export const PersonalDataForm: React.FC = () => {
           name="addressOfRegistration"
           label={BOOKING.form.addressOfRegistration}
           control={control}
+          rules={{
+            maxLength: { value: 200, message: ERROR_MESSAGES.maxLength },
+          }}
           sx={{ width: '300px' }}
         />
         <TextFieldElement
@@ -82,6 +105,9 @@ export const PersonalDataForm: React.FC = () => {
           name="addressOfResidence"
           label={BOOKING.form.addressOfResidence}
           control={control}
+          rules={{
+            maxLength: { value: 200, message: ERROR_MESSAGES.maxLength },
+          }}
           sx={{ width: { xs: '300px', md: '450px' } }}
         />
       </Stack>
@@ -91,10 +117,26 @@ export const PersonalDataForm: React.FC = () => {
         sx={{ mb: 3 }}
       >
         <TextFieldElement
+          required
+          type="number"
+          name="numberOfRelatives"
+          label={BOOKING.form.numberOfRelatives}
+          control={control}
+          rules={{
+            min: { value: 0, message: ERROR_MESSAGES.min },
+            max: { value: 50, message: ERROR_MESSAGES.max },
+          }}
+          sx={{ width: { xs: '300px', md: '450px' } }}
+        />
+        <TextFieldElement
           type="number"
           name="numberOfRelativesBelow16"
           label={BOOKING.form.numberOfRelativesBelow16}
           control={control}
+          rules={{
+            min: { value: 0, message: ERROR_MESSAGES.min },
+            max: { value: 50, message: ERROR_MESSAGES.max },
+          }}
           sx={{ width: '300px' }}
         />
         <TextFieldElement
@@ -102,6 +144,10 @@ export const PersonalDataForm: React.FC = () => {
           name="numberOfRelativesAbove65"
           label={BOOKING.form.numberOfRelativesAbove65}
           control={control}
+          rules={{
+            min: { value: 0, message: ERROR_MESSAGES.min },
+            max: { value: 50, message: ERROR_MESSAGES.max },
+          }}
           sx={{ width: { xs: '300px', md: '400px' } }}
         />
       </Stack>

@@ -3,6 +3,11 @@ export const ACCESS_TOKEN = 'ACCESS_TOKEN';
 export const ERROR_MESSAGES = {
   required: 'Має бути заповнене',
   requiredDate: 'Має бути датою формату ДД.ММ.РР',
+  minLength: 'Недостатня кількість символів',
+  maxLength: 'Перевищена кількість символів',
+  min: 'Недостатня кількість',
+  max: 'Перевищена кількість',
+  pattern: 'Невірний формат',
 };
 
 export const LOGIN = {
@@ -24,6 +29,7 @@ export const MAIN = {
     error: 'За таким номером довідки бронювання не знайдене',
   },
   startBooking: 'Забронювати місце в черзі',
+  backToMain: 'Повернутися на головну',
 };
 
 export const BOOKING = {
@@ -44,6 +50,7 @@ export const BOOKING = {
     firstName: 'Ім‘я',
     lastName: 'Прізвище',
     middleName: 'По-батькові',
+    phoneNumber: 'Номер телефону',
     dateOfBirth: 'Дата народження',
     addressOfRegistration: 'Місто реєстрації (згідно паспорту)',
     addressOfResidence: 'Місто фактичного проживання (згідно Довідці ВПО)',
@@ -53,20 +60,21 @@ export const BOOKING = {
   },
   bookingInfoTitle: 'Ваше бронювання',
   peopleSuffix: 'ос.',
+  errorModalTitle: 'Помилка бронювання',
   helpRestriction: {
     regexp: /Help can be received once in (\d+?) days/,
     getText: (days: number) =>
-      `Ви вже отримували допомогу. Повторно записатися можливо раз у ${days} д.`,
+      `Ви вже отримували допомогу. Отримати допомогу повторно можливо раз у ${days} д.`,
   },
   errorMessages: {
     'Registration has been already scheduled':
-      'Ви вже зареєстровані. Ви можете знайти інформацію про ваше бронювання на головній сторінці за номером довідки ВПО',
+      'Ви вже зареєстровані. Ви можете знайти інформацію про ваше бронювання на головній сторінці за номером довідки ВПО.',
     'Registration must be scheduled for the future':
-      'Вибраний час бронювання не доступний. Перезавантажте сторінку та спробуйте знову',
+      'Вибраний час бронювання не доступний. Перезавантажте сторінку та спробуйте знову.',
     'Slot with such time was not found in schedule':
-      'Вибраний час бронювання не дійсний. Перезавантажте сторінку та спробуйте знову',
+      'Вибраний час бронювання не дійсний. Перезавантажте сторінку та спробуйте знову.',
     'Selected time slot is no longer available':
-      'Вибраний час бронювання вже зайнятий. Перезавантажте сторінку та спробуйте знову',
+      'Вибраний час бронювання вже зайнятий. Перезавантажте сторінку та спробуйте знову.',
   } as Record<string, string>,
 };
 

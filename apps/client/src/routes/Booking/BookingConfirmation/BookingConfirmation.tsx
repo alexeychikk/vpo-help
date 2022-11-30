@@ -12,9 +12,7 @@ export const BookingConfirmation: React.FC = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
       <BookingInfoItem
         label={BOOKING.form.scheduleDate}
-        data={moment(formValues.scheduleDate)
-          .utc()
-          .format('HH:mm - DD MMMM YYYY')}
+        data={moment(formValues.scheduleDate).format('HH:mm - DD MMMM YYYY')}
       />
       <Stack
         direction={{ xs: 'column', md: 'row' }}
@@ -23,7 +21,7 @@ export const BookingConfirmation: React.FC = () => {
       >
         <BookingInfoItem
           label={BOOKING.form.vpoIssueDate}
-          data={moment(formValues.vpoIssueDate).utc().format('DD.MM.YY')}
+          data={moment(formValues.vpoIssueDate).format('DD.MM.YY')}
         />
         <BookingInfoItem
           label={BOOKING.form.vpoReferenceNumber}
@@ -47,6 +45,10 @@ export const BookingConfirmation: React.FC = () => {
           label={BOOKING.form.middleName}
           data={formValues.middleName}
         />
+        <BookingInfoItem
+          label={BOOKING.form.phoneNumber}
+          data={formValues.phoneNumber}
+        />
       </Stack>
       <Stack
         direction={{ md: 'column', lg: 'row' }}
@@ -55,7 +57,7 @@ export const BookingConfirmation: React.FC = () => {
       >
         <BookingInfoItem
           label={BOOKING.form.dateOfBirth}
-          data={moment(formValues.dateOfBirth).utc().format('DD.MM.YY')}
+          data={moment(formValues.dateOfBirth).format('DD.MM.YY')}
         />
         <BookingInfoItem
           label={BOOKING.form.addressOfRegistration}
@@ -66,27 +68,28 @@ export const BookingConfirmation: React.FC = () => {
           data={formValues.addressOfResidence}
         />
       </Stack>
-      {formValues.numberOfRelativesBelow16 &&
-        formValues.numberOfRelativesAbove65 && (
-          <Stack
-            direction={{ xs: 'column', md: 'row' }}
-            spacing={{ xs: 2, lg: 5 }}
-            sx={{ mb: 3 }}
-          >
-            {formValues.numberOfRelativesBelow16 && (
-              <BookingInfoItem
-                label={BOOKING.form.numberOfRelativesBelow16}
-                data={`${formValues.numberOfRelativesBelow16} ${BOOKING.peopleSuffix}`}
-              />
-            )}
-            {formValues.numberOfRelativesAbove65 && (
-              <BookingInfoItem
-                label={BOOKING.form.numberOfRelativesAbove65}
-                data={`${formValues.numberOfRelativesAbove65} ${BOOKING.peopleSuffix}`}
-              />
-            )}
-          </Stack>
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={{ xs: 2, lg: 5 }}
+        sx={{ mb: 3 }}
+      >
+        <BookingInfoItem
+          label={BOOKING.form.numberOfRelatives}
+          data={`${formValues.numberOfRelatives} ${BOOKING.peopleSuffix}`}
+        />
+        {!!formValues.numberOfRelativesBelow16 && (
+          <BookingInfoItem
+            label={BOOKING.form.numberOfRelativesBelow16}
+            data={`${formValues.numberOfRelativesBelow16} ${BOOKING.peopleSuffix}`}
+          />
         )}
+        {!!formValues.numberOfRelativesAbove65 && (
+          <BookingInfoItem
+            label={BOOKING.form.numberOfRelativesAbove65}
+            data={`${formValues.numberOfRelativesAbove65} ${BOOKING.peopleSuffix}`}
+          />
+        )}
+      </Stack>
     </Box>
   );
 };

@@ -3,6 +3,11 @@ import {
   Button,
   CircularProgress,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Paper,
   Step,
   StepLabel,
@@ -31,6 +36,7 @@ const steps = BOOKING.stepper;
 export const Booking = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [vpoUser, setVpoUser] = useState<VpoUserModel | null>(null);
   const form = useForm<BookingModel>({
@@ -38,6 +44,9 @@ export const Booking = () => {
     defaultValues: {
       vpoIssueDate: getCurrentUTCDate(),
       dateOfBirth: getCurrentUTCDate(),
+      numberOfRelatives: 0,
+      numberOfRelativesBelow16: 0,
+      numberOfRelativesAbove65: 0,
     },
   });
 
@@ -93,6 +102,7 @@ export const Booking = () => {
               clientMessage = BOOKING.errorMessages[serverMessage];
             }
             setErrorMessage(clientMessage);
+            setIsModalOpen(true);
           }
         }
       }
@@ -110,7 +120,7 @@ export const Booking = () => {
   }
 
   return (
-    <Container component="main" maxWidth="lg">
+    <Container component="main" maxWidth="xl">
       <Paper
         variant="outlined"
         sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
@@ -175,6 +185,24 @@ export const Booking = () => {
           </Box>
         </FormProvider>
       </Paper>
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <DialogTitle id="alert-dialog-title">
+          {BOOKING.errorModalTitle}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {errorMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsModalOpen(false)} sx={{ mr: 2 }}>
+            {BOOKING.prevStep}
+          </Button>
+          <Button href={ROUTES.MAIN.path} variant="contained" autoFocus>
+            {BOOKING.gotoMain}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
@@ -183,6 +211,7 @@ export type BookingModel = {
   firstName: string;
   lastName: string;
   middleName: string;
+  phoneNumber: string;
   dateOfBirth: string;
   vpoIssueDate: string;
   vpoReferenceNumber: string;

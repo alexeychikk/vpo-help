@@ -23,7 +23,7 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
       </Typography>
       <BookingInfoItem
         label={BOOKING.form.scheduleDate}
-        data={moment(bookingDate).utc().format('HH:mm - DD MMMM YYYY')}
+        data={moment(bookingDate).format('HH:mm - DD MMMM YYYY')}
         sx={{ alignItems: 'center', mb: 4 }}
       />
       {addresses && (

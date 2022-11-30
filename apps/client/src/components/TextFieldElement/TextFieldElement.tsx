@@ -1,11 +1,6 @@
 import type { TextFieldProps } from '@mui/material';
 import { TextField } from '@mui/material';
-import type {
-  Control,
-  ControllerProps,
-  FieldError,
-  Path,
-} from 'react-hook-form';
+import type { Control, ControllerProps, Path } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 import { ERROR_MESSAGES } from '../../constants';
 
@@ -33,6 +28,7 @@ export const TextFieldElement = <T extends Record<string, unknown>>(
       ...rules,
     },
   });
+  console.log(error);
 
   return (
     <TextField

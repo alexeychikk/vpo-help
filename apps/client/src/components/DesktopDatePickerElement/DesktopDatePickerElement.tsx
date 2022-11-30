@@ -44,7 +44,6 @@ export const DesktopDatePickerElement = <T extends Record<string, unknown>>(
     },
   });
   const context = useFormContext<T>();
-  console.log(context.getValues());
 
   return (
     <DesktopDatePicker
