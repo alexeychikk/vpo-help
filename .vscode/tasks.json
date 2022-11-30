@@ -14,7 +14,7 @@
       "label": "Docker log: api",
       "type": "shell",
       "command": "docker",
-      "args": ["container", "logs", "api", "-f"],
+      "args": ["container", "logs", "vpo_api", "-f"],
       "problemMatcher": []
     },
     {

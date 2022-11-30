@@ -1,5 +1,5 @@
 import type { Optional } from 'utility-types';
-import { IsVpoReferenceNumber } from './isVpoReferenceNumber.decorator';
+import { IsVpoReferenceNumber } from './decorators';
 
 export class LoginAsVpoDto {
   @IsVpoReferenceNumber()

@@ -11,7 +11,7 @@ describe('POST /vpo', () => {
       Object {
         "error": "Bad Request",
         "message": Array [
-          "minimal allowed date for vpoIssueDate is Sat Jan 01 2022 02:00:00 GMT+0200 (Eastern European Standard Time)",
+          "minimal allowed date for vpoIssueDate is 2022-01-01",
           "vpoReferenceNumber must be longer than or equal to 3 characters",
           "firstName must be longer than or equal to 1 characters",
           "lastName must be longer than or equal to 1 characters",
@@ -208,9 +208,7 @@ describe('POST /vpo', () => {
       .expect(201);
 
     expect(body).toMatchObject({
-      id: expectExtended.objectId(),
-      createdAt: expectExtended.dateISOString(),
-      updatedAt: expectExtended.dateISOString(),
+      ...expectExtended.model(),
       role: vpo.toVpoUserModel().role,
       scheduleDate: vpo.scheduleDate.toISOString(),
       vpoReferenceNumber: vpo.vpoReferenceNumber,

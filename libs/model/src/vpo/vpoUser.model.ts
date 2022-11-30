@@ -1,7 +1,7 @@
 import { IsDate, IsEnum } from 'class-validator';
 import type { IdType, ModelConstructorData } from '../common';
 import { BaseModel, Role } from '../common';
-import { IsVpoReferenceNumber } from './isVpoReferenceNumber.decorator';
+import { IsVpoReferenceNumber } from './decorators';
 
 export class VpoUserModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @IsEnum(Role)

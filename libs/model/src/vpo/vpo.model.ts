@@ -8,16 +8,15 @@ import {
   Length,
   Max,
   Min,
-  MinDate,
 } from 'class-validator';
 import type { IdType, ModelConstructorData } from '../common';
 import { BaseModel, Role } from '../common';
-import { IsVpoReferenceNumber } from './isVpoReferenceNumber.decorator';
+import { IsVpoIssueDate, IsVpoReferenceNumber } from './decorators';
 import { ReceivedGoodsDto } from './receivedGoods.dto';
 import { VpoUserModel } from './vpoUser.model';
 
 export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
-  @MinDate(new Date(`2022-01-01`))
+  @IsVpoIssueDate()
   vpoIssueDate!: Date;
 
   @IsVpoReferenceNumber()

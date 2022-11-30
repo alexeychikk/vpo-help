@@ -7,6 +7,7 @@ import {
 } from '@vpo-help/server';
 import {
   AuthController,
+  HtmlController,
   ScheduleController,
   SettingsController,
   VpoController,
@@ -22,6 +23,7 @@ import { EnvService } from './services';
   ],
   controllers: [
     AuthController,
+    HtmlController,
     ScheduleController,
     SettingsController,
     VpoController,

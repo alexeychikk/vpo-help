@@ -4,31 +4,8 @@ import { serialize } from '@vpo-help/utils';
 import { testApp } from '../../testing';
 
 describe('PUT /settings', () => {
-  test('rejects unauthorized user', async () => {
-    const { body } = await testApp.requestApi
-      .put('/settings')
-      .send({})
-      .expect(401);
-
-    expect(body).toMatchInlineSnapshot(`
-      Object {
-        "message": "Unauthorized",
-        "statusCode": 401,
-      }
-    `);
-  });
-
-  test('rejects user with insufficient permissions', async () => {
-    const { body } = await testApp
-      .asVpo()
-      .requestApiWithAuth((req) => req.put('/settings').send({}).expect(403));
-
-    expect(body).toMatchInlineSnapshot(`
-      Object {
-        "message": "Forbidden",
-        "statusCode": 403,
-      }
-    `);
+  test('auth', async () => {
+    await testApp.expectAdmin((req) => req.put('/settings').send({}));
   });
 
   test('rejects invalid settings', async () => {
@@ -76,28 +53,8 @@ describe('PUT /settings', () => {
 });
 
 describe('GET /settings', () => {
-  test('rejects unauthorized user', async () => {
-    const { body } = await testApp.requestApi.get('/settings').expect(401);
-
-    expect(body).toMatchInlineSnapshot(`
-      Object {
-        "message": "Unauthorized",
-        "statusCode": 401,
-      }
-    `);
-  });
-
-  test('rejects user with insufficient permissions', async () => {
-    const { body } = await testApp
-      .asVpo()
-      .requestApiWithAuth((req) => req.get('/settings').expect(403));
-
-    expect(body).toMatchInlineSnapshot(`
-      Object {
-        "message": "Forbidden",
-        "statusCode": 403,
-      }
-    `);
+  test('auth', async () => {
+    await testApp.expectAdmin((req) => req.get('/settings'));
   });
 
   test('returns common settings', async () => {

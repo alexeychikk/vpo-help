@@ -14,7 +14,7 @@ async function bootstrap() {
     logger.log(
       `listening on http://${env.HOST}:${env.PORT} | ${
         env.TZ
-      } ${new Date().getTimezoneOffset()}`,
+      } ${new Date().getTimezoneOffset()} | ${env.LANG} | ${new Date()}`,
     );
   } catch (error) {
     console.error(new Date().toISOString(), ' | ', error);

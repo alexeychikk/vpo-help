@@ -17,8 +17,8 @@ import type {
   UserModel,
   VpoUserModel,
 } from '@vpo-help/model';
-import { Role, VpoModel } from '@vpo-help/model';
-import type { VpoEntity } from '@vpo-help/server';
+import { HtmlPageModel, Role, VpoModel } from '@vpo-help/model';
+import type { HtmlPageEntity, VpoEntity } from '@vpo-help/server';
 import {
   AuthService,
   ClassValidationPipe,
@@ -34,12 +34,16 @@ import { EnvService } from '../src/services';
 
 export const TEST_PASSWORD = '11111';
 
-jest.setTimeout(10000);
+jest.setTimeout(15000);
 
 let nestApp: NestFastifyApplication;
 
+const dbUrls: string[] = [];
+
 beforeEach(async () => {
   const dbUrl = `mongodb://localhost:27017/vpo-test-${faker.datatype.uuid()}`;
+  dbUrls.push(dbUrl);
+
   @Injectable()
   class TestEnvService extends EnvBaseService {
     get DB_URL() {
@@ -130,6 +134,17 @@ class TestApp {
   async registerVpo(dto?: Partial<VpoModel>): Promise<VpoEntity> {
     const model = await this.getFakeVpo(dto);
     return this.vpoService.register(model);
+  }
+
+  async createHtmlPage(dto?: Partial<HtmlPageModel>): Promise<HtmlPageEntity> {
+    const model = new HtmlPageModel({
+      name: faker.word.noun(1),
+      content: {
+        [faker.word.noun(1)]: `<div>${faker.lorem.lines(3)}</div>`,
+      },
+      ...dto,
+    });
+    return this.settingsService.createHtmlPage(model);
   }
 
   asUser(dto?: Partial<LoginAsUserDto> & { userId?: string }): TestApp {
@@ -251,6 +266,39 @@ class TestApp {
     const vpoUser = await this.getCurrentVpoUser();
     const vpo = await this.vpoService.findById(vpoUser.id);
     return instanceToPlain(vpo) as Serialized<VpoModel>;
+  }
+
+  async expectRejectsUnauthorizedUser(
+    fn: (request: supertest.SuperTest<supertest.Test>) => supertest.Test,
+  ) {
+    const { body } = await fn(this.requestApi).expect(401);
+    expect(body).toMatchInlineSnapshot(`
+      Object {
+        "message": "Unauthorized",
+        "statusCode": 401,
+      }
+    `);
+  }
+
+  async expectRejectsInsufficientPermissions(
+    fn: (request: supertest.SuperTest<supertest.Test>) => supertest.Test,
+  ) {
+    const { body } = await this.asVpo().requestApiWithAuth((req) =>
+      fn(req).expect(403),
+    );
+    expect(body).toMatchInlineSnapshot(`
+      Object {
+        "message": "Forbidden",
+        "statusCode": 403,
+      }
+    `);
+  }
+
+  async expectAdmin(
+    fn: (request: supertest.SuperTest<supertest.Test>) => supertest.Test,
+  ) {
+    await this.expectRejectsUnauthorizedUser(fn);
+    await this.expectRejectsInsufficientPermissions(fn);
   }
 
   private async getAuthenticatedUser<

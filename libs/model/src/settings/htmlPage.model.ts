@@ -1,13 +1,16 @@
-import { IsAlphanumeric, IsObject, Length } from 'class-validator';
+import { IsObject, IsOptional, Length, Matches } from 'class-validator';
 import type { Optional } from 'utility-types';
+import { composeDecorators } from '@vpo-help/utils';
 import type { IdType, ModelConstructorData } from '../common';
 import { BaseModel } from '../common';
 
 export type HtmlFieldsMap = Record<string, string>;
 
+const IsPageName = () =>
+  composeDecorators(Length(1, 100), Matches(/^[0-9A-Z-_]+$/i));
+
 export class HtmlPageModel<Id extends IdType = IdType> extends BaseModel<Id> {
-  @Length(1, 100)
-  @IsAlphanumeric()
+  @IsPageName()
   name!: string;
 
   @IsObject()
@@ -20,10 +23,23 @@ export class HtmlPageModel<Id extends IdType = IdType> extends BaseModel<Id> {
 }
 
 export class UpdateHtmlPageDto {
+  @IsPageName()
+  @IsOptional()
+  name?: string;
+
   @IsObject()
   content!: HtmlFieldsMap;
 
   constructor(data: Optional<UpdateHtmlPageDto>) {
+    Object.assign(this, data);
+  }
+}
+
+export class FindByPageNameDto {
+  @IsPageName()
+  name!: string;
+
+  constructor(data: FindByPageNameDto) {
     Object.assign(this, data);
   }
 }

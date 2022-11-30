@@ -53,9 +53,7 @@ describe('POST /auth/login', () => {
       },
       permissions: expect.any(Object),
       user: {
-        id: expectExtended.objectId(),
-        createdAt: expectExtended.dateISOString(),
-        updatedAt: expectExtended.dateISOString(),
+        ...expectExtended.model(),
         email: user.email,
         role: user.role,
       },
@@ -111,9 +109,7 @@ describe('POST /auth/login/vpo', () => {
       },
       permissions: expect.any(Object),
       user: {
-        id: expectExtended.objectId(),
-        createdAt: expectExtended.dateISOString(),
-        updatedAt: expectExtended.dateISOString(),
+        ...expectExtended.model(),
         role: vpo.role,
         scheduleDate: vpo.scheduleDate,
         vpoReferenceNumber: vpo.vpoReferenceNumber,

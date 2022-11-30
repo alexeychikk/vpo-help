@@ -38,6 +38,10 @@ export abstract class EnvBaseService {
     return this.getVar('TZ');
   }
 
+  get LANG(): string {
+    return this.getVar('LANG');
+  }
+
   get HOST(): string {
     return this.getVar('HOST', '0.0.0.0');
   }

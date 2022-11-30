@@ -1,13 +1,22 @@
 import type { OnModuleInit } from '@nestjs/common';
-import { Injectable, NotFoundException } from '@nestjs/common';
-import type { UpdateSettingsDto } from '@vpo-help/model';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import type {
+  HtmlPageModel,
+  UpdateHtmlPageDto,
+  UpdateSettingsDto,
+} from '@vpo-help/model';
 import {
   ScheduleDto,
   ScheduleSlotDto,
   SettingsCategory,
   SettingsDto,
 } from '@vpo-help/model';
-import { SettingsEntity } from '../entities';
+import { HtmlPageEntity, SettingsEntity } from '../entities';
 import { HtmlPageRepository } from './htmlPage.repository';
 import { SettingsRepository } from './settings.repository';
 
@@ -113,6 +122,34 @@ export class SettingsService implements OnModuleInit {
     return this.updateSettings(SettingsCategory.Schedule, dto);
   }
 
+  async getHtmlPage(name: string): Promise<HtmlPageEntity> {
+    const doc = await this.htmlPageRepository.findOne({ name });
+    if (!doc) throw new NotFoundException();
+    return doc;
+  }
+
+  async createHtmlPage(dto: HtmlPageModel): Promise<HtmlPageEntity> {
+    const page = await this.htmlPageRepository.findOne({ name: dto.name });
+    if (page) throw new ConflictException();
+    const entity = plainToInstance(HtmlPageEntity, dto);
+    return this.htmlPageRepository.save(entity);
+  }
+
+  async updateHtmlPage(
+    name: string,
+    dto: UpdateHtmlPageDto,
+  ): Promise<HtmlPageEntity> {
+    const page = await this.getHtmlPage(name);
+    if (dto.name) page.name = dto.name;
+    page.content = dto.content;
+    return this.htmlPageRepository.saveExisting(page);
+  }
+
+  async deleteHtmlPage(name: string) {
+    const entity = await this.getHtmlPage(name);
+    await this.htmlPageRepository.delete(entity.id);
+  }
+
   private async updateSettings<Ret extends SettingsEntity['properties']>(
     category: SettingsCategory,
     dto: Partial<SettingsEntity['properties']>,
@@ -127,9 +164,7 @@ export class SettingsService implements OnModuleInit {
     category: SettingsCategory,
   ): Promise<Ret> {
     const doc = await this.settingsRepository.findOne({ category });
-    if (!doc) {
-      throw new NotFoundException();
-    }
+    if (!doc) throw new NotFoundException();
     return doc.properties as Ret;
   }
 }

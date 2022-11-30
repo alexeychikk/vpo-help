@@ -45,31 +45,8 @@ describe('GET /schedule/available', () => {
 });
 
 describe('PUT /schedule', () => {
-  test('rejects unauthorized user', async () => {
-    const { body } = await testApp.requestApi
-      .put('/schedule')
-      .send({})
-      .expect(401);
-
-    expect(body).toMatchInlineSnapshot(`
-      Object {
-        "message": "Unauthorized",
-        "statusCode": 401,
-      }
-    `);
-  });
-
-  test('rejects user with insufficient permissions', async () => {
-    const { body } = await testApp
-      .asVpo()
-      .requestApiWithAuth((req) => req.put('/schedule').send({}).expect(403));
-
-    expect(body).toMatchInlineSnapshot(`
-      Object {
-        "message": "Forbidden",
-        "statusCode": 403,
-      }
-    `);
+  test('auth', async () => {
+    await testApp.expectAdmin((req) => req.put('/schedule').send({}));
   });
 
   test('rejects invalid schedule', async () => {

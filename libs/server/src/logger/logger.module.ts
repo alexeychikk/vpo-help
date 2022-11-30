@@ -20,7 +20,7 @@ import { EnvModule } from '../env';
           }),
           messageKey: 'message',
           prettyPrint: env.IS_DEV
-            ? { colorize: true, translateTime: 'yyyy-mm-dd HH:MM:ss.l' }
+            ? { colorize: true, translateTime: 'yyyy-MM-dd HH:mm:ss.l' }
             : undefined,
           redact: {
             paths: [

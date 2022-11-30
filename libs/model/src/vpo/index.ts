@@ -1,4 +1,4 @@
-export * from './isVpoReferenceNumber.decorator';
+export * from './decorators';
 export * from './loginAsVpo.dto';
 export * from './loginAsVpoResponse.dto';
 export * from './receivedGoods.dto';

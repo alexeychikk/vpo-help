@@ -201,6 +201,7 @@ _Auth, Permissions:_ **["HTML.WRITE"]**
 ```ts
 // PAYLOAD
 {
+  name?: String,
   content: {
     [fieldName]: String,
   }
