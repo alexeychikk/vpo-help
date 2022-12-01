@@ -3,6 +3,8 @@ Object.assign(process.env, {
   JWT_SECRET: 'YOUR_CUSTOM_VERY_STRONG_SECRET',
   TZ: 'Europe/Kyiv',
   LANG: 'en_US.UTF-8', // seems like this has no effect in jest
+  ADMIN_EMAIL: 'admin@example.com',
+  ADMIN_PASSWORD: 'admin',
 });
 
 export {};

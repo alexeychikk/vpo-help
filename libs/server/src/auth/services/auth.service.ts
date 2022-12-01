@@ -1,6 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import type { OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import bcrypt from 'bcryptjs';
+import type {
+  CreateAdminDto,
+  LoginAsUserDto,
+  LoginAsVpoDto,
+} from '@vpo-help/model';
 import {
   AccessTokenDto,
   LoginAsUserResponseDto,
@@ -9,28 +14,52 @@ import {
   Role,
   UserModel,
 } from '@vpo-help/model';
-import type { UserEntity, VpoEntity } from '../../model';
+import { EnvBaseService, EnvModule } from '../../env';
+import { UserEntity } from '../../model/user/entities/user.entity';
+import { UserService } from '../../model/user/services/user.service';
+import { VpoService } from '../../model/vpo/services/vpo.service';
 import type { JwtPayload } from '../entities';
+import { PasswordService } from './password.service';
 
 @Injectable()
-export class AuthService {
-  constructor(private jwtService: JwtService) {}
+export class AuthService implements OnModuleInit {
+  constructor(
+    @Inject(EnvModule.ENV_SERVICE_PROVIDER_NAME)
+    private readonly envService: EnvBaseService,
+    private readonly jwtService: JwtService,
+    private readonly passwordService: PasswordService,
+    private readonly userService: UserService,
+    private readonly vpoService: VpoService,
+  ) {}
 
-  async hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 12);
-  }
-
-  async validatePassword(
-    password: string,
-    passwordHash: string,
-  ): Promise<void> {
-    const isEqual = await bcrypt.compare(password, passwordHash);
-    if (!isEqual) {
-      throw new UnauthorizedException();
+  async onModuleInit() {
+    try {
+      await this.userService.findByEmail(this.envService.ADMIN_EMAIL);
+    } catch (error) {
+      await this.createAdmin({
+        email: this.envService.ADMIN_EMAIL,
+        password: this.envService.ADMIN_PASSWORD,
+      });
     }
   }
 
-  async loginAsUser(user: UserEntity): Promise<LoginAsUserResponseDto> {
+  async createAdmin(dto: CreateAdminDto): Promise<UserEntity> {
+    const entity = new UserEntity({
+      email: dto.email,
+      passwordHash: await this.passwordService.hashPassword(dto.password),
+      role: Role.Admin,
+    });
+    return this.userService.create(entity);
+  }
+
+  async loginAsUser(dto: LoginAsUserDto): Promise<LoginAsUserResponseDto> {
+    const user = await this.userService.findByEmail(dto.email);
+
+    await this.passwordService.validatePassword(
+      dto.password,
+      user.passwordHash,
+    );
+
     const payload: JwtPayload = {
       sub: user.id.toString(),
       role: user.role,
@@ -53,7 +82,11 @@ export class AuthService {
     });
   }
 
-  async loginAsVpo(vpo: VpoEntity): Promise<LoginAsVpoResponseDto> {
+  async loginAsVpo(dto: LoginAsVpoDto): Promise<LoginAsVpoResponseDto> {
+    const vpo = await this.vpoService.findByReferenceNumber(
+      dto.vpoReferenceNumber,
+    );
+
     const payload: JwtPayload = {
       sub: vpo.id.toString(),
       role: Role.Vpo,

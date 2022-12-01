@@ -3,8 +3,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Role } from '@vpo-help/model';
 import { EnvBaseService, EnvModule } from '../../env';
-import type { UserEntity, VpoEntity } from '../../model';
-import { UserService, VpoService } from '../../model';
+import type { UserEntity } from '../../model/user/entities/user.entity';
+import { UserService } from '../../model/user/services/user.service';
+import type { VpoEntity } from '../../model/vpo/entities/vpo.entity';
+import { VpoService } from '../../model/vpo/services/vpo.service';
 import type { JwtPayload } from '../entities';
 
 @Injectable()

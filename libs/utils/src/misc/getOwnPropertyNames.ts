@@ -13,7 +13,7 @@ export function getOwnPropertyNames(proto: any) {
     });
 
     const parentClass = Object.getPrototypeOf(proto).constructor;
-    if (!isClass(parentClass) || parentClass == Object) {
+    if (!isClass(parentClass) || parentClass === Object) {
       break;
     }
     proto = Object.getPrototypeOf(proto);

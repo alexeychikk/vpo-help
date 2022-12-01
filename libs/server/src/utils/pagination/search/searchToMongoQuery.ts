@@ -1,9 +1,21 @@
 import { BadRequestException } from '@nestjs/common';
 import { escapeRegExp, isEmpty } from 'lodash';
-import type { SearchQueryDto } from '@vpo-help/model';
+import type { SearchComparatorDto, SearchQueryDto } from '@vpo-help/model';
 import { SearchOperator, SearchType } from '@vpo-help/model';
 
-export function searchToMongoQuery({
+export function searchToMongoQuery(
+  dto: SearchQueryDto,
+): Record<string, unknown> | undefined {
+  const $and = [
+    transformQSearch(dto),
+    dto.min && transformComparatorSearch('$gte', dto.min),
+    dto.max && transformComparatorSearch('$lte', dto.max),
+  ].filter(Boolean);
+
+  return $and.length === 0 ? undefined : $and.length === 1 ? $and[0] : { $and };
+}
+
+function transformQSearch({
   q,
   qType,
   qOperator,
@@ -46,4 +58,28 @@ export function searchToMongoQuery({
       `Could not parse 'q' query parameter to JSON`,
     );
   }
+}
+
+function transformComparatorSearch(
+  operator: string,
+  dto: SearchComparatorDto,
+): Record<string, unknown> | undefined {
+  const result = Object.entries(dto).reduce(
+    (res, [key, { value, isOptional }]) => {
+      if (isOptional) {
+        res.$and ??= [];
+        (res.$and as Record<string, unknown>[]).push({
+          $or: [
+            { [key]: { $exists: false } },
+            { [key]: { [operator]: value } },
+          ],
+        });
+      } else {
+        res[key] = { [operator]: value };
+      }
+      return res;
+    },
+    {} as Record<string, unknown>,
+  );
+  return isEmpty(result) ? undefined : result;
 }

@@ -8,7 +8,7 @@ export class PaginationQueryDto {
 
   @IsInt()
   @Min(1)
-  @Max(100)
+  @Max(100000)
   @IsOptional()
-  limit?: number = 100;
+  limit?: number = 1000;
 }

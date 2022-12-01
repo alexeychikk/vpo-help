@@ -1,3 +1,4 @@
+export * from './isSearchComparator.decorator';
 export * from './paginatedList.dto';
 export * from './pagination.dto';
 export * from './paginationQuery.dto';

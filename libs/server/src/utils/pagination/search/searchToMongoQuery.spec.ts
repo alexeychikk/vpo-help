@@ -48,3 +48,40 @@ test('returns undefined if q is empty', () => {
     undefined,
   );
 });
+
+test('converts min and max to mongo queries', () => {
+  expect(
+    searchToMongoQuery({
+      min: { foo: { value: 'bar' }, baz: { value: 10, isOptional: true } },
+    }),
+  ).toEqual({
+    foo: { $gte: 'bar' },
+    $and: [{ $or: [{ baz: { $exists: false } }, { baz: { $gte: 10 } }] }],
+  });
+
+  const date = new Date();
+  expect(
+    searchToMongoQuery({
+      max: { foo: { value: 'oops' }, baz: { value: date } },
+    }),
+  ).toEqual({
+    foo: { $lte: 'oops' },
+    baz: { $lte: date },
+  });
+});
+
+test('multiple operators become $and query', () => {
+  expect(
+    searchToMongoQuery({
+      q: 'foo',
+      min: { foo: { value: 'bar' } },
+      max: { baz: { value: 10 } },
+    }),
+  ).toEqual({
+    $and: [
+      { $text: { $search: 'foo' } },
+      { foo: { $gte: 'bar' } },
+      { baz: { $lte: 10 } },
+    ],
+  });
+});

@@ -5,7 +5,7 @@ import type { EnvBaseService } from '../env';
 import { EnvModule } from '../env';
 import { LoggerModule } from '../logger';
 import { JwtAuthGuard } from './guards';
-import { AuthService, JwtStrategy } from './services';
+import { AuthService, JwtStrategy, PasswordService } from './services';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { AuthService, JwtStrategy } from './services';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard],
-  exports: [AuthService, JwtStrategy, JwtAuthGuard],
+  providers: [PasswordService, AuthService, JwtStrategy, JwtAuthGuard],
+  exports: [PasswordService, AuthService, JwtStrategy, JwtAuthGuard],
 })
 export class AuthModule {}

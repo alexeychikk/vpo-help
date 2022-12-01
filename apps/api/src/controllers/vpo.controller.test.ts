@@ -1,6 +1,7 @@
 import { addMinutes, endOfWeek, subDays } from 'date-fns';
 import { ScheduleDto } from '@vpo-help/model';
 import { expectExtended } from '@vpo-help/testing';
+import { serialize } from '@vpo-help/utils';
 import { testApp } from '../../testing';
 
 describe('POST /vpo', () => {
@@ -48,13 +49,13 @@ describe('POST /vpo', () => {
   });
 
   test('rejects vpo that already received help recently (see settings)', async () => {
-    const vpo = await testApp
-      .asVpo({ receivedHelpDate: subDays(new Date(), 5) })
-      .getCurrentVpo();
+    const vpo = await testApp.insertVpo({
+      receivedHelpDate: subDays(new Date(), 5),
+    });
 
     const { body } = await testApp.requestApi
       .post('/vpo')
-      .send(vpo)
+      .send({ ...vpo, scheduleDate: await testApp.getAvailableDateSlot() })
       .expect(409);
 
     expect(body).toMatchInlineSnapshot(`
@@ -67,9 +68,9 @@ describe('POST /vpo', () => {
   });
 
   test('registers vpo that can receive help again', async () => {
-    const vpo = await testApp
-      .asVpo({ receivedHelpDate: subDays(new Date(), 100) })
-      .getCurrentVpo();
+    const vpo = await testApp.insertVpo({
+      receivedHelpDate: subDays(new Date(), 100),
+    });
     const scheduleDate = await testApp.getAvailableDateSlot(1);
 
     const { body } = await testApp.requestApi
@@ -77,14 +78,16 @@ describe('POST /vpo', () => {
       .send({ ...vpo, scheduleDate })
       .expect(201);
 
-    expect(body).toMatchObject({
-      ...(await testApp.getCurrentVpoUser()),
-      scheduleDate: scheduleDate.toISOString(),
-    });
+    expect(body).toMatchObject(
+      serialize({
+        ...vpo.toVpoUserModel(),
+        scheduleDate,
+      }),
+    );
   });
 
   test('rejects vpo that registers again on the same date', async () => {
-    const vpo = await testApp.asVpo().getCurrentVpo();
+    const vpo = await testApp.registerVpo();
     const { body } = await testApp.requestApi
       .post('/vpo')
       .send(vpo)
@@ -213,6 +216,44 @@ describe('POST /vpo', () => {
       role: vpo.toVpoUserModel().role,
       scheduleDate: vpo.scheduleDate.toISOString(),
       vpoReferenceNumber: vpo.vpoReferenceNumber,
+    });
+  });
+});
+
+describe('GET /vpo/:id', () => {
+  test('auth', async () => {
+    await testApp.expectAdmin((req) => req.get(`/vpo/foo`));
+  });
+
+  test('returns vpo by id', async () => {
+    const vpo = await testApp.registerVpo();
+    const { body } = await testApp
+      .asUser()
+      .requestApiWithAuth((req) => req.get(`/vpo/${vpo.id}`).expect(200));
+
+    expect(body).toEqual(serialize(vpo));
+  });
+});
+
+describe('GET /vpo', () => {
+  test('auth', async () => {
+    await testApp.expectAdmin((req) => req.get(`/vpo`));
+  });
+
+  test('returns a list of vpo-s', async () => {
+    const list = [
+      await testApp.insertVpo(),
+      await testApp.insertVpo(),
+      await testApp.insertVpo(),
+    ];
+
+    const { body } = await testApp
+      .asUser()
+      .requestApiWithAuth((req) => req.get(`/vpo`).expect(200));
+
+    expect(body).toEqual({
+      items: serialize(list),
+      totalItems: 3,
     });
   });
 });

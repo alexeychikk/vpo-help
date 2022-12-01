@@ -6,6 +6,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { addDays } from 'date-fns';
 import { ObjectId } from 'mongodb';
 import supertest from 'supertest';
 import type {
@@ -17,14 +18,13 @@ import type {
   UserModel,
   VpoUserModel,
 } from '@vpo-help/model';
-import { HtmlPageModel, Role, VpoModel } from '@vpo-help/model';
+import { HtmlPageModel, VpoModel } from '@vpo-help/model';
 import type { HtmlPageEntity, VpoEntity } from '@vpo-help/server';
 import {
   AuthService,
   ClassValidationPipe,
   EnvBaseService,
   SettingsService,
-  UserEntity,
   UserService,
   VpoService,
 } from '@vpo-help/server';
@@ -34,7 +34,7 @@ import { EnvService } from '../src/services';
 
 export const TEST_PASSWORD = '11111';
 
-jest.setTimeout(15000);
+jest.setTimeout(30000);
 
 let nestApp: NestFastifyApplication;
 
@@ -136,6 +136,18 @@ class TestApp {
     return this.vpoService.register(model);
   }
 
+  /**
+   * Fast alternative to `registerVpo` that allows writing to all the vpo fields
+   * and does not depend on available scheduleDate.
+   */
+  async insertVpo(dto?: Partial<VpoModel>): Promise<VpoEntity> {
+    const model = await this.getFakeVpo({
+      scheduleDate: addDays(new Date(), 1),
+      ...dto,
+    });
+    return this.vpoService.upsert(model);
+  }
+
   async createHtmlPage(dto?: Partial<HtmlPageModel>): Promise<HtmlPageEntity> {
     const model = new HtmlPageModel({
       name: faker.word.noun(1),
@@ -168,12 +180,10 @@ class TestApp {
           .catch(() => undefined);
 
         if (!user) {
-          const entity = new UserEntity({
+          user = await this.authService.createAdmin({
             email,
-            passwordHash: await this.authService.hashPassword(password),
-            role: Role.Admin,
+            password,
           });
-          user = await this.userService.create(entity);
         }
 
         return this.loginAsUser({
@@ -231,12 +241,12 @@ class TestApp {
         min: 0,
         max: 10,
       }),
-      scheduleDate:
-        dto?.scheduleDate ||
-        (await this.vpoService.getAvailableSchedule()).items[0].dateFrom,
       vpoIssueDate: faker.date.between(new Date('2022-01-01'), new Date()),
       vpoReferenceNumber: faker.datatype.uuid(),
       ...dto,
+      scheduleDate:
+        dto?.scheduleDate ||
+        (await this.vpoService.getAvailableSchedule()).items[0].dateFrom,
     });
   }
 

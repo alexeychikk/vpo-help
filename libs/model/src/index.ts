@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 export * from './common';
 export * from './pagination';
 export * from './settings';

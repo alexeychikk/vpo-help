@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
 } from '@nestjs/common';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import {
   addDays,
   differenceInDays,
@@ -44,7 +45,13 @@ export class VpoService {
     await this.lockByDate(model.scheduleDate, async () => {
       await this.ensureDateAvailable(model.scheduleDate);
 
-      const rawModel = omit(model, ['id', 'createdAt', 'updatedAt']);
+      const rawModel = omit(model, [
+        'id',
+        'createdAt',
+        'updatedAt',
+        'receivedHelpDate',
+        'receivedGoods',
+      ]);
 
       if (entity) {
         entity = await this.vpoRepository.saveExisting(
@@ -56,6 +63,14 @@ export class VpoService {
     });
 
     return entity!;
+  }
+
+  async upsert(model: VpoModel): Promise<VpoEntity> {
+    const entity = plainToInstance(VpoEntity, instanceToPlain(model));
+    if (model.id) {
+      return this.vpoRepository.saveExisting(entity);
+    }
+    return this.vpoRepository.save(entity);
   }
 
   async findById(id: IdType): Promise<VpoEntity> {

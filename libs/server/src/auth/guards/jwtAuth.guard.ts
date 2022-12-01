@@ -4,8 +4,8 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import type { AccessType, Permission, PermissionMap } from '@vpo-help/model';
 import { PERMISSIONS } from '@vpo-help/model';
-import type { UserEntity } from '../../model';
-import { VpoEntity } from '../../model';
+import type { UserEntity } from '../../model/user/entities/user.entity';
+import { VpoEntity } from '../../model/vpo/entities/vpo.entity';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {

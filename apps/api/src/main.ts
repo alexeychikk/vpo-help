@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { LoggerService } from '@vpo-help/server';
 import { createApp } from './createApp';
 import { EnvService } from './services';

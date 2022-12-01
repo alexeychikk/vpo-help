@@ -42,6 +42,14 @@ export abstract class EnvBaseService {
     return this.getVar('LANG');
   }
 
+  get ADMIN_EMAIL(): string {
+    return this.getVar('ADMIN_EMAIL');
+  }
+
+  get ADMIN_PASSWORD(): string {
+    return this.getVar('ADMIN_PASSWORD');
+  }
+
   get HOST(): string {
     return this.getVar('HOST', '0.0.0.0');
   }

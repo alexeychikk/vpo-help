@@ -7,31 +7,22 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { LoginAsUserDto, LoginAsVpoDto } from '@vpo-help/model';
-import { AuthService, UserService, VpoService } from '@vpo-help/server';
+import { AuthService } from '@vpo-help/server';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'auth' })
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private userService: UserService,
-    private vpoService: VpoService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   @HttpCode(200)
   async loginAsUser(@Body() dto: LoginAsUserDto) {
-    const user = await this.userService.findByEmail(dto.email);
-    await this.authService.validatePassword(dto.password, user.passwordHash);
-    return this.authService.loginAsUser(user);
+    return this.authService.loginAsUser(dto);
   }
 
   @Post('login/vpo')
   @HttpCode(200)
   async loginAsVpo(@Body() dto: LoginAsVpoDto) {
-    const vpo = await this.vpoService.findByReferenceNumber(
-      dto.vpoReferenceNumber,
-    );
-    return this.authService.loginAsVpo(vpo);
+    return this.authService.loginAsVpo(dto);
   }
 }
