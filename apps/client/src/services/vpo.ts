@@ -1,7 +1,13 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
+import type {
+  PaginatedListDto,
+  PaginationSearchSortDto,
+  VpoModel,
+  VpoUserModel,
+} from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import { ACCESS_TOKEN } from '../constants';
-import type { VpoUserModel } from './auth';
 
 export class Vpo {
   private http: AxiosInstance;
@@ -10,15 +16,22 @@ export class Vpo {
     this.http = axios.create({ baseURL: `${baseUrl}/vpo` });
   }
 
-  async register(vpoModel: VpoModel): Promise<VpoUserModel> {
-    const { data } = await this.http.post<VpoUserModel>('', vpoModel);
+  async register(
+    vpoModel: Serialized<VpoModel>,
+  ): Promise<Serialized<VpoUserModel>> {
+    const { data } = await this.http.post<Serialized<VpoUserModel>>(
+      '',
+      vpoModel,
+    );
     return data;
   }
 
   async getPaginated(
-    params: PaginationParams,
-  ): Promise<Paginated<VpoUserModel>> {
-    const { data } = await this.http.get<Paginated<VpoUserModel>>('', {
+    params: Serialized<PaginationSearchSortDto>,
+  ): Promise<Serialized<PaginatedListDto<VpoModel>>> {
+    const { data } = await this.http.get<
+      Serialized<PaginatedListDto<VpoModel>>
+    >('', {
       params,
       headers: {
         Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
@@ -27,43 +40,3 @@ export class Vpo {
     return data;
   }
 }
-
-export type VpoModel = {
-  vpoIssueDate: string;
-  vpoReferenceNumber: string;
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  dateOfBirth: string;
-  addressOfRegistration: string;
-  addressOfResidence: string;
-  numberOfRelatives: number;
-  numberOfRelativesBelow16: number;
-  numberOfRelativesAbove65: number;
-  scheduleDate: string;
-  receivedHelpDate?: string;
-  receivedGoods?: { [productName: string]: number };
-  phoneNumber?: string;
-  email?: string;
-};
-
-export type PaginationParams = {
-  page: number;
-  limit: number;
-  sort: SortDirectionMap<VpoModel>;
-};
-
-export enum SortDirection {
-  asc = 1,
-  desc = -1,
-}
-
-export type SortDirectionMap<Entity = unknown> = Record<
-  keyof Entity,
-  SortDirection
->;
-
-export type Paginated<T> = {
-  items: T[];
-  totalItems: number;
-};

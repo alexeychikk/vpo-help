@@ -6,11 +6,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { PrivateRoute } from '../components';
 import { ACCESS_TOKEN } from '../constants';
 import { ROUTES } from '../routes';
+import { authService } from '../services';
 
 const theme = createTheme();
 
 export const App = () => {
-  const token = localStorage.getItem(ACCESS_TOKEN);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -23,9 +23,9 @@ export const App = () => {
                   key={route.path}
                   path={route.path}
                   element={
-                    route.private ? (
+                    'private' in route && route.private ? (
                       <PrivateRoute
-                        token={token}
+                        getToken={authService.getToken}
                         redirectPath={ROUTES.LOGIN.path}
                         element={route.render()}
                       />
@@ -33,7 +33,18 @@ export const App = () => {
                       route.render()
                     )
                   }
-                />
+                >
+                  {'subroutes' in route &&
+                    Object.values(route.subroutes).map((subroute) => {
+                      return (
+                        <Route
+                          key={subroute.path}
+                          path={subroute.path}
+                          element={subroute.render()}
+                        />
+                      );
+                    })}
+                </Route>
               );
             })}
           </Routes>

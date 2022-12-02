@@ -1,4 +1,7 @@
-import type { ChangeSet } from '@devexpress/dx-react-scheduler';
+import type {
+  AppointmentModel,
+  ChangeSet,
+} from '@devexpress/dx-react-scheduler';
 import {
   EditingState,
   IntegratedEditing,
@@ -11,100 +14,96 @@ import {
   Scheduler as DevExpressScheduler,
   WeekView,
 } from '@devexpress/dx-react-scheduler-material-ui';
-import { Paper } from '@mui/material';
-import moment from 'moment';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import type { Required } from 'utility-types';
 import { AppointmentFormLayout } from './AppointmentFormLayout';
 import { AppointmentTooltipContent } from './AppointmentTooltipContent';
 import { DayScaleCell } from './DayScaleCell';
 
-const startDate = '2022-11-21';
+export type SchedulerProps<
+  T extends Required<AppointmentModel, 'id' | 'startDate'>,
+> = {
+  schedule: T[];
+  startDate: string;
+  validate: (added: Omit<T, 'id'>) => boolean;
+  generateNewId: (schedule: T[]) => T['id'];
+  onChange: (newSchedule: T[]) => Promise<void> | void;
+};
 
-export type SchedulerProps = Record<string, never>;
+export const Scheduler = <
+  T extends Required<AppointmentModel, 'id' | 'startDate'> = Required<
+    AppointmentModel,
+    'id' | 'startDate'
+  >,
+>({
+  schedule,
+  startDate,
+  validate,
+  generateNewId,
+  onChange,
+}: SchedulerProps<T>): React.ReactElement => {
+  const handleCommitChanges = useCallback(
+    async (changeSet: ChangeSet) => {
+      const { added, changed, deleted } = changeSet as ScheduleChangeSet<T>;
+      let newSchedule = schedule.slice();
 
-export const Scheduler: React.FC<SchedulerProps> = () => {
-  const [schedule, setSchedule] = useState<ScheduleSlotModel[]>([
-    {
-      id: 0,
-      startDate: moment(startDate)
-        .add(1, 'day')
-        .hours(12)
-        .minutes(20)
-        .valueOf(),
-      endDate: moment(startDate).add(1, 'day').hours(16).minutes(0).valueOf(),
-      numberOfPersons: 40,
-    },
-  ]);
-
-  const handleCommitChanges = useCallback((changeSet: ChangeSet) => {
-    const { added, changed, deleted } = changeSet as ScheduleChangeSet;
-
-    setSchedule((data) => {
-      const newSchedule = data.slice();
-
-      if (added && added.startDate && added.endDate && added.numberOfPersons) {
-        const startingAddedId = data.length ? data[data.length - 1].id + 1 : 0;
-        newSchedule.push({ ...added, id: startingAddedId });
+      if (added && validate(added)) {
+        const startingAddedId = generateNewId(newSchedule);
+        newSchedule.push({ ...added, id: startingAddedId } as T);
       }
 
       if (changed) {
-        newSchedule.forEach((slot) => {
-          if (
-            !changed[slot.id] ||
-            !changed[slot.id].startDate ||
-            !changed[slot.id].endDate ||
-            !!changed[slot.id].numberOfPersons
-          )
-            return;
+        newSchedule = newSchedule.map((slot) => {
+          if (!changed[slot.id as T['id']]) {
+            return slot;
+          }
+          return { ...slot, ...changed[slot.id as T['id']] };
         });
       }
 
       if (deleted !== undefined) {
-        return newSchedule.filter((slot) => slot.id !== deleted);
+        newSchedule = newSchedule.filter((slot) => slot.id !== deleted);
       }
-      return newSchedule;
-    });
-  }, []);
+
+      await onChange(newSchedule);
+    },
+    [schedule, generateNewId, validate, onChange],
+  );
+
+  console.log(schedule);
 
   return (
-    <Paper>
-      <DevExpressScheduler
-        data={schedule}
-        height={660}
-        locale={'uk-UA'}
-        firstDayOfWeek={1}
-      >
-        <ViewState currentDate={startDate} />
-        <EditingState onCommitChanges={handleCommitChanges} />
-        <IntegratedEditing />
-        <WeekView
-          startDayHour={8}
-          endDayHour={20}
-          cellDuration={30}
-          dayScaleCellComponent={DayScaleCell}
-        />
-        <Appointments />
-        <AppointmentTooltip
-          showCloseButton
-          showOpenButton
-          showDeleteButton
-          contentComponent={AppointmentTooltipContent}
-        />
-        <AppointmentForm basicLayoutComponent={AppointmentFormLayout} />
-      </DevExpressScheduler>
-    </Paper>
+    <DevExpressScheduler
+      data={schedule}
+      height="auto"
+      locale={'uk-UA'}
+      firstDayOfWeek={1}
+    >
+      <ViewState currentDate={startDate} />
+      <EditingState onCommitChanges={handleCommitChanges} />
+      <IntegratedEditing />
+      <WeekView
+        startDayHour={8}
+        endDayHour={20}
+        cellDuration={30}
+        dayScaleCellComponent={DayScaleCell}
+      />
+      <Appointments />
+      <AppointmentTooltip
+        showCloseButton
+        showOpenButton
+        showDeleteButton
+        contentComponent={AppointmentTooltipContent}
+      />
+      <AppointmentForm basicLayoutComponent={AppointmentFormLayout} />
+    </DevExpressScheduler>
   );
 };
 
-type ScheduleSlotModel = {
-  id: number;
-  startDate: number;
-  endDate: number;
-  numberOfPersons: number;
-};
-
-type ScheduleChangeSet = {
-  added?: Omit<ScheduleSlotModel, 'id'>;
-  changed?: Record<number, ScheduleSlotModel>;
-  deleted?: number;
+type ScheduleChangeSet<
+  T extends Required<AppointmentModel, 'id' | 'startDate'>,
+> = {
+  added?: Omit<T, 'id'>;
+  changed?: Record<T['id'], T>;
+  deleted?: T['id'];
 };

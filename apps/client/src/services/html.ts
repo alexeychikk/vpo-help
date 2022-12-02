@@ -1,5 +1,7 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
+import type { HtmlPageModel, UpdateHtmlPageDto } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import { ACCESS_TOKEN } from '../constants';
 
 export class Html {
@@ -9,32 +11,47 @@ export class Html {
     this.http = axios.create({ baseURL: `${baseUrl}/html` });
   }
 
-  async getPage(name: string): Promise<HtmlPageModel> {
-    const { data } = await this.http.get<HtmlPageModel>(`/${name}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+  async getPage(name: string): Promise<Serialized<HtmlPageModel>> {
+    const { data } = await this.http.get<Serialized<HtmlPageModel>>(
+      `/${name}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+        },
       },
-    });
+    );
     return data;
   }
 
-  async savePage(name: string, dto: HtmlPageDto): Promise<HtmlPageModel> {
-    const { data } = await this.http.put<HtmlPageModel>(`/${name}`, dto, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+  async createPage(
+    name: string,
+    dto: Serialized<HtmlPageModel>,
+  ): Promise<Serialized<HtmlPageModel>> {
+    const { data } = await this.http.post<Serialized<HtmlPageModel>>(
+      `/${name}`,
+      dto,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+        },
       },
-    });
+    );
+    return data;
+  }
+
+  async updatePage(
+    name: string,
+    dto: Serialized<UpdateHtmlPageDto>,
+  ): Promise<Serialized<HtmlPageModel>> {
+    const { data } = await this.http.put<Serialized<HtmlPageModel>>(
+      `/${name}`,
+      dto,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+        },
+      },
+    );
     return data;
   }
 }
-
-export type HtmlPageModel = HtmlPageDto & {
-  id: string;
-  name: string;
-};
-
-export type HtmlPageDto = {
-  content: {
-    [fieldName: string]: string;
-  };
-};

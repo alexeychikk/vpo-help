@@ -2,18 +2,13 @@ import {
   ArrowForwardIos as ArrowForwardIosIcon,
   Search as SearchIcon,
 } from '@mui/icons-material';
-import {
-  Box,
-  Button,
-  Container,
-  TextField,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, Button, Container, Typography, useTheme } from '@mui/material';
 import { AxiosError } from 'axios';
 import { useCallback, useRef, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
+import type { VpoUserModel } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import {
   BookingInfo,
   ButtonWithLoading,
@@ -21,7 +16,6 @@ import {
 } from '../../components';
 import { MAIN } from '../../constants';
 import { authService } from '../../services';
-import type { VpoUserModel } from '../../services/auth';
 import { ROUTES } from '../routes.config';
 import { Footer } from './Footer';
 
@@ -29,7 +23,7 @@ export const Main = () => {
   const theme = useTheme();
   const form = useForm<{ referenceNumber: string }>();
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState<VpoUserModel | null>(null);
+  const [user, setUser] = useState<Serialized<VpoUserModel> | null>(null);
 
   const searchVpo: SubmitHandler<{ referenceNumber: string }> = useCallback(
     async ({ referenceNumber }) => {
@@ -58,6 +52,7 @@ export const Main = () => {
 
   return (
     <Container
+      component="main"
       maxWidth={false}
       sx={{
         display: 'flex',

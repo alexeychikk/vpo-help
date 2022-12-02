@@ -12,22 +12,24 @@ export const AppointmentFormLayout: React.FC<
   const handleStartDateChange = useCallback(
     (nextValue: number | null) => {
       onFieldChange({
-        startDate: nextValue ? moment(nextValue).valueOf() : '',
+        startDate: nextValue ? moment(nextValue).format() : '',
       });
     },
     [onFieldChange],
   );
+
   const handleEndDateChange = useCallback(
     (nextValue: number | null) => {
-      onFieldChange({ endDate: nextValue ? moment(nextValue).valueOf() : '' });
+      onFieldChange({ endDate: nextValue ? moment(nextValue).format() : '' });
     },
     [onFieldChange],
   );
+
   const handleSlotCapacityChange: ChangeEventHandler<HTMLInputElement> =
     useCallback(
       (event) => {
-        const nextValue = event.currentTarget.value;
-        onFieldChange({ numberOfPersons: parseInt(nextValue) || '' });
+        const nextValue = parseInt(event.currentTarget.value);
+        onFieldChange({ numberOfPersons: isNaN(nextValue) ? '' : nextValue });
       },
       [onFieldChange],
     );
@@ -76,7 +78,7 @@ export const AppointmentFormLayout: React.FC<
         id="numberOfPersons"
         name="numberOfPersons"
         label={SCHEDULER.appointmentForm.maxSlotCapacity}
-        value={props.appointmentData['numberOfPersons']}
+        value={props.appointmentData['numberOfPersons'] ?? ''}
         error={!props.appointmentData['numberOfPersons']}
         onChange={handleSlotCapacityChange}
       />

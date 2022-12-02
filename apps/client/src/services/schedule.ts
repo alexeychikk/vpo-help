@@ -1,6 +1,9 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
 import moment from 'moment';
+import type { ScheduleAvailableDto, ScheduleDto } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
+import { ACCESS_TOKEN } from '../constants';
 
 export class Schedule {
   private http: AxiosInstance;
@@ -9,18 +12,32 @@ export class Schedule {
     this.http = axios.create({ baseURL: `${baseUrl}/schedule` });
   }
 
-  async getSchedule(): Promise<ScheduleDto> {
-    const { data } = await this.http.get<ScheduleDto>('');
+  async getSchedule(): Promise<Serialized<ScheduleDto>> {
+    const { data } = await this.http.get<Serialized<ScheduleDto>>('', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+      },
+    });
     return data;
   }
 
-  async putSchedule(schedule: ScheduleDto): Promise<ScheduleDto> {
-    const { data } = await this.http.put<ScheduleDto>('', schedule);
+  async saveSchedule(
+    schedule: Serialized<ScheduleDto>,
+  ): Promise<Serialized<ScheduleDto>> {
+    const { data } = await this.http.put<Serialized<ScheduleDto>>(
+      '',
+      schedule,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+        },
+      },
+    );
     return data;
   }
 
   async getAvailableSlots(): Promise<ScheduleSlotAvailableDto[]> {
-    const { data } = await this.http.get<{ items: ScheduleSlotAvailableDto[] }>(
+    const { data } = await this.http.get<Serialized<ScheduleAvailableDto>>(
       '/available',
     );
     return data.items.map(({ dateFrom, dateTo }) => ({
@@ -29,15 +46,6 @@ export class Schedule {
     }));
   }
 }
-
-export type ScheduleDto = Record<
-  1 | 2 | 3 | 4 | 5 | 6 | 7,
-  {
-    timeFrom: string;
-    timeTo: string;
-    numberOfPersons: number;
-  }
->;
 
 export type ScheduleSlotAvailableDto = {
   dateFrom: moment.Moment;

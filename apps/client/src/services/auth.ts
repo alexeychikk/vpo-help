@@ -1,5 +1,13 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
+import type {
+  LoginAsUserDto,
+  LoginAsUserResponseDto,
+  LoginAsVpoResponseDto,
+  UserModel,
+  VpoUserModel,
+} from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import { ACCESS_TOKEN } from '../constants';
 
 export class Auth {
@@ -9,16 +17,32 @@ export class Auth {
     this.http = axios.create({ baseURL: `${baseUrl}/auth` });
   }
 
-  async loginVpo(vpoReferenceNumber: string): Promise<VpoUserModel> {
-    const { data } = await this.http.post<LoginAsVpoResponseDto>('/login/vpo', {
-      vpoReferenceNumber,
-    });
+  getToken() {
+    try {
+      return localStorage.getItem(ACCESS_TOKEN);
+    } catch (error) {
+      alert('Local storage is not available!');
+      return '';
+    }
+  }
+
+  async loginVpo(
+    vpoReferenceNumber: string,
+  ): Promise<Serialized<VpoUserModel<string>>> {
+    const { data } = await this.http.post<Serialized<LoginAsVpoResponseDto>>(
+      '/login/vpo',
+      {
+        vpoReferenceNumber,
+      },
+    );
 
     return data.user;
   }
 
-  async loginAdmin(dto: LoginAsAdminDto): Promise<VpoAdminModel> {
-    const { data } = await this.http.post<LoginAsAdminResponseDto>(
+  async loginAdmin(
+    dto: Serialized<LoginAsUserDto>,
+  ): Promise<Serialized<UserModel>> {
+    const { data } = await this.http.post<Serialized<LoginAsUserResponseDto>>(
       '/login',
       dto,
     );
@@ -26,35 +50,3 @@ export class Auth {
     return data.user;
   }
 }
-
-export type LoginAsAdminDto = {
-  email: string;
-  password: string;
-};
-
-export type LoginAsAdminResponseDto = {
-  user: VpoAdminModel;
-  accessToken: { access_token: string };
-};
-
-export type VpoAdminModel = {
-  id: string;
-  role: 'ADMIN';
-  email: string;
-};
-
-export type LoginAsVpoDto = {
-  vpoReferenceNumber: string;
-};
-
-export type LoginAsVpoResponseDto = {
-  user: VpoUserModel;
-  accessToken: { access_token: string };
-};
-
-export type VpoUserModel = {
-  id: string;
-  role: 'VPO';
-  vpoReferenceNumber: string;
-  scheduleDate: string;
-};

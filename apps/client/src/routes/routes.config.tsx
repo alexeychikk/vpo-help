@@ -1,38 +1,45 @@
-import React from 'react';
 import { Admin } from './Admin';
+import { Schedule } from './Admin/Schedule';
+import { Settings } from './Admin/Settings';
+import { VpoTable } from './Admin/VpoTable';
 import { Booking } from './Booking';
 import { Login } from './Login';
 import { Main } from './Main';
 
-export enum Routes {
-  ADMIN = 'ADMIN',
-  LOGIN = 'LOGIN',
-  MAIN = 'MAIN',
-  BOOKING = 'BOOKING',
-}
-
-export const ROUTES: Record<Routes, Route> = {
-  [Routes.MAIN]: {
+export const ROUTES = {
+  MAIN: {
     path: '/',
     render: () => <Main />,
   },
-  [Routes.BOOKING]: {
+  BOOKING: {
     path: '/booking',
     render: () => <Booking />,
   },
-  [Routes.LOGIN]: {
+  LOGIN: {
     path: '/login',
     render: () => <Login />,
   },
-  [Routes.ADMIN]: {
+  ADMIN: {
     path: '/admin',
     private: true,
     render: () => <Admin />,
+    subroutes: {
+      VPO_INDEX: {
+        path: '',
+        render: () => <VpoTable />,
+      },
+      VPO: {
+        path: 'vpo',
+        render: () => <VpoTable />,
+      },
+      SCHEDULE: {
+        path: 'schedule',
+        render: () => <Schedule />,
+      },
+      SETTINGS: {
+        path: 'settings',
+        render: () => <Settings />,
+      },
+    },
   },
-};
-
-export type Route = {
-  path: string;
-  private?: boolean;
-  render: () => React.ReactElement;
-};
+} as const;

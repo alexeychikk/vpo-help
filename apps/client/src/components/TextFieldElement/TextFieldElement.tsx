@@ -28,7 +28,6 @@ export const TextFieldElement = <T extends Record<string, unknown>>(
       ...rules,
     },
   });
-  console.log(error);
 
   return (
     <TextField

@@ -20,10 +20,11 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Navigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
+import type { VpoModel, VpoUserModel } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo, ButtonWithLoading } from '../../components';
 import { BOOKING } from '../../constants';
 import { scheduleService, vpoService } from '../../services';
-import type { VpoUserModel } from '../../services/auth';
 import type { ScheduleSlotAvailableDto } from '../../services/schedule';
 import { getCurrentUTCDate } from '../../utils';
 import { ROUTES } from '../routes.config';
@@ -38,8 +39,8 @@ export const Booking = () => {
   const [submitting, setSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [vpoUser, setVpoUser] = useState<VpoUserModel | null>(null);
-  const form = useForm<BookingModel>({
+  const [vpoUser, setVpoUser] = useState<Serialized<VpoUserModel> | null>(null);
+  const form = useForm<Serialized<VpoModel>>({
     mode: 'onBlur',
     defaultValues: {
       vpoIssueDate: getCurrentUTCDate(),
@@ -76,7 +77,9 @@ export const Booking = () => {
     [availableSlotsResponse.value],
   );
 
-  const nextStepOrSubmit: SubmitHandler<BookingModel> = async (formValues) => {
+  const nextStepOrSubmit: SubmitHandler<Serialized<VpoModel>> = async (
+    formValues,
+  ) => {
     if (activeStep === steps.length - 1) {
       try {
         setSubmitting(true);
@@ -205,20 +208,4 @@ export const Booking = () => {
       </Dialog>
     </Container>
   );
-};
-
-export type BookingModel = {
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  vpoIssueDate: string;
-  vpoReferenceNumber: string;
-  addressOfRegistration: string;
-  addressOfResidence: string;
-  numberOfRelatives: number;
-  numberOfRelativesBelow16: number;
-  numberOfRelativesAbove65: number;
-  scheduleDate: string;
 };

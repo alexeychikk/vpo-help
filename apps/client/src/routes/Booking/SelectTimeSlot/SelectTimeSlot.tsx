@@ -1,21 +1,25 @@
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import type moment from 'moment';
 import { useFormContext, useWatch } from 'react-hook-form';
+import type { VpoModel } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import type { ScheduleSlotAvailableDto } from '../../../services/schedule';
-import type { BookingModel } from '../Booking';
 
 export type SelectTimeSlotProps = {
   slots: Record<string, ScheduleSlotAvailableDto[]>;
 };
 
 export const SelectTimeSlot: React.FC<SelectTimeSlotProps> = ({ slots }) => {
-  const { register, setValue, getValues } = useFormContext<BookingModel>();
+  const { register, setValue, getValues } =
+    useFormContext<Serialized<VpoModel>>();
   const scheduleDate = useWatch({
     name: 'scheduleDate',
     defaultValue: getValues().scheduleDate,
   });
 
   const handleSlotSelect = (dateFrom: moment.Moment) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     setValue('scheduleDate', dateFrom.toISOString());
   };
 

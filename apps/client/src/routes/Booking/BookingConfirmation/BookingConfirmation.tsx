@@ -1,12 +1,13 @@
 import { Box, Stack } from '@mui/material';
 import moment from 'moment';
 import { useFormContext } from 'react-hook-form';
+import type { VpoModel } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import { BookingInfoItem } from '../../../components';
 import { BOOKING } from '../../../constants';
-import type { BookingModel } from '../Booking';
 
 export const BookingConfirmation: React.FC = () => {
-  const { getValues } = useFormContext<BookingModel>();
+  const { getValues } = useFormContext<Serialized<VpoModel>>();
   const formValues = getValues();
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>

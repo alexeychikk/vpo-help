@@ -1,5 +1,7 @@
 import { Box, Stack } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
+import type { VpoModel } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import {
   DesktopDatePickerElement,
   PhoneNumberField,
@@ -7,10 +9,9 @@ import {
 } from '../../../components';
 import { BOOKING, ERROR_MESSAGES } from '../../../constants';
 import { formatISOOnlyDate } from '../../../utils';
-import type { BookingModel } from '../Booking';
 
 export const PersonalDataForm: React.FC = () => {
-  const { control } = useFormContext<BookingModel>();
+  const { control } = useFormContext<Serialized<VpoModel>>();
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
       <Stack

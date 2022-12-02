@@ -8,6 +8,8 @@ export const ERROR_MESSAGES = {
   min: 'Недостатня кількість',
   max: 'Перевищена кількість',
   pattern: 'Невірний формат',
+  unknown:
+    'Виникла невідома помилка. Зверніться за допомогою до адміністратора веб-ресурсу.',
 };
 
 export const LOGIN = {
@@ -30,6 +32,26 @@ export const MAIN = {
   },
   startBooking: 'Забронювати місце в черзі',
   backToMain: 'Повернутися на головну',
+};
+
+export const ADMIN = {
+  header: {
+    pages: {
+      VPO: 'Список ВПО',
+      SCHEDULE: 'Розклад',
+      SETTINGS: 'Налаштування',
+    } as const,
+  },
+  schedule: {
+    title: 'Розклад',
+  },
+  saveButton: 'Зберегти',
+  errorModal: {
+    title: 'Помилка',
+    content:
+      'Виникла помилка при збереженні данних. Перезавантажте сторінку та спробуйте знову. Якщо помилка повториться, зверніться за допомогою до адміністратора веб-ресурсу.',
+    closeButton: 'Закрити',
+  },
 };
 
 export const BOOKING = {
