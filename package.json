@@ -26,7 +26,6 @@
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.15",
     "@mui/material": "^5.10.15",
-    "@mui/styles": "^5.10.16",
     "@mui/x-date-pickers": "^5.0.9",
     "@nestjs/axios": "^0.0.7",
     "@nestjs/common": "^8.0.0",
