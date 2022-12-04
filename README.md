@@ -4,9 +4,46 @@ This project was generated using [Nx](https://nx.dev).\
 Server is a monolith built using [NestJS](https://docs.nestjs.com/) framework.\
 Client is a [React](https://reactjs.org/) application.
 
+---
+
+## Deploy
+
+### Using Docker
+
+1. Copy [./apps/api/.env.dev](apps/api/.env.dev) and rename to `.env`.
+   Change environment variables to production ones.
+2. Run the following command:\
+   `docker compose -f compose.prod.yaml up --build`
+
+### Manually
+
+1. Install dependencies\
+   1.1 [Git](https://git-scm.com/)\
+   1.2 [Node.js 16+](https://nodejs.org/en/)\
+   1.3 [MongoDB](https://www.mongodb.com/try/download/community)
+2. Install npm dependencies _(in project's folder)_:\
+   `npm i`
+3. Build _(in project's folder)_:\
+   `npm run build`
+4. Create `.env` file in project's **root** (see [./apps/api/.env.dev](apps/api/.env.dev)) _OR_ provide environment variables to the run command (see the next step). Add `DB_URL=mongodb://localhost:27017/vpo-help` env, change to your db url.
+5. Run API server _(in project's folder)_:\
+   `npm start`
+
+---
+
+## Test
+
+Run automated tests:
+
+```sh
+npm run test
+```
+
+---
+
 ## API
 
-This project has monolithic architecture and provides the following REST-full API:
+This project has monolithic architecture and provides the following REST-full API _(some endpoints might not be reflected in this doc)_:
 
 ### POST /auth/login
 
@@ -57,7 +94,7 @@ _Auth, Permissions:_ **["SCHEDULE.WRITE"]**
 ```ts
 // PAYLOAD
 ScheduleDto {
-  1: [
+  0: [
     {
       timeFrom: TimeString,
       timeTo: TimeString,
@@ -65,7 +102,7 @@ ScheduleDto {
     }
   ],
   ...,
-  7: [{...}],
+  6: [{...}],
 }
 // RESPONSE
 { ...ScheduleDto }

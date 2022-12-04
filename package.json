@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve",
+    "start": "node ./dist/apps/api/main",
     "build": "nx run-many --target=build --configuration=production --all=true",
     "test": "nx affected --target=test",
     "ts": "nx run-many --target=ts --all=true",
@@ -43,6 +43,7 @@
     "core-js": "^3.21.0",
     "csv": "^6.2.5",
     "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "fastify": "3.28.0",
