@@ -43,7 +43,7 @@ test('allows setting csv export columns via query', async () => {
     req
       .get(`/vpo/export`)
       .query({
-        columns: `vpoReferenceNumber,vpoIssueDate:Issue Date,fullName:Name`,
+        columns: `vpoReferenceNumber,vpoIssueDate:Issue Date,fullName:`,
       })
       .buffer()
       .expect(200),
@@ -51,7 +51,7 @@ test('allows setting csv export columns via query', async () => {
 
   const parsedList = parse(text);
   const [headerRow] = parsedList;
-  expect(headerRow).toEqual(['vpoReferenceNumber', 'Issue Date', 'Name']);
+  expect(headerRow).toEqual(['Номер довідки ВПО', 'Issue Date', 'fullName']);
 
   const dataColumns = parsedList.slice(1) as string[][];
   dataColumns.forEach((row, i) => {

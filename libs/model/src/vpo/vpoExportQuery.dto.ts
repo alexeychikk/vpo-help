@@ -28,6 +28,8 @@ export class VpoExportQueryDto {
         const [key, header] = col.split(':');
         const dto = new VpoExportColumnDto({ key });
         if (header) dto.header = header;
+        else if (header == undefined)
+          dto.header = DEFAULT_CSV_COLUMNS.find((c) => c.key === key)?.header;
         return dto;
       });
     },
