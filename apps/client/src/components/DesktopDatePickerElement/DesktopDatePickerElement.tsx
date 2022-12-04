@@ -25,13 +25,14 @@ export type DesktopDatePickerElementProps<T extends Record<string, unknown>> =
     control: Control<T>;
     rules?: ControllerProps['rules'];
     required?: boolean;
+    sx?: TextFieldProps['sx'];
     transform?: (date: moment.Moment | null) => unknown;
   };
 
 export const DesktopDatePickerElement = <T extends Record<string, unknown>>(
   props: DesktopDatePickerElementProps<T>,
 ): React.ReactElement => {
-  const { rules, name, control, transform, required, ...rest } = props;
+  const { rules, name, control, transform, required, sx, ...rest } = props;
   const {
     field,
     fieldState: { error },
@@ -49,7 +50,7 @@ export const DesktopDatePickerElement = <T extends Record<string, unknown>>(
     <DesktopDatePicker
       {...rest}
       inputFormat="DD.MM.YY"
-      value={field.value}
+      value={field.value || null}
       onChange={(date) => {
         field.onChange(
           typeof transform === 'function' ? transform(date) : date,
@@ -65,6 +66,7 @@ export const DesktopDatePickerElement = <T extends Record<string, unknown>>(
           error={!!error}
           required={!!rules?.required || required}
           helperText={error ? error.message : params.helperText}
+          sx={sx}
           onBlur={(event) => {
             if (
               (!event.target.value ||

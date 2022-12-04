@@ -16,9 +16,7 @@ export const Admin = () => {
       }}
     >
       <Header />
-      <Container maxWidth="lg">
-        <Outlet />
-      </Container>
+      <Outlet />
     </Container>
   );
 };

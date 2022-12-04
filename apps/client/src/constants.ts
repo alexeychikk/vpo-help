@@ -12,6 +12,13 @@ export const ERROR_MESSAGES = {
     'Виникла невідома помилка. Зверніться за допомогою до адміністратора веб-ресурсу.',
 };
 
+export const FOOTER = {
+  addresses: 'Адреси центрів допомоги',
+  addressesStub: 'Тут будуть адреси центрів допомоги ВПО',
+  schedule: 'Графік роботи',
+  scheduleStub: 'Тут буде графік роботи центрів допомоги ВПО',
+};
+
 export const LOGIN = {
   title: 'Вхід',
   button: 'Увійти',
@@ -42,8 +49,50 @@ export const ADMIN = {
       SETTINGS: 'Налаштування',
     } as const,
   },
+  vpo: {
+    title: 'Список ВПО',
+    table: {
+      vpoReferenceNumber: 'Номер довідки',
+      vpoIssueDate: 'Дата видачі довідки',
+      scheduleDate: 'Заброньований час',
+      receivedHelpDate: 'Отримано допомогу',
+      firstName: 'Ім‘я',
+      lastName: 'Прізвище',
+      middleName: 'По-батькові',
+      phoneNumber: 'Телефон',
+      dateOfBirth: 'Дата народження',
+      addressOfRegistration: 'Місто згідно паспорту',
+      addressOfResidence: 'Місто фактичного проживання',
+      numberOfRelatives: 'Родичі',
+      numberOfRelativesBelow16: 'Діти',
+      numberOfRelativesAbove65: 'Літні люди',
+      createAt: 'Дата реєстрації',
+    },
+    filters: {
+      title: 'Фільтри',
+      search: 'Повнотекстовый пошук',
+      searchError: 'Для пошуку введіть не меньше 3 символів',
+      minCreatedAt: 'Мінімальна дата реєстрації',
+      maxCreatedAt: 'Максимальна дата реєстрації',
+      minReceivedHelp: 'Мінімальна дата отримання допомоги',
+      maxReceivedHelp: 'Максимальна дата отримання допомоги',
+      reset: 'Скинути фільтри',
+      apply: 'Застосувати фільтри',
+    },
+  },
   schedule: {
     title: 'Розклад',
+  },
+  settings: {
+    title: 'Налаштування',
+    form: {
+      daysToNextVpoRegistration: 'Кількість днів до повторної реєстрації ВПО',
+      endOfWarDate: 'Дата, до якої реєстрація доступна для ВПО',
+      scheduleDaysAvailable:
+        'Кількість днів, яка доступна на вибір для ВПО при реєстрації',
+      addresses: FOOTER.addresses,
+      schedule: FOOTER.schedule,
+    },
   },
   saveButton: 'Зберегти',
   errorModal: {
@@ -75,7 +124,9 @@ export const BOOKING = {
     phoneNumber: 'Номер телефону',
     dateOfBirth: 'Дата народження',
     addressOfRegistration: 'Місто реєстрації (згідно паспорту)',
+    addressOfResidenceValue: 'Київ',
     addressOfResidence: 'Місто фактичного проживання (згідно Довідці ВПО)',
+    addressOfResidenceHelper: 'Бронювання доступне тільки для Киева',
     numberOfRelatives: 'Скільки членів вашої родини переїхали з вами?',
     numberOfRelativesBelow16: 'Скільки з них дітей до 16 років?',
     numberOfRelativesAbove65: 'Скільки з них дорослих, старшіх за 65 років?',
@@ -109,9 +160,4 @@ export const SCHEDULER = {
     endDate: 'Кінець прийому',
     maxSlotCapacity: 'Максимальна кількість реєстрацій',
   },
-};
-
-export const FOOTER = {
-  addresses: 'Адреси центрів допомоги',
-  schedule: 'Графік роботи',
 };

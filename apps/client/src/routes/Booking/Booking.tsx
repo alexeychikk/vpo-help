@@ -24,9 +24,8 @@ import type { VpoModel, VpoUserModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo, ButtonWithLoading } from '../../components';
 import { BOOKING } from '../../constants';
-import { scheduleService, vpoService } from '../../services';
+import { htmlService, scheduleService, vpoService } from '../../services';
 import type { ScheduleSlotAvailableDto } from '../../services/schedule';
-import { getCurrentUTCDate } from '../../utils';
 import { ROUTES } from '../routes.config';
 import { BookingConfirmation } from './BookingConfirmation';
 import { PersonalDataForm } from './PersonalDataForm';
@@ -43,8 +42,7 @@ export const Booking = () => {
   const form = useForm<Serialized<VpoModel>>({
     mode: 'onBlur',
     defaultValues: {
-      vpoIssueDate: getCurrentUTCDate(),
-      dateOfBirth: getCurrentUTCDate(),
+      addressOfResidence: BOOKING.form.addressOfResidenceValue,
       numberOfRelatives: 0,
       numberOfRelativesBelow16: 0,
       numberOfRelativesAbove65: 0,
@@ -60,6 +58,11 @@ export const Booking = () => {
       return acc;
     }, {} as Record<string, ScheduleSlotAvailableDto[]>);
   }, []);
+
+  const infoResponse = useAsync(async () => {
+    const info = await htmlService.getPage('info');
+    return info.content;
+  });
 
   const getStepContent = useCallback(
     (step: number) => {
@@ -83,7 +86,15 @@ export const Booking = () => {
     if (activeStep === steps.length - 1) {
       try {
         setSubmitting(true);
-        const data = await vpoService.register(formValues);
+        const data = await vpoService.register({
+          ...formValues,
+          numberOfRelatives:
+            parseInt(formValues.numberOfRelatives.toString()) || 0,
+          numberOfRelativesBelow16:
+            parseInt(formValues.numberOfRelativesBelow16.toString()) || 0,
+          numberOfRelativesAbove65:
+            parseInt(formValues.numberOfRelativesBelow16.toString()) || 0,
+        });
         setVpoUser(data);
         setActiveStep(activeStep + 1);
       } catch (error) {
@@ -148,9 +159,9 @@ export const Booking = () => {
               <BookingInfo
                 vpoReferenceNumber={vpoUser.vpoReferenceNumber}
                 bookingDate={vpoUser.scheduleDate}
-                addresses={''}
+                addresses={infoResponse.value?.['addresses']}
               />
-            ) : availableSlotsResponse.loading ? (
+            ) : availableSlotsResponse.loading || infoResponse.loading ? (
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <CircularProgress size={50} />
               </Box>

@@ -2,11 +2,19 @@ import {
   ArrowForwardIos as ArrowForwardIosIcon,
   Search as SearchIcon,
 } from '@mui/icons-material';
-import { Box, Button, Container, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { AxiosError } from 'axios';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
+import { useAsync } from 'react-use';
 import type { VpoUserModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import {
@@ -15,7 +23,7 @@ import {
   TextFieldElement,
 } from '../../components';
 import { MAIN } from '../../constants';
-import { authService } from '../../services';
+import { authService, htmlService } from '../../services';
 import { ROUTES } from '../routes.config';
 import { Footer } from './Footer';
 
@@ -24,6 +32,11 @@ export const Main = () => {
   const form = useForm<{ referenceNumber: string }>();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<Serialized<VpoUserModel> | null>(null);
+
+  const infoResponse = useAsync(async () => {
+    const info = await htmlService.getPage('info');
+    return info.content;
+  });
 
   const searchVpo: SubmitHandler<{ referenceNumber: string }> = useCallback(
     async ({ referenceNumber }) => {
@@ -61,103 +74,123 @@ export const Main = () => {
         p: { xs: 0 },
       }}
     >
-      <Container
-        maxWidth="xl"
-        sx={{ p: 4, display: 'flex', flexGrow: 1, justifyContent: 'center' }}
-      >
-        {user ? (
-          <Box
+      {infoResponse.loading ? (
+        <Box
+          sx={{
+            display: 'flex',
+            flexGrow: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <CircularProgress size={50} />
+        </Box>
+      ) : (
+        <>
+          <Container
+            maxWidth="xl"
             sx={{
+              p: 4,
               display: 'flex',
-              flexDirection: 'column',
+              flexGrow: 1,
               justifyContent: 'center',
             }}
           >
-            <BookingInfo
-              vpoReferenceNumber={user.vpoReferenceNumber}
-              bookingDate={user.scheduleDate}
-              addresses={''}
-            />
-            <Button variant="contained" onClick={() => setUser(null)}>
-              {MAIN.backToMain}
-            </Button>
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Box>
-              <Typography variant="h5" marginBottom={2}>
-                {MAIN.findBooking.title}
-              </Typography>
-              <Box
-                component="form"
-                noValidate
-                onSubmit={form.handleSubmit(searchVpo)}
-                sx={{ display: 'flex' }}
-              >
-                <TextFieldElement
-                  fullWidth
-                  required
-                  id="referenceNumber"
-                  name="referenceNumber"
-                  label={MAIN.findBooking.label}
-                  sx={{ mr: 2 }}
-                  control={form.control}
-                />
-                <ButtonWithLoading
-                  type="submit"
-                  variant="contained"
-                  startIcon={<SearchIcon />}
-                  sx={{ px: 5, mt: '10px' }}
-                  loading={loading}
-                >
-                  {MAIN.findBooking.button}
-                </ButtonWithLoading>
-              </Box>
+            {user ? (
               <Box
                 sx={{
-                  borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                  color: theme.palette.grey[400],
-                  textAlign: 'center',
-                  height: '1rem',
-                  mt: 3,
-                  mb: 3,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
                 }}
               >
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    display: 'inline',
-                    backgroundColor: theme.palette.background.default,
-                    pr: 3,
-                    pl: 3,
-                  }}
-                >
-                  {MAIN.separator}
-                </Typography>
+                <BookingInfo
+                  vpoReferenceNumber={user.vpoReferenceNumber}
+                  bookingDate={user.scheduleDate}
+                  addresses={infoResponse.value?.['addresses']}
+                />
+                <Button variant="contained" onClick={() => setUser(null)}>
+                  {MAIN.backToMain}
+                </Button>
               </Box>
-            </Box>
-            <Box>
-              <Button
-                variant="contained"
-                size="large"
-                endIcon={<ArrowForwardIosIcon />}
-                sx={{ mt: 2, pl: 5, pr: 5 }}
-                href={ROUTES.BOOKING.path}
+            ) : (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
               >
-                {MAIN.startBooking}
-              </Button>
-            </Box>
-          </Box>
-        )}
-      </Container>
-      <Footer />
+                <Box>
+                  <Typography variant="h5" marginBottom={2}>
+                    {MAIN.findBooking.title}
+                  </Typography>
+                  <Box
+                    component="form"
+                    noValidate
+                    onSubmit={form.handleSubmit(searchVpo)}
+                    sx={{ display: 'flex' }}
+                  >
+                    <TextFieldElement
+                      fullWidth
+                      required
+                      id="referenceNumber"
+                      name="referenceNumber"
+                      label={MAIN.findBooking.label}
+                      sx={{ mr: 2 }}
+                      control={form.control}
+                    />
+                    <ButtonWithLoading
+                      type="submit"
+                      variant="contained"
+                      startIcon={<SearchIcon />}
+                      sx={{ px: 5, mt: '10px' }}
+                      loading={loading}
+                    >
+                      {MAIN.findBooking.button}
+                    </ButtonWithLoading>
+                  </Box>
+                  <Box
+                    sx={{
+                      borderBottom: `1px solid ${theme.palette.grey[300]}`,
+                      color: theme.palette.grey[400],
+                      textAlign: 'center',
+                      height: '1rem',
+                      mt: 3,
+                      mb: 3,
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        display: 'inline',
+                        backgroundColor: theme.palette.background.default,
+                        pr: 3,
+                        pl: 3,
+                      }}
+                    >
+                      {MAIN.separator}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    endIcon={<ArrowForwardIosIcon />}
+                    sx={{ mt: 2, pl: 5, pr: 5 }}
+                    href={ROUTES.BOOKING.path}
+                  >
+                    {MAIN.startBooking}
+                  </Button>
+                </Box>
+              </Box>
+            )}
+          </Container>
+          <Footer />
+        </>
+      )}
     </Container>
   );
 };

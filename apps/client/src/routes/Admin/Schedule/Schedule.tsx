@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -15,13 +16,12 @@ import {
 import { AxiosError } from 'axios';
 import moment from 'moment';
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import type { Optional } from 'utility-types';
 import type { ScheduleDto } from '@vpo-help/model';
 import { Scheduler } from '../../../components';
 import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
-// import type { ScheduleDto } from '../../../services';
 import { scheduleService } from '../../../services';
 import { ROUTES } from '../../routes.config';
 
@@ -116,70 +116,78 @@ export const Schedule: React.FC = () => {
   }, []);
 
   if (scheduleResponse.error) {
+    if (
+      scheduleResponse.error instanceof AxiosError &&
+      scheduleResponse.error.response?.status === 401
+    ) {
+      return <Navigate to={ROUTES.LOGIN.path} />;
+    }
     console.error(scheduleResponse.error.stack || scheduleResponse.error);
     return <Typography variant="h3">{ERROR_MESSAGES.unknown}</Typography>;
   }
 
   return (
-    <Paper sx={{ mb: 3, p: 2 }}>
-      {scheduleResponse.loading || loading ? (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: 'calc(100vh - 30px)',
-          }}
-        >
-          <CircularProgress size={50} />
-        </Box>
-      ) : (
-        <>
-          <Typography variant="h3" sx={{ mb: 3, textAlign: 'center' }}>
-            {ADMIN.schedule.title}
-          </Typography>
-          <Scheduler
-            schedule={scheduleCache || scheduleResponse.value!}
-            startDate={startDate}
-            validate={validateNewSlot}
-            generateNewId={generateNewId}
-            onChange={cacheSchedule}
-          />
-          <Fab
-            color="primary"
-            title={ADMIN.saveButton}
-            disabled={!isScheduleChanged}
+    <Container maxWidth="lg" sx={{ mb: 3 }}>
+      <Paper sx={{ mb: 3, p: 2 }}>
+        {scheduleResponse.loading || loading ? (
+          <Box
             sx={{
-              position: 'fixed',
-              top: 'calc(100vh - 72px)',
-              left: 'calc(100vw - 72px)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: 'calc(100vh - 30px)',
             }}
-            onClick={saveSchedule}
           >
-            <SaveIcon />
-          </Fab>
-        </>
-      )}
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <DialogTitle id="alert-dialog-title">
-          {ADMIN.errorModal.title}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {ADMIN.errorModal.content}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setIsModalOpen(false)}
-            variant="contained"
-            autoFocus
-          >
-            {ADMIN.errorModal.closeButton}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Paper>
+            <CircularProgress size={50} />
+          </Box>
+        ) : (
+          <>
+            <Typography variant="h3" sx={{ mb: 3, textAlign: 'center' }}>
+              {ADMIN.schedule.title}
+            </Typography>
+            <Scheduler
+              schedule={scheduleCache || scheduleResponse.value!}
+              startDate={startDate}
+              validate={validateNewSlot}
+              generateNewId={generateNewId}
+              onChange={cacheSchedule}
+            />
+            <Fab
+              color="primary"
+              title={ADMIN.saveButton}
+              disabled={!isScheduleChanged}
+              sx={{
+                position: 'fixed',
+                top: 'calc(100vh - 72px)',
+                left: 'calc(100vw - 72px)',
+              }}
+              onClick={saveSchedule}
+            >
+              <SaveIcon />
+            </Fab>
+          </>
+        )}
+        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <DialogTitle id="alert-dialog-title">
+            {ADMIN.errorModal.title}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {ADMIN.errorModal.content}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setIsModalOpen(false)}
+              variant="contained"
+              autoFocus
+            >
+              {ADMIN.errorModal.closeButton}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Paper>
+    </Container>
   );
 };
 

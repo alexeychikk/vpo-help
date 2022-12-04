@@ -1,6 +1,7 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
-import type { Optional } from 'utility-types';
+import type { SettingsDto, UpdateSettingsDto } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import { ACCESS_TOKEN } from '../constants';
 
 export class Settings {
@@ -10,8 +11,8 @@ export class Settings {
     this.http = axios.create({ baseURL: `${baseUrl}/settings` });
   }
 
-  async getSettings(): Promise<SettingsDto> {
-    const { data } = await this.http.get<SettingsDto>('', {
+  async getSettings(): Promise<Serialized<SettingsDto>> {
+    const { data } = await this.http.get<Serialized<SettingsDto>>('', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
       },
@@ -19,8 +20,10 @@ export class Settings {
     return data;
   }
 
-  async saveSettings(dto: Optional<SettingsDto>): Promise<SettingsDto> {
-    const { data } = await this.http.put<SettingsDto>('', dto, {
+  async saveSettings(
+    dto: Serialized<UpdateSettingsDto>,
+  ): Promise<Serialized<SettingsDto>> {
+    const { data } = await this.http.put<Serialized<SettingsDto>>('', dto, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
       },
@@ -28,9 +31,3 @@ export class Settings {
     return data;
   }
 }
-
-export type SettingsDto = {
-  daysToNextVpoRegistration: number;
-  endOfWarDate: string;
-  scheduleDaysAvailable: number;
-};

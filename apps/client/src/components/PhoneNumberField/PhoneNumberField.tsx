@@ -1,5 +1,5 @@
 import type { TextFieldProps } from '@mui/material';
-import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { isPhoneNumber } from 'class-validator';
 import React from 'react';
 import type { Control, ControllerProps, Path } from 'react-hook-form';
 import { ERROR_MESSAGES } from '../../constants';
@@ -27,7 +27,7 @@ export const PhoneNumberField = <T extends Record<string, unknown>>(
           ...props.rules?.validate,
           pattern: (value) =>
             value
-              ? !parsePhoneNumberFromString(value)?.isValid()
+              ? !isPhoneNumber(value)
                 ? ERROR_MESSAGES.pattern
                 : undefined
               : undefined,

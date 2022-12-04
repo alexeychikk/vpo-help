@@ -24,18 +24,13 @@ export class Html {
   }
 
   async createPage(
-    name: string,
-    dto: Serialized<HtmlPageModel>,
+    dto: Serialized<Pick<HtmlPageModel, 'name' | 'content'>>,
   ): Promise<Serialized<HtmlPageModel>> {
-    const { data } = await this.http.post<Serialized<HtmlPageModel>>(
-      `/${name}`,
-      dto,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
-        },
+    const { data } = await this.http.post<Serialized<HtmlPageModel>>('', dto, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
       },
-    );
+    });
     return data;
   }
 

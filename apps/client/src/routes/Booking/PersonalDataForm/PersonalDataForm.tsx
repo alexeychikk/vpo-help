@@ -103,8 +103,10 @@ export const PersonalDataForm: React.FC = () => {
         />
         <TextFieldElement
           required
+          disabled
           name="addressOfResidence"
           label={BOOKING.form.addressOfResidence}
+          helperText={BOOKING.form.addressOfResidenceHelper}
           control={control}
           rules={{
             maxLength: { value: 200, message: ERROR_MESSAGES.maxLength },

@@ -20,7 +20,7 @@ export const SelectTimeSlot: React.FC<SelectTimeSlotProps> = ({ slots }) => {
   const handleSlotSelect = (dateFrom: moment.Moment) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    setValue('scheduleDate', dateFrom.toISOString());
+    setValue('scheduleDate', dateFrom.format());
   };
 
   return (
@@ -36,13 +36,13 @@ export const SelectTimeSlot: React.FC<SelectTimeSlotProps> = ({ slots }) => {
                 {slots[weekDay].map(({ dateFrom, dateTo }) => {
                   return (
                     <Chip
-                      key={dateFrom.toISOString()}
+                      key={dateFrom.format()}
                       label={`${dateFrom.format('HH:mm')} - ${dateTo.format(
                         'HH:mm',
                       )}`}
                       color="primary"
                       variant={
-                        scheduleDate === dateFrom.toISOString()
+                        scheduleDate === dateFrom.format()
                           ? 'filled'
                           : 'outlined'
                       }

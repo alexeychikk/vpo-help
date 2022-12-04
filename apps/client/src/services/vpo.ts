@@ -27,7 +27,7 @@ export class Vpo {
   }
 
   async getPaginated(
-    params: Serialized<PaginationSearchSortDto>,
+    params: PaginationSearchSortParams,
   ): Promise<Serialized<PaginatedListDto<VpoModel>>> {
     const { data } = await this.http.get<
       Serialized<PaginatedListDto<VpoModel>>
@@ -40,3 +40,9 @@ export class Vpo {
     return data;
   }
 }
+
+export type PaginationSearchSortParams = {
+  page: number;
+  limit: number;
+  [x: string]: string | number;
+};

@@ -1,10 +1,17 @@
 import { Box, Container, Typography, useTheme } from '@mui/material';
+import { useAsync } from 'react-use';
 import { FOOTER } from '../../../constants';
+import { htmlService } from '../../../services';
 
-export const Footer = () => {
+export const Footer: React.FC = () => {
   const theme = useTheme();
-  const addresses = '<b>Hello</b><br/>World';
-  const schedule = '<b>Hello</b><br/>Schedule';
+
+  const infoResponse = useAsync(async () => {
+    const info = await htmlService.getPage('info');
+    return info.content;
+  });
+
+  if (infoResponse.loading) return null;
 
   return (
     <Container
@@ -35,7 +42,12 @@ export const Footer = () => {
             {FOOTER.addresses}
           </Typography>
           <Typography component="div" variant="body1">
-            <pre dangerouslySetInnerHTML={{ __html: addresses }} />
+            <pre
+              dangerouslySetInnerHTML={{
+                __html:
+                  infoResponse.value?.['addresses'] || FOOTER.addressesStub,
+              }}
+            />
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -43,7 +55,11 @@ export const Footer = () => {
             {FOOTER.schedule}
           </Typography>
           <Typography component="div" variant="body1">
-            <pre dangerouslySetInnerHTML={{ __html: schedule }} />
+            <pre
+              dangerouslySetInnerHTML={{
+                __html: infoResponse.value?.['schedule'] || FOOTER.scheduleStub,
+              }}
+            />
           </Typography>
         </Box>
       </Container>

@@ -6,7 +6,7 @@ import { BookingInfoItem } from './BookingInfoItem';
 export type BookingInfoProps = {
   vpoReferenceNumber: string;
   bookingDate: string;
-  addresses: string;
+  addresses?: string;
 };
 
 export const BookingInfo: React.FC<BookingInfoProps> = ({
@@ -33,7 +33,7 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
             flexDirection: 'column',
           }}
         >
-          <Typography variant="h6" mb={2}>
+          <Typography variant="h6" mb={2} textAlign="center">
             {FOOTER.addresses}
           </Typography>
           <Typography component="div" variant="body1">
