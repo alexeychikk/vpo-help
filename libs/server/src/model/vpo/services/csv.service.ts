@@ -1,7 +1,10 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
 import { stringify } from 'csv';
 import { format } from 'date-fns';
-import type { PaginationSearchSortDto } from '@vpo-help/model';
+import type {
+  PaginationSearchSortDto,
+  VpoExportQueryDto,
+} from '@vpo-help/model';
 import type { VpoEntity } from '../entities';
 import { VpoRepository } from './vpo.repository';
 
@@ -9,7 +12,10 @@ import { VpoRepository } from './vpo.repository';
 export class CsvService {
   constructor(private readonly vpoRepository: VpoRepository) {}
 
-  async exportVpoList(dto: PaginationSearchSortDto<VpoEntity>) {
+  async exportVpoList(
+    dto: PaginationSearchSortDto<VpoEntity>,
+    query: VpoExportQueryDto,
+  ) {
     let cursor = this.vpoRepository
       .createCursor(dto.where)
       .skip((dto.page - 1) * dto.limit)
@@ -17,24 +23,11 @@ export class CsvService {
     if (dto.sort) cursor = cursor.sort(dto.sort);
 
     const file = stringify({
-      header: true,
+      header: query.header,
       cast: {
         date: (value) => format(value, 'dd.MM.yyyy'),
       },
-      columns: [
-        { key: 'vpoReferenceNumber', header: 'Номер довідки ВПО' },
-        { key: 'vpoIssueDate', header: 'Дата видачі довідки' },
-        { key: 'fullName', header: 'ПІБ' },
-        { key: 'dateOfBirth', header: 'Дата народження' },
-        { key: 'phoneNumber', header: 'Номер телефону' },
-        { key: 'addressOfRegistration', header: 'Місто реєстрації' },
-        { key: 'addressOfResidence', header: 'Місто проживання' },
-        { key: 'numberOfRelatives', header: 'Членів родини' },
-        { key: 'numberOfRelativesBelow16', header: 'Членів родини до 16' },
-        { key: 'numberOfRelativesAbove65', header: 'Членів родини за 65' },
-        { key: 'scheduleDate', header: 'Дата бронювання' },
-        { key: 'receivedHelpDate', header: 'Дата обслуговування' },
-      ],
+      columns: query.columns,
     });
 
     cursor

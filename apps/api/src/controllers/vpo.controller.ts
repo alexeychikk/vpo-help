@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import {
   FindByIdDto,
   PaginationSearchSortDto,
   Permission,
+  VpoExportQueryDto,
   VpoModel,
 } from '@vpo-help/model';
 import type { VpoEntity } from '@vpo-help/server';
@@ -63,8 +65,9 @@ export class VpoController {
   @HttpCode(HttpStatus.OK)
   async export(
     @PaginationSearchSort() dto: PaginationSearchSortDto<VpoEntity>,
+    @Query() query: VpoExportQueryDto,
   ) {
-    return this.csvService.exportVpoList(dto);
+    return this.csvService.exportVpoList(dto, query);
   }
 
   @Post('import')
