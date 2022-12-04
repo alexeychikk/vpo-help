@@ -4,8 +4,8 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
-    "build": "nx build",
-    "test": "nx test",
+    "build": "nx run-many --target=build --configuration=production --all=true",
+    "test": "nx affected --target=test",
     "ts": "nx run-many --target=ts --all=true",
     "ts:affected": "nx affected --target=ts",
     "prepare": "run-p prepare:husky",
