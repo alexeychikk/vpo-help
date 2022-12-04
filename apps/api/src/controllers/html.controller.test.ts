@@ -55,6 +55,18 @@ describe('GET /html/:name', () => {
 
     expect(body).toEqual(serialize(page));
   });
+
+  test('returns default info page data', async () => {
+    const { body } = await testApp.requestApi.get(`/html/info`).expect(200);
+
+    expect(body).toMatchObject({
+      name: 'info',
+      content: {
+        addresses: '',
+        schedule: '',
+      },
+    });
+  });
 });
 
 describe('PUT /html/:name', () => {

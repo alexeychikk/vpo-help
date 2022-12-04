@@ -7,52 +7,20 @@ import {
 import { plainToInstance } from 'class-transformer';
 import { sortBy } from 'lodash';
 import type {
-  HtmlPageModel,
+  ScheduleDto,
+  SettingsDto,
   UpdateHtmlPageDto,
   UpdateSettingsDto,
 } from '@vpo-help/model';
 import {
-  ScheduleDto,
-  ScheduleSlotDto,
+  DEFAULT_SCHEDULE,
+  DEFAULT_SETTINGS,
+  HtmlPageModel,
   SettingsCategory,
-  SettingsDto,
 } from '@vpo-help/model';
 import { HtmlPageEntity, SettingsEntity } from '../entities';
 import { HtmlPageRepository } from './htmlPage.repository';
 import { SettingsRepository } from './settings.repository';
-
-const DEFAULT_DAY_SCHEDULE = [
-  new ScheduleSlotDto({
-    timeFrom: '13:00',
-    timeTo: '13:30',
-    numberOfPersons: 40,
-  }),
-  new ScheduleSlotDto({
-    timeFrom: '13:30',
-    timeTo: '14:00',
-    numberOfPersons: 40,
-  }),
-  new ScheduleSlotDto({
-    timeFrom: '14:00',
-    timeTo: '14:30',
-    numberOfPersons: 40,
-  }),
-  new ScheduleSlotDto({
-    timeFrom: '14:30',
-    timeTo: '15:00',
-    numberOfPersons: 40,
-  }),
-  new ScheduleSlotDto({
-    timeFrom: '15:00',
-    timeTo: '15:30',
-    numberOfPersons: 40,
-  }),
-  new ScheduleSlotDto({
-    timeFrom: '15:30',
-    timeTo: '16:00',
-    numberOfPersons: 40,
-  }),
-];
 
 @Injectable()
 export class SettingsService implements OnModuleInit {
@@ -65,22 +33,24 @@ export class SettingsService implements OnModuleInit {
     await this.initSettings(
       new SettingsEntity({
         category: SettingsCategory.Common,
-        properties: new SettingsDto({
-          daysToNextVpoRegistration: 60,
-          endOfWarDate: new Date('2025-01-01'),
-          scheduleDaysAvailable: 2,
-        }),
+        properties: DEFAULT_SETTINGS,
       }),
     );
 
     await this.initSettings(
       new SettingsEntity({
         category: SettingsCategory.Schedule,
-        properties: new ScheduleDto({
-          2: DEFAULT_DAY_SCHEDULE,
-          3: DEFAULT_DAY_SCHEDULE,
-          4: DEFAULT_DAY_SCHEDULE,
-        }),
+        properties: DEFAULT_SCHEDULE,
+      }),
+    );
+
+    await this.initHtmlPage(
+      new HtmlPageModel({
+        name: 'info',
+        content: {
+          addresses: '',
+          schedule: '',
+        },
       }),
     );
   }
@@ -91,6 +61,14 @@ export class SettingsService implements OnModuleInit {
     });
     if (!existingSettings) {
       await this.settingsRepository.save(defaultSettings);
+    }
+  }
+
+  private async initHtmlPage(page: HtmlPageModel) {
+    try {
+      await this.getHtmlPage(page.name);
+    } catch (error) {
+      await this.createHtmlPage(page);
     }
   }
 
