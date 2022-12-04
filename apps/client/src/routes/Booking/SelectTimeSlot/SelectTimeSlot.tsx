@@ -32,7 +32,7 @@ export const SelectTimeSlot: React.FC<SelectTimeSlotProps> = ({ slots }) => {
               <Typography sx={{ textTransform: 'capitalize', my: 1 }}>
                 {weekDay}
               </Typography>
-              <Stack direction="row" spacing={1}>
+              <Stack direction="row" spacing={1} flexWrap="wrap">
                 {slots[weekDay].map(({ dateFrom, dateTo }) => {
                   return (
                     <Chip
@@ -46,6 +46,7 @@ export const SelectTimeSlot: React.FC<SelectTimeSlotProps> = ({ slots }) => {
                           ? 'filled'
                           : 'outlined'
                       }
+                      sx={{ mb: 1 }}
                       onClick={() => handleSlotSelect(dateFrom)}
                     />
                   );

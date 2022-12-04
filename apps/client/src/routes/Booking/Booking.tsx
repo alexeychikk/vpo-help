@@ -134,7 +134,7 @@ export const Booking = () => {
   }
 
   return (
-    <Container component="main" maxWidth="xl">
+    <Container component="main" maxWidth="xl" sx={{ minWidth: '500px' }}>
       <Paper
         variant="outlined"
         sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}

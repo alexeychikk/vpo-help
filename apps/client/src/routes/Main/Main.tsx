@@ -71,6 +71,7 @@ export const Main = () => {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
+        minWidth: '400px',
         p: { xs: 0 },
       }}
     >

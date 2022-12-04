@@ -1,10 +1,12 @@
-import { Admin } from './Admin';
-import { Schedule } from './Admin/Schedule';
-import { Settings } from './Admin/Settings';
-import { VpoTable } from './Admin/VpoTable';
+import React from 'react';
 import { Booking } from './Booking';
-import { Login } from './Login';
 import { Main } from './Main';
+
+const Admin = React.lazy(() => import('./Admin'));
+const Schedule = React.lazy(() => import('./Admin/Schedule'));
+const Settings = React.lazy(() => import('./Admin/Settings'));
+const VpoTable = React.lazy(() => import('./Admin/VpoTable'));
+const Login = React.lazy(() => import('./Login'));
 
 export const ROUTES = {
   MAIN: {
