@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
+import { sortBy } from 'lodash';
 import type {
   HtmlPageModel,
   UpdateHtmlPageDto,
@@ -119,6 +120,9 @@ export class SettingsService implements OnModuleInit {
   }
 
   async updateSchedule(dto: Partial<ScheduleDto>): Promise<ScheduleDto> {
+    Object.entries(dto).forEach(
+      ([day, slots]) => (dto[+day as Day] = sortBy(slots, 'timeFrom')),
+    );
     return this.updateSettings(SettingsCategory.Schedule, dto);
   }
 
