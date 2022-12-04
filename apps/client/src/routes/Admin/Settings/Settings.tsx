@@ -23,7 +23,7 @@ import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import type { SettingsDto } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
@@ -31,7 +31,7 @@ import {
   DesktopDatePickerElement,
   TextFieldElement,
 } from '../../../components';
-import { ADMIN, ERROR_MESSAGES } from '../../../constants';
+import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { htmlService, settingsService } from '../../../services';
 import { formatISOOnlyDate } from '../../../utils';
 import { ROUTES } from '../../routes.config';
@@ -41,6 +41,7 @@ const toolbar = {
 };
 
 export const Settings: React.FC = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const form = useForm<Serialized<SettingsDto>>();
@@ -127,6 +128,12 @@ export const Settings: React.FC = () => {
       }
       setLoading(false);
     } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          localStorage.removeItem(ACCESS_TOKEN);
+          return navigate(ROUTES.LOGIN.path, { replace: true });
+        }
+      }
       setLoading(false);
       setIsModalOpen(false);
     }

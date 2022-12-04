@@ -23,18 +23,24 @@ import {
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AxiosError } from 'axios';
 import moment from 'moment';
-import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import type { SortDirection } from '@vpo-help/model';
-import { ADMIN, ERROR_MESSAGES } from '../../../constants';
+import { ButtonWithLoading } from '../../../components';
+import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { vpoService } from '../../../services';
 import { formatISOOnlyDate } from '../../../utils';
 import { ROUTES } from '../../routes.config';
 import { HeadTableCell } from './HeadTableCell';
 
 export const VpoTable: React.FC = () => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [exportLimit, setExportLimit] = useState(1000);
+  const [exportLoading, setExportLoading] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
   const [sortBy, setSortBy] = useState<string>();
@@ -159,6 +165,63 @@ export const VpoTable: React.FC = () => {
     }
   };
 
+  const handleExport = async () => {
+    try {
+      setExportLoading(true);
+      const baseSort = { 'sort[updatedAt]': -1, 'sort[createdAt]': -1 };
+      let sort = baseSort;
+
+      if (sortBy) {
+        sort = { [`sort[${sortBy}]`]: sortDirection, ...baseSort };
+      }
+
+      await vpoService.downloadVpoList({
+        page: 1,
+        limit: exportLimit || 1000,
+        ...sort,
+        ...filters,
+      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          localStorage.removeItem(ACCESS_TOKEN);
+          return navigate(ROUTES.LOGIN.path, { replace: true });
+        }
+      }
+      setErrorMessage(ADMIN.vpo.export.error);
+      setIsModalOpen(true);
+    }
+    setExportLoading(false);
+  };
+
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      setImportLoading(true);
+      const data = await vpoService.uploadFile(file);
+
+      if (data.failed?.length) {
+        setErrorMessage(`${ADMIN.vpo.import.error} - ${data.failed}`);
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          localStorage.removeItem(ACCESS_TOKEN);
+          return navigate(ROUTES.LOGIN.path, { replace: true });
+        }
+      }
+      setIsModalOpen(true);
+    }
+    setImportLoading(false);
+  };
+
+  const handleCloseModal = () => {
+    setErrorMessage('');
+    setIsModalOpen(false);
+  };
+
   return (
     <Container maxWidth="xl" sx={{ mb: 3 }}>
       <Paper>
@@ -187,7 +250,7 @@ export const VpoTable: React.FC = () => {
               <Stack direction="row" spacing={2} mb={2}>
                 <TextField
                   name="search"
-                  label={ADMIN.vpo.filters.search || ''}
+                  label={ADMIN.vpo.filters.search}
                   value={search || ''}
                   error={!!search && search.length < 3}
                   helperText={
@@ -437,23 +500,56 @@ export const VpoTable: React.FC = () => {
                 justifyContent: 'end',
               }}
             />
+            <Box p={2}>
+              <Stack direction="row" spacing={2} pb={2}>
+                <TextField
+                  type="number"
+                  name="exportLimit"
+                  label={ADMIN.vpo.export.limit}
+                  value={exportLimit || 0}
+                  onChange={(event) => {
+                    setExportLimit(parseInt(event.target.value) || 0);
+                  }}
+                />
+                <ButtonWithLoading
+                  variant="contained"
+                  loading={exportLoading}
+                  disabled={!vpoResponse.value?.totalItems}
+                  onClick={handleExport}
+                  sx={{ height: '100%' }}
+                >
+                  {ADMIN.vpo.export.button}
+                </ButtonWithLoading>
+                <ButtonWithLoading
+                  component="label"
+                  variant="contained"
+                  loading={importLoading}
+                  sx={{ height: '100%' }}
+                >
+                  {ADMIN.vpo.import.button}
+                  <input
+                    type="file"
+                    name="import"
+                    accept="text/csv"
+                    hidden
+                    onChange={handleImport}
+                  />
+                </ButtonWithLoading>
+              </Stack>
+            </Box>
           </>
         )}
-        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <Dialog open={isModalOpen} onClose={handleCloseModal}>
           <DialogTitle id="alert-dialog-title">
             {ADMIN.errorModal.title}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              {ADMIN.errorModal.content}
+              {errorMessage || ADMIN.errorModal.content}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={() => setIsModalOpen(false)}
-              variant="contained"
-              autoFocus
-            >
+            <Button onClick={handleCloseModal} variant="contained" autoFocus>
               {ADMIN.errorModal.closeButton}
             </Button>
           </DialogActions>

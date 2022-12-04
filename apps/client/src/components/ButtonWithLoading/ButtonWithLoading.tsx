@@ -3,6 +3,7 @@ import { Box, Button, CircularProgress } from '@mui/material';
 import { blue } from '@mui/material/colors';
 
 export type ButtonWithLoadingProps = ButtonProps & {
+  component?: 'button' | 'label';
   loading: boolean;
 };
 

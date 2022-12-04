@@ -1,8 +1,9 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
+import FileDownload from 'js-file-download';
 import type {
   PaginatedListDto,
-  PaginationSearchSortDto,
+  VpoImportResultDto,
   VpoModel,
   VpoUserModel,
 } from '@vpo-help/model';
@@ -37,6 +38,33 @@ export class Vpo {
         Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
       },
     });
+    return data;
+  }
+
+  async downloadVpoList(params: PaginationSearchSortParams) {
+    const { data } = await this.http.get('/export', {
+      params,
+      responseType: 'blob',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+      },
+    });
+    FileDownload(data, `vpo_list_${params.limit}.csv`);
+  }
+
+  async uploadFile(file: File): Promise<Serialized<VpoImportResultDto>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const { data } = await this.http.post<Serialized<VpoImportResultDto>>(
+      '/import',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+        },
+      },
+    );
     return data;
   }
 }
