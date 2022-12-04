@@ -11,7 +11,7 @@ import {
   SettingsService,
 } from './settings';
 import { UserEntity, UserRepository, UserService } from './user';
-import { VpoEntity, VpoRepository, VpoService } from './vpo';
+import { CsvService, VpoEntity, VpoRepository, VpoService } from './vpo';
 
 const entities = [UserEntity, VpoEntity, SettingsEntity, HtmlPageEntity];
 
@@ -38,7 +38,7 @@ const entities = [UserEntity, VpoEntity, SettingsEntity, HtmlPageEntity];
       HtmlPageRepository,
     ]),
   ],
-  providers: [UserService, VpoService, SettingsService],
-  exports: [UserService, VpoService, SettingsService],
+  providers: [UserService, VpoService, SettingsService, CsvService],
+  exports: [UserService, VpoService, SettingsService, CsvService],
 })
 export class ModelModule {}

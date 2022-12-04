@@ -10,4 +10,7 @@ module.exports = {
     },
   },
   testEnvironment: 'node',
+  transformIgnorePatterns: [
+    '/node_modules/(?!(csv|csv-parse|csv-generate|csv-stringify|stream-transform)/)',
+  ],
 };

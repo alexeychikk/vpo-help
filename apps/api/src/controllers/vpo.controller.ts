@@ -19,6 +19,7 @@ import {
 } from '@vpo-help/model';
 import type { VpoEntity } from '@vpo-help/server';
 import {
+  CsvService,
   JwtAuthGuard,
   PaginationSearchSort,
   UsePermissions,
@@ -28,7 +29,10 @@ import {
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'vpo' })
 export class VpoController {
-  constructor(private vpoService: VpoService) {}
+  constructor(
+    private readonly vpoService: VpoService,
+    private readonly csvService: CsvService,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -60,7 +64,7 @@ export class VpoController {
   async export(
     @PaginationSearchSort() dto: PaginationSearchSortDto<VpoEntity>,
   ) {
-    // TODO
+    return this.csvService.exportVpoList(dto);
   }
 
   @Post('import')

@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "../../dist/apps/api",
     "module": "commonjs",
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "allowJs": true
   },
   "include": ["./testing", "**/*.test.ts", "**/*.spec.ts", "**/*.d.ts"]
 }

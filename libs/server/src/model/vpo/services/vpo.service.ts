@@ -32,7 +32,7 @@ import { VpoRepository } from './vpo.repository';
 export class VpoService {
   constructor(
     private readonly settingsService: SettingsService,
-    private readonly vpoRepository: VpoRepository,
+    readonly vpoRepository: VpoRepository,
   ) {}
 
   async register(model: VpoModel): Promise<VpoEntity> {
@@ -169,7 +169,7 @@ export class VpoService {
     }
   }
 
-  async ensureDateAvailable(date: Date) {
+  private async ensureDateAvailable(date: Date) {
     const schedule = await this.settingsService.getSchedule();
 
     const timeSlots = schedule[date.getDay() as Day];

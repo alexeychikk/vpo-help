@@ -7,6 +7,7 @@ import { Test } from '@nestjs/testing';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { addDays } from 'date-fns';
+import { times } from 'lodash';
 import { ObjectId } from 'mongodb';
 import supertest from 'supertest';
 import type {
@@ -148,6 +149,19 @@ class TestApp {
     return this.vpoService.upsert(model);
   }
 
+  async populateVpo(amount = 10000) {
+    const result = [];
+    const perIteration = 100;
+    while (amount > 0) {
+      amount -= perIteration;
+      const count = amount >= 0 ? perIteration : perIteration + amount;
+      const docs = times(count, () => this.getFakeVpoRaw());
+      result.push(...docs);
+      await this.vpoService.vpoRepository.insertMany(docs);
+    }
+    return result;
+  }
+
   async createHtmlPage(dto?: Partial<HtmlPageModel>): Promise<HtmlPageEntity> {
     const model = new HtmlPageModel({
       name: faker.word.noun(1),
@@ -223,8 +237,8 @@ class TestApp {
     return this;
   }
 
-  async getFakeVpo(dto?: Partial<VpoModel>): Promise<VpoModel> {
-    return plainToInstance(VpoModel, {
+  getFakeVpoRaw(dto?: Partial<VpoModel>) {
+    return {
       addressOfRegistration: faker.address.city(),
       addressOfResidence: faker.address.streetAddress(true),
       dateOfBirth: faker.date.past(30),
@@ -243,11 +257,20 @@ class TestApp {
       }),
       vpoIssueDate: faker.date.between(new Date('2022-01-01'), new Date()),
       vpoReferenceNumber: faker.datatype.uuid(),
+      scheduleDate: addDays(new Date(), 1),
       ...dto,
-      scheduleDate:
-        dto?.scheduleDate ||
-        (await this.vpoService.getAvailableSchedule()).items[0].dateFrom,
-    });
+    };
+  }
+
+  async getFakeVpo(dto?: Partial<VpoModel>): Promise<VpoModel> {
+    return plainToInstance(
+      VpoModel,
+      Object.assign(this.getFakeVpoRaw(dto), {
+        scheduleDate:
+          dto?.scheduleDate ||
+          (await this.vpoService.getAvailableSchedule()).items[0].dateFrom,
+      }),
+    );
   }
 
   async requestApiWithAuth(
