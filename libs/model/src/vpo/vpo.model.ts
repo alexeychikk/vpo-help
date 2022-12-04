@@ -2,17 +2,17 @@ import {
   IsDate,
   IsEmail,
   IsInt,
-  IsObject,
   IsOptional,
   IsPhoneNumber,
   Length,
   Max,
   Min,
 } from 'class-validator';
+import { IsNestedArray } from '@vpo-help/utils';
 import type { IdType, ModelConstructorData } from '../common';
 import { BaseModel, Role } from '../common';
 import { IsVpoIssueDate, IsVpoReferenceNumber } from './decorators';
-import { ReceivedGoodsDto } from './receivedGoods.dto';
+import { ReceivedHelpDto } from './receivedHelp.dto';
 import { VpoUserModel } from './vpoUser.model';
 
 export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
@@ -67,9 +67,9 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @IsOptional()
   receivedHelpDate?: Date;
 
-  @IsObject()
+  @IsNestedArray(() => ReceivedHelpDto)
   @IsOptional()
-  receivedGoods?: ReceivedGoodsDto;
+  receivedGoods?: ReceivedHelpDto[];
 
   @IsEmail()
   @IsOptional()

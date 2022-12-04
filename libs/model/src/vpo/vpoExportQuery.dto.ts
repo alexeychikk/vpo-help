@@ -20,21 +20,9 @@ export const DEFAULT_CSV_COLUMNS: VpoExportColumnDto[] = [
 export class VpoExportQueryDto {
   @IsNestedArray(() => VpoExportColumnDto)
   @IsOptional()
-  @Transform(
-    ({ value }) => {
-      if (typeof value !== 'string') return value;
-      const columns = value.split(',');
-      return columns.map((col) => {
-        const [key, header] = col.split(':');
-        const dto = new VpoExportColumnDto({ key });
-        if (header) dto.header = header;
-        else if (header == undefined)
-          dto.header = DEFAULT_CSV_COLUMNS.find((c) => c.key === key)?.header;
-        return dto;
-      });
-    },
-    { toClassOnly: true },
-  )
+  @Transform(({ value }) => transformValueToColumns(value), {
+    toClassOnly: true,
+  })
   columns?: VpoExportColumnDto[] = DEFAULT_CSV_COLUMNS.map(
     (col) => new VpoExportColumnDto(col),
   );
@@ -59,4 +47,19 @@ export class VpoExportColumnDto {
   constructor(data: VpoExportColumnDto) {
     Object.assign(this, data);
   }
+}
+
+function transformValueToColumns(
+  value: unknown,
+): VpoExportColumnDto[] | unknown {
+  if (typeof value !== 'string') return value;
+  const columns = value.split(',');
+  return columns.map((col) => {
+    const [key, header] = col.split(':');
+    const dto = new VpoExportColumnDto({ key });
+    if (header) dto.header = header;
+    else if (header == undefined)
+      dto.header = DEFAULT_CSV_COLUMNS.find((c) => c.key === key)?.header;
+    return dto;
+  });
 }

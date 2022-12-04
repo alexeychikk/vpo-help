@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   ClassSerializerInterceptor,
   Controller,
@@ -8,9 +9,11 @@ import {
   Param,
   Post,
   Query,
+  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { FastifyRequest } from 'fastify';
 import {
   AccessType,
   FindByIdDto,
@@ -74,7 +77,9 @@ export class VpoController {
   @UsePermissions({ [Permission.VpoImport]: [AccessType.Write] })
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async import() {
-    // TODO
+  async import(@Req() req: FastifyRequest) {
+    const fileData = await req.file();
+    if (!fileData) throw new BadRequestException();
+    return this.csvService.updateVpoListFromFile(fileData);
   }
 }

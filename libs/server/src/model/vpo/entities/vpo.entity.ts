@@ -1,7 +1,8 @@
 import type { ObjectId } from 'mongodb';
 import { Column, Entity, Index } from 'typeorm';
 import type { Class } from 'utility-types';
-import { ReceivedGoodsDto, VpoModel } from '@vpo-help/model';
+import type { ReceivedHelpDto } from '@vpo-help/model';
+import { VpoModel } from '@vpo-help/model';
 import { baseEntityWith, EntityConstructorData } from '../../common';
 
 @Entity()
@@ -57,7 +58,7 @@ export class VpoEntity extends baseEntityWith(
   receivedHelpDate?: Date;
 
   @Column()
-  receivedGoods?: ReceivedGoodsDto;
+  receivedGoods?: ReceivedHelpDto[];
 
   @Column()
   email?: string;

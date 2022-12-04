@@ -22,6 +22,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@fastify/helmet": "^8.1.0",
+    "@fastify/multipart": "^6.0.0",
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.15",
     "@mui/material": "^5.10.15",

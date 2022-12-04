@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import multipart from '@fastify/multipart';
 import { Injectable } from '@nestjs/common';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
@@ -62,6 +63,7 @@ beforeEach(async () => {
   nestApp = moduleFixture.createNestApplication<NestFastifyApplication>(
     new FastifyAdapter(),
   );
+  await nestApp.register(multipart);
   nestApp.useGlobalPipes(new ClassValidationPipe());
 
   await nestApp.init();

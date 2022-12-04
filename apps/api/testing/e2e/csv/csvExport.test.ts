@@ -3,6 +3,10 @@ import { DEFAULT_CSV_COLUMNS } from '@vpo-help/model';
 import { expectExtended } from '@vpo-help/testing';
 import { testApp } from '../../testApp';
 
+test('auth', async () => {
+  await testApp.expectAdmin((req) => req.get(`/vpo/export`));
+});
+
 test('exports a list of vpo-s to a csv file', async () => {
   const list = await testApp.populateVpo(10);
 
