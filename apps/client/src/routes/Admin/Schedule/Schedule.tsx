@@ -1,4 +1,4 @@
-import { Save as SaveIcon } from '@mui/icons-material';
+import SaveIcon from '@mui/icons-material/Save';
 import {
   Box,
   Button,
@@ -20,7 +20,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import type { Optional } from 'utility-types';
 import type { ScheduleDto } from '@vpo-help/model';
-import { Scheduler } from '../../../components';
+import { Scheduler } from '../../../components/Scheduler';
 import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { scheduleService } from '../../../services';
 import { ROUTES } from '../../routes.config';

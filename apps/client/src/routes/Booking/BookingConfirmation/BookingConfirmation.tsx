@@ -3,7 +3,7 @@ import moment from 'moment';
 import { useFormContext } from 'react-hook-form';
 import type { VpoModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
-import { BookingInfoItem } from '../../../components';
+import { BookingInfoItem } from '../../../components/BookingInfo/BookingInfoItem';
 import { BOOKING } from '../../../constants';
 
 export const BookingConfirmation: React.FC = () => {

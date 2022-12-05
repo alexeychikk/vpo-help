@@ -27,7 +27,7 @@ import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import type { SortDirection } from '@vpo-help/model';
-import { ButtonWithLoading } from '../../../components';
+import { ButtonWithLoading } from '../../../components/ButtonWithLoading';
 import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { vpoService } from '../../../services';
 import { formatISOOnlyDate } from '../../../utils';

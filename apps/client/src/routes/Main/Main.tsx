@@ -1,7 +1,5 @@
-import {
-  ArrowForwardIos as ArrowForwardIosIcon,
-  Search as SearchIcon,
-} from '@mui/icons-material';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import SearchIcon from '@mui/icons-material/Search';
 import {
   Box,
   Button,
@@ -17,11 +15,9 @@ import { useForm } from 'react-hook-form';
 import { useAsync } from 'react-use';
 import type { VpoUserModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
-import {
-  BookingInfo,
-  ButtonWithLoading,
-  TextFieldElement,
-} from '../../components';
+import { BookingInfo } from '../../components/BookingInfo';
+import { ButtonWithLoading } from '../../components/ButtonWithLoading';
+import { TextFieldElement } from '../../components/TextFieldElement';
 import { MAIN } from '../../constants';
 import { authService, htmlService } from '../../services';
 import { ROUTES } from '../routes.config';

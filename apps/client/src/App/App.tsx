@@ -3,8 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { PrivateRoute } from '../components';
-import { ACCESS_TOKEN } from '../constants';
+import { PrivateRoute } from '../components/PrivateRoute';
 import { ROUTES } from '../routes';
 import { authService } from '../services';
 

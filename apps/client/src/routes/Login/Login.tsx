@@ -1,11 +1,12 @@
-import { LockOutlined } from '@mui/icons-material';
-import { Avatar, Box, Button, Container, Typography } from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { Avatar, Box, Container, Typography } from '@mui/material';
 import { AxiosError } from 'axios';
 import { useCallback, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { ButtonWithLoading, TextFieldElement } from '../../components';
+import { ButtonWithLoading } from '../../components/ButtonWithLoading';
+import { TextFieldElement } from '../../components/TextFieldElement';
 import { LOGIN } from '../../constants';
 import { authService } from '../../services';
 import { ROUTES } from '../routes.config';
@@ -48,7 +49,7 @@ export const Login = () => {
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlined />
+          <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
           {LOGIN.title}

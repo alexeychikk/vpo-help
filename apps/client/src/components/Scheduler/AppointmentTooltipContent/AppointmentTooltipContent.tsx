@@ -1,5 +1,5 @@
 import type { AppointmentTooltip } from '@devexpress/dx-react-scheduler-material-ui';
-import { AccessTimeOutlined } from '@mui/icons-material';
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import { Box, Container, Typography } from '@mui/material';
 import moment from 'moment';
 import { SCHEDULER } from '../../../constants';
@@ -16,7 +16,7 @@ export const AppointmentTooltipContent: React.FC<
         {startDate.format('dddd')}
       </Typography>
       <Box display={'flex'} alignItems={'center'} marginBottom={1}>
-        <AccessTimeOutlined sx={{ mr: 1 }} />
+        <AccessTimeOutlinedIcon sx={{ mr: 1 }} />
         <Typography variant="h6" textTransform={'capitalize'}>
           {`${startDate.format('HH:mm')} - ${endDate.format('HH:mm')}`}
         </Typography>

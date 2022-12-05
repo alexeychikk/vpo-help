@@ -1,4 +1,4 @@
-import { Save as SaveIcon } from '@mui/icons-material';
+import SaveIcon from '@mui/icons-material/Save';
 import {
   Box,
   Button,
@@ -27,10 +27,8 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import type { SettingsDto } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
-import {
-  DesktopDatePickerElement,
-  TextFieldElement,
-} from '../../../components';
+import { DesktopDatePickerElement } from '../../../components/DesktopDatePickerElement';
+import { TextFieldElement } from '../../../components/TextFieldElement';
 import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { htmlService, settingsService } from '../../../services';
 import { formatISOOnlyDate } from '../../../utils';

@@ -3,12 +3,10 @@ import moment from 'moment';
 import { useFormContext } from 'react-hook-form';
 import type { VpoModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
-import {
-  DesktopDatePickerElement,
-  PhoneNumberField,
-  SelectElement,
-  TextFieldElement,
-} from '../../../components';
+import { DesktopDatePickerElement } from '../../../components/DesktopDatePickerElement';
+import { PhoneNumberField } from '../../../components/PhoneNumberField';
+import { SelectElement } from '../../../components/SelectElement';
+import { TextFieldElement } from '../../../components/TextFieldElement';
 import { BOOKING, ERROR_MESSAGES } from '../../../constants';
 import { formatISOOnlyDate } from '../../../utils';
 
