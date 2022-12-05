@@ -1,6 +1,4 @@
 import 'reflect-metadata';
-import * as dotenv from 'dotenv';
-dotenv.config();
 import { LoggerService } from '@vpo-help/server';
 import { createApp } from './createApp';
 import { EnvService } from './services';
