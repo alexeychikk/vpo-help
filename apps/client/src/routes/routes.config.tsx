@@ -1,4 +1,5 @@
-import React from 'react';
+import { Box, LinearProgress } from '@mui/material';
+import React, { Suspense } from 'react';
 import { Booking } from './Booking';
 import { Main } from './Main';
 
@@ -7,6 +8,12 @@ const Schedule = React.lazy(() => import('./Admin/Schedule'));
 const Settings = React.lazy(() => import('./Admin/Settings'));
 const VpoTable = React.lazy(() => import('./Admin/VpoTable'));
 const Login = React.lazy(() => import('./Login'));
+
+const Loading = () => (
+  <Box sx={{ width: '100%' }}>
+    <LinearProgress />
+  </Box>
+);
 
 export const ROUTES = {
   MAIN: {
@@ -19,28 +26,52 @@ export const ROUTES = {
   },
   LOGIN: {
     path: '/login',
-    render: () => <Login />,
+    render: () => (
+      <Suspense fallback={<Loading />}>
+        <Login />
+      </Suspense>
+    ),
   },
   ADMIN: {
     path: '/admin',
     private: true,
-    render: () => <Admin />,
+    render: () => (
+      <Suspense fallback={<Loading />}>
+        <Admin />
+      </Suspense>
+    ),
     subroutes: {
       VPO_INDEX: {
         path: '',
-        render: () => <VpoTable />,
+        render: () => (
+          <Suspense fallback={<Loading />}>
+            <VpoTable />
+          </Suspense>
+        ),
       },
       VPO: {
         path: 'vpo',
-        render: () => <VpoTable />,
+        render: () => (
+          <Suspense fallback={<Loading />}>
+            <VpoTable />
+          </Suspense>
+        ),
       },
       SCHEDULE: {
         path: 'schedule',
-        render: () => <Schedule />,
+        render: () => (
+          <Suspense fallback={<Loading />}>
+            <Schedule />
+          </Suspense>
+        ),
       },
       SETTINGS: {
         path: 'settings',
-        render: () => <Settings />,
+        render: () => (
+          <Suspense fallback={<Loading />}>
+            <Settings />
+          </Suspense>
+        ),
       },
     },
   },

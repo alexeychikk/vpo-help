@@ -37,7 +37,7 @@ import { formatISOOnlyDate } from '../../../utils';
 import { ROUTES } from '../../routes.config';
 
 const toolbar = {
-  options: ['inline', 'list', 'link', 'remove', 'history'],
+  options: ['inline', 'fontSize', 'list', 'link', 'remove', 'history'],
 };
 
 export const Settings: React.FC = () => {

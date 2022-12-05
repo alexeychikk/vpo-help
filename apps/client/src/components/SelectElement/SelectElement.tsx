@@ -20,7 +20,7 @@ export type SelectElementProps<T extends FieldValues> = Omit<
   'name'
 > & {
   name: Path<T>;
-  options: { label: string; value: MenuItemProps['value'] }[] | string[];
+  options: { label: string; value: string | number }[] | (string | number)[];
   control: Control<T>;
   helperText?: string;
   rules?: ControllerProps['rules'];
@@ -81,9 +81,13 @@ export const SelectElement = <T extends FieldValues>(
         }}
       >
         {options.map((option) => {
-          const isOptionString = typeof option === 'string';
+          const isOptionString =
+            typeof option === 'string' || typeof option === 'number';
           return (
-            <MenuItem value={isOptionString ? option : option.value}>
+            <MenuItem
+              key={isOptionString ? option : option.value}
+              value={isOptionString ? option : option.value}
+            >
               {isOptionString ? option : option.label}
             </MenuItem>
           );
