@@ -14,7 +14,7 @@ import {
   SettingsController,
   VpoController,
 } from './controllers';
-import { EnvService } from './services';
+import { EnvService, ShutdownService } from './services';
 
 @Module({
   imports: [
@@ -23,6 +23,7 @@ import { EnvService } from './services';
     ModelModule,
     AuthModule,
   ],
+  providers: [ShutdownService],
   controllers: [
     AuthController,
     HtmlController,

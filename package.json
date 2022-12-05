@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "env-cmd node ./dist/apps/api/main",
+    "start": "env-cmd pm2 start ./dist/apps/api/main.js --name api --max-memory-restart 256M",
+    "restart": "env-cmd pm2 restart api --update-env",
     "build": "nx run-many --target=build --configuration=production --all=true",
     "test": "nx affected --target=test",
     "ts": "nx run-many --target=ts --all=true",

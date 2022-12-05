@@ -9,6 +9,7 @@ async function bootstrap() {
     env.ensureVariablesSet();
 
     const app = await createApp({ env });
+    app.enableShutdownHooks();
     const logger = app.get(LoggerService);
 
     await app.listen(env.PORT, env.HOST);
