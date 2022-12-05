@@ -49,7 +49,7 @@ export const DesktopDatePickerElement = <T extends Record<string, unknown>>(
   return (
     <DesktopDatePicker
       {...rest}
-      inputFormat="DD.MM.YY"
+      inputFormat="DD.MM.YYYY"
       value={field.value || null}
       onChange={(date) => {
         field.onChange(

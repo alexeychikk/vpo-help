@@ -1,10 +1,12 @@
 import { Box, Stack } from '@mui/material';
+import moment from 'moment';
 import { useFormContext } from 'react-hook-form';
 import type { VpoModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import {
   DesktopDatePickerElement,
   PhoneNumberField,
+  SelectElement,
   TextFieldElement,
 } from '../../../components';
 import { BOOKING, ERROR_MESSAGES } from '../../../constants';
@@ -15,7 +17,7 @@ export const PersonalDataForm: React.FC = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
       <Stack
-        direction={{ xs: 'column', md: 'row' }}
+        direction={{ xs: 'column', lg: 'row' }}
         spacing={{ xs: 1, lg: 3 }}
         sx={{ mb: 3 }}
       >
@@ -26,6 +28,25 @@ export const PersonalDataForm: React.FC = () => {
           label={BOOKING.form.vpoIssueDate}
           control={control}
           transform={formatISOOnlyDate}
+        />
+        <SelectElement
+          required
+          name="addressOfResidence"
+          label={BOOKING.form.addressOfResidence}
+          helperText={BOOKING.form.addressOfResidenceHelper}
+          control={control}
+          rules={{
+            validate: {
+              city: (value) =>
+                value
+                  ? value !== BOOKING.form.addressOfResidenceValue
+                    ? BOOKING.form.addressOfResidenceError
+                    : undefined
+                  : undefined,
+            },
+          }}
+          sx={{ width: { xs: '300px', md: '450px' } }}
+          options={BOOKING.form.addressOfResidenceOptions}
         />
         <TextFieldElement
           required
@@ -71,12 +92,6 @@ export const PersonalDataForm: React.FC = () => {
             maxLength: { value: 50, message: ERROR_MESSAGES.maxLength },
           }}
         />
-        <PhoneNumberField
-          required
-          name="phoneNumber"
-          label={BOOKING.form.phoneNumber}
-          control={control}
-        />
       </Stack>
       <Stack
         direction={{ md: 'column', lg: 'row' }}
@@ -101,17 +116,11 @@ export const PersonalDataForm: React.FC = () => {
           }}
           sx={{ width: '300px' }}
         />
-        <TextFieldElement
+        <PhoneNumberField
           required
-          disabled
-          name="addressOfResidence"
-          label={BOOKING.form.addressOfResidence}
-          helperText={BOOKING.form.addressOfResidenceHelper}
+          name="phoneNumber"
+          label={BOOKING.form.phoneNumber}
           control={control}
-          rules={{
-            maxLength: { value: 200, message: ERROR_MESSAGES.maxLength },
-          }}
-          sx={{ width: { xs: '300px', md: '450px' } }}
         />
       </Stack>
       <Stack

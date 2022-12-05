@@ -1,18 +1,16 @@
 import { Box, Typography } from '@mui/material';
 import moment from 'moment';
-import { BOOKING, FOOTER } from '../../constants';
+import { BOOKING } from '../../constants';
 import { BookingInfoItem } from './BookingInfoItem';
 
 export type BookingInfoProps = {
   vpoReferenceNumber: string;
   bookingDate: string;
-  addresses?: string;
 };
 
 export const BookingInfo: React.FC<BookingInfoProps> = ({
   vpoReferenceNumber,
   bookingDate,
-  addresses,
 }) => {
   return (
     <Box
@@ -26,21 +24,6 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
         data={moment(bookingDate).format('HH:mm - DD MMMM YYYY')}
         sx={{ alignItems: 'center', mb: 4 }}
       />
-      {addresses && (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Typography variant="h6" mb={2} textAlign="center">
-            {FOOTER.addresses}
-          </Typography>
-          <Typography component="div" variant="body1">
-            <pre dangerouslySetInnerHTML={{ __html: addresses }} />
-          </Typography>
-        </Box>
-      )}
     </Box>
   );
 };

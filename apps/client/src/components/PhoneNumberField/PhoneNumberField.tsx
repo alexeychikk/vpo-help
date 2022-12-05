@@ -21,6 +21,7 @@ export const PhoneNumberField = <T extends Record<string, unknown>>(
     <TextFieldElement
       {...props}
       type="tel"
+      helperText="+380XXXXXXXXX"
       rules={{
         ...props.rules,
         validate: {
@@ -28,7 +29,7 @@ export const PhoneNumberField = <T extends Record<string, unknown>>(
           pattern: (value) =>
             value
               ? !isPhoneNumber(value)
-                ? ERROR_MESSAGES.pattern
+                ? ERROR_MESSAGES.patternPhone
                 : undefined
               : undefined,
         },

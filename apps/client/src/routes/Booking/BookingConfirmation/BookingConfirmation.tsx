@@ -22,7 +22,7 @@ export const BookingConfirmation: React.FC = () => {
       >
         <BookingInfoItem
           label={BOOKING.form.vpoIssueDate}
-          data={moment(formValues.vpoIssueDate).format('DD.MM.YY')}
+          data={moment(formValues.vpoIssueDate).format('DD.MM.YYYY')}
         />
         <BookingInfoItem
           label={BOOKING.form.vpoReferenceNumber}
@@ -58,7 +58,7 @@ export const BookingConfirmation: React.FC = () => {
       >
         <BookingInfoItem
           label={BOOKING.form.dateOfBirth}
-          data={moment(formValues.dateOfBirth).format('DD.MM.YY')}
+          data={moment(formValues.dateOfBirth).format('DD.MM.YYYY')}
         />
         <BookingInfoItem
           label={BOOKING.form.addressOfRegistration}

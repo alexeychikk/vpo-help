@@ -11,7 +11,8 @@ import {
   Typography,
 } from '@mui/material';
 import React from 'react';
-import { ADMIN } from '../../../constants';
+import { ACCESS_TOKEN, ADMIN } from '../../../constants';
+import { ROUTES } from '../../routes.config';
 
 const pages = [
   {
@@ -39,6 +40,10 @@ export const Header: React.FC = () => {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(ACCESS_TOKEN);
   };
 
   return (
@@ -72,8 +77,15 @@ export const Header: React.FC = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page.href} href={page.href}>
-                  <Typography textAlign="center">{page.label}</Typography>
+                <MenuItem key={page.href}>
+                  <Button
+                    key={page.href}
+                    href={page.href}
+                    component="a"
+                    sx={{ color: 'black' }}
+                  >
+                    {page.label}
+                  </Button>
                 </MenuItem>
               ))}
             </Menu>
@@ -89,6 +101,13 @@ export const Header: React.FC = () => {
               </Button>
             ))}
           </Box>
+          <Button
+            sx={{ color: 'white' }}
+            href={ROUTES.LOGIN.path}
+            onClick={handleLogout}
+          >
+            {ADMIN.header.logout}
+          </Button>
         </Toolbar>
       </Container>
     </AppBar>

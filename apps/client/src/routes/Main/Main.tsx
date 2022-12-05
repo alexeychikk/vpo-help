@@ -108,7 +108,6 @@ export const Main = () => {
                 <BookingInfo
                   vpoReferenceNumber={user.vpoReferenceNumber}
                   bookingDate={user.scheduleDate}
-                  addresses={infoResponse.value?.['addresses']}
                 />
                 <Button variant="contained" onClick={() => setUser(null)}>
                   {MAIN.backToMain}

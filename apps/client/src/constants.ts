@@ -7,7 +7,7 @@ export const ERROR_MESSAGES = {
   maxLength: 'Перевищена кількість символів',
   min: 'Недостатня кількість',
   max: 'Перевищена кількість',
-  pattern: 'Невірний формат',
+  patternPhone: 'Формат має бути +380XXXXXXXXX',
   unknown:
     'Виникла невідома помилка. Зверніться за допомогою до адміністратора веб-ресурсу.',
 };
@@ -48,6 +48,7 @@ export const ADMIN = {
       SCHEDULE: 'Розклад',
       SETTINGS: 'Налаштування',
     } as const,
+    logout: 'Вийти',
   },
   vpo: {
     title: 'Список ВПО',
@@ -135,6 +136,8 @@ export const BOOKING = {
     dateOfBirth: 'Дата народження',
     addressOfRegistration: 'Місто реєстрації (згідно паспорту)',
     addressOfResidenceValue: 'Київ',
+    addressOfResidenceError: 'Бронювання доступне тільки для Киева',
+    addressOfResidenceOptions: ['Київ', 'Інше місто'],
     addressOfResidence: 'Місто фактичного проживання (згідно Довідці ВПО)',
     addressOfResidenceHelper: 'Бронювання доступне тільки для Киева',
     numberOfRelatives: 'Скільки членів вашої родини переїхали з вами?',
@@ -158,6 +161,8 @@ export const BOOKING = {
       'Вибраний час бронювання не дійсний. Перезавантажте сторінку та спробуйте знову.',
     'Selected time slot is no longer available':
       'Вибраний час бронювання вже зайнятий. Перезавантажте сторінку та спробуйте знову.',
+    'minimal allowed date for vpoIssueDate is 2022-01-01':
+      'Бронювання можливе тільки для власників довідок ВПО від 2022 року.',
   } as Record<string, string>,
 };
 

@@ -4,4 +4,5 @@ export * from './DesktopDatePickerElement';
 export * from './PhoneNumberField';
 export * from './PrivateRoute';
 export * from './Scheduler';
+export * from './SelectElement';
 export * from './TextFieldElement';

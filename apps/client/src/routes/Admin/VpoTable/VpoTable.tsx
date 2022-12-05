@@ -265,7 +265,7 @@ export const VpoTable: React.FC = () => {
                   ignoreInvalidInputs
                   label={ADMIN.vpo.filters.minCreatedAt}
                   value={minCreatedDateFilter || null}
-                  inputFormat="DD.MM.YY"
+                  inputFormat="DD.MM.YYYY"
                   renderInput={(params) => (
                     <TextField {...params} sx={{ width: '300px' }} />
                   )}
@@ -275,7 +275,7 @@ export const VpoTable: React.FC = () => {
                   ignoreInvalidInputs
                   label={ADMIN.vpo.filters.maxCreatedAt}
                   value={maxCreatedDateFilter || null}
-                  inputFormat="DD.MM.YY"
+                  inputFormat="DD.MM.YYYY"
                   renderInput={(params) => (
                     <TextField {...params} sx={{ width: '300px' }} />
                   )}
@@ -287,7 +287,7 @@ export const VpoTable: React.FC = () => {
                   ignoreInvalidInputs
                   label={ADMIN.vpo.filters.minReceivedHelp}
                   value={minReceivedHelpFilter || null}
-                  inputFormat="DD.MM.YY"
+                  inputFormat="DD.MM.YYYY"
                   renderInput={(params) => (
                     <TextField {...params} sx={{ width: '400px' }} />
                   )}
@@ -297,7 +297,7 @@ export const VpoTable: React.FC = () => {
                   ignoreInvalidInputs
                   label={ADMIN.vpo.filters.maxReceivedHelp}
                   value={maxReceivedHelpFilter || null}
-                  inputFormat="DD.MM.YY"
+                  inputFormat="DD.MM.YYYY"
                   renderInput={(params) => (
                     <TextField {...params} sx={{ width: '400px' }} />
                   )}
@@ -449,14 +449,14 @@ export const VpoTable: React.FC = () => {
                     >
                       <TableCell>{row.vpoReferenceNumber}</TableCell>
                       <TableCell>
-                        {moment(row.vpoIssueDate).format('DD.MM.YY')}
+                        {moment(row.vpoIssueDate).format('DD.MM.YYYY')}
                       </TableCell>
                       <TableCell>
-                        {moment(row.scheduleDate).format('HH:mm - DD.MM.YY')}
+                        {moment(row.scheduleDate).format('HH:mm - DD.MM.YYYY')}
                       </TableCell>
                       <TableCell>
                         {row.receivedHelpDate
-                          ? moment(row.receivedHelpDate).format('DD.MM.YY')
+                          ? moment(row.receivedHelpDate).format('DD.MM.YYYY')
                           : '-'}
                       </TableCell>
                       <TableCell>{row.lastName}</TableCell>
@@ -479,7 +479,7 @@ export const VpoTable: React.FC = () => {
                       </TableCell>
                       <TableCell>
                         {moment(row.updatedAt || row.createdAt).format(
-                          'DD.MM.YY',
+                          'DD.MM.YYYY',
                         )}
                       </TableCell>
                     </TableRow>
