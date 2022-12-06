@@ -12,7 +12,7 @@ export const AppointmentFormLayout: React.FC<
   const handleStartDateChange = useCallback(
     (nextValue: number | null) => {
       onFieldChange({
-        startDate: nextValue ? moment(nextValue).format() : '',
+        startDate: nextValue ? moment(nextValue).toISOString() : '',
       });
     },
     [onFieldChange],
@@ -20,7 +20,9 @@ export const AppointmentFormLayout: React.FC<
 
   const handleEndDateChange = useCallback(
     (nextValue: number | null) => {
-      onFieldChange({ endDate: nextValue ? moment(nextValue).format() : '' });
+      onFieldChange({
+        endDate: nextValue ? moment(nextValue).toISOString() : '',
+      });
     },
     [onFieldChange],
   );

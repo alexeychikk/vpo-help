@@ -38,7 +38,9 @@ export const Schedule: React.FC = () => {
   const scheduleResponse = useAsync(async () => {
     const schedule = await scheduleService.getSchedule();
     let idCounter = 0;
-    return Object.entries(schedule).reduce((acc, [dayNumber, slots]) => {
+    return Object.entries(schedule).reduce((acc, [serverDayNumber, slots]) => {
+      const dayNumber =
+        serverDayNumber === '0' ? 6 : parseInt(serverDayNumber) - 1;
       slots.forEach((slot) => {
         const [hoursFrom, minutesFrom] = slot.timeFrom
           .split(':')
@@ -53,12 +55,12 @@ export const Schedule: React.FC = () => {
             .add(dayNumber, 'days')
             .hours(hoursFrom)
             .minutes(minutesFrom)
-            .format(),
+            .toISOString(),
           endDate: moment(startDate)
             .add(dayNumber, 'days')
             .hours(hoursTo)
             .minutes(minutesTo)
-            .format(),
+            .toISOString(),
           numberOfPersons: slot.numberOfPersons,
         });
       });
@@ -72,7 +74,10 @@ export const Schedule: React.FC = () => {
       setLoading(true);
       await scheduleService.saveSchedule(
         scheduleCache.reduce((acc, slot) => {
-          const key = moment(slot.startDate).weekday() as keyof ScheduleDto;
+          const dayNumber = moment(slot.startDate).weekday();
+          const key = (
+            dayNumber === 6 ? 0 : dayNumber + 1
+          ) as keyof ScheduleDto;
           acc[key] ??= [];
           acc[key].push({
             timeFrom: moment(slot.startDate).format('HH:mm'),
@@ -159,7 +164,7 @@ export const Schedule: React.FC = () => {
               sx={{
                 position: 'fixed',
                 top: 'calc(100vh - 72px)',
-                left: 'calc(100vw - 72px)',
+                left: 'calc(100vw - 85px)',
               }}
               onClick={saveSchedule}
             >

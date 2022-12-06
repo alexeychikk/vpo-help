@@ -30,7 +30,7 @@ import type { SortDirection } from '@vpo-help/model';
 import { ButtonWithLoading } from '../../../components/ButtonWithLoading';
 import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { vpoService } from '../../../services';
-import { formatISOOnlyDate } from '../../../utils';
+import { formatISOEndOfDay, formatISOStartOfDay } from '../../../utils';
 import { ROUTES } from '../../routes.config';
 import { HeadTableCell } from './HeadTableCell';
 
@@ -49,8 +49,7 @@ export const VpoTable: React.FC = () => {
   );
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [search, setSearch] = useState<string>();
-  const [minCreatedDateFilter, setMinCreatedDateFilter] = useState<string>();
-  const [maxCreatedDateFilter, setMaxCreatedDateFilter] = useState<string>();
+  const [scheduleDateFilter, setScheduleDateFilter] = useState<string>();
   const [minReceivedHelpFilter, setMinReceivedHelpFilter] = useState<string>();
   const [maxReceivedHelpFilter, setMaxReceivedHelpFilter] = useState<string>();
 
@@ -85,24 +84,16 @@ export const VpoTable: React.FC = () => {
     setSearch(event.target.value);
   };
 
-  const handleMinCreatedDateFilterChange = (date: moment.Moment | null) => {
-    setMinCreatedDateFilter((date && formatISOOnlyDate(date)) || undefined);
-  };
-
-  const handleMaxCreatedDateFilterChange = (date: moment.Moment | null) => {
-    setMaxCreatedDateFilter((date && formatISOOnlyDate(date)) || undefined);
+  const handleScheduleDateFilterChange = (date: moment.Moment | null) => {
+    setScheduleDateFilter(date?.toISOString() || undefined);
   };
 
   const handleMinReceivedHelpFilterChange = (date: moment.Moment | null) => {
-    setMinReceivedHelpFilter(
-      (date && formatISOOnlyDate(date.utc())) || undefined,
-    );
+    setMinReceivedHelpFilter(date?.toISOString() || undefined);
   };
 
   const handleMaxReceivedHelpFilterChange = (date: moment.Moment | null) => {
-    setMaxReceivedHelpFilter(
-      (date && formatISOOnlyDate(date.utc())) || undefined,
-    );
+    setMaxReceivedHelpFilter(date?.toISOString() || undefined);
   };
 
   if (vpoResponse.error) {
@@ -126,8 +117,7 @@ export const VpoTable: React.FC = () => {
 
   const resetFilters = () => {
     setSearch(undefined);
-    setMinCreatedDateFilter(undefined);
-    setMaxCreatedDateFilter(undefined);
+    setScheduleDateFilter(undefined);
     setMinReceivedHelpFilter(undefined);
     setMaxReceivedHelpFilter(undefined);
     setFilters({});
@@ -139,11 +129,10 @@ export const VpoTable: React.FC = () => {
     if (search && search.length >= 3) {
       newFilters['q'] = search;
     }
-    if (minCreatedDateFilter) {
-      newFilters['min[createdAt]'] = minCreatedDateFilter;
-    }
-    if (maxCreatedDateFilter) {
-      newFilters['max[createdAt]'] = maxCreatedDateFilter;
+    if (scheduleDateFilter) {
+      newFilters['min[scheduleDate]'] =
+        formatISOStartOfDay(scheduleDateFilter)!;
+      newFilters['max[scheduleDate]'] = formatISOEndOfDay(scheduleDateFilter)!;
     }
     if (minReceivedHelpFilter) {
       newFilters['min-[receivedHelpDate]'] = minReceivedHelpFilter;
@@ -154,8 +143,8 @@ export const VpoTable: React.FC = () => {
 
     if (
       filters['q'] !== newFilters['q'] ||
-      filters['min[createdAt]'] !== newFilters['min[createdAt]'] ||
-      filters['max[createdAt]'] !== newFilters['max[createdAt]'] ||
+      filters['min[scheduleDate]'] !== newFilters['min[scheduleDate]'] ||
+      filters['max[scheduleDate]'] !== newFilters['max[scheduleDate]'] ||
       filters['min-[receivedHelpDate]'] !==
         newFilters['min-[receivedHelpDate]'] ||
       filters['max[receivedHelpDate]'] !== newFilters['max[receivedHelpDate]']
@@ -247,7 +236,7 @@ export const VpoTable: React.FC = () => {
               <Typography variant="h6" sx={{ mb: 1 }}>
                 {ADMIN.vpo.filters.title}
               </Typography>
-              <Stack direction="row" spacing={2} mb={2}>
+              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={2}>
                 <TextField
                   name="search"
                   label={ADMIN.vpo.filters.search}
@@ -259,37 +248,31 @@ export const VpoTable: React.FC = () => {
                       : undefined
                   }
                   onChange={handleSearchChange}
-                  sx={{ width: '300px' }}
+                  sx={{ width: { xs: '100%', md: '250px' } }}
                 />
                 <DesktopDatePicker
                   ignoreInvalidInputs
-                  label={ADMIN.vpo.filters.minCreatedAt}
-                  value={minCreatedDateFilter || null}
+                  label={ADMIN.vpo.filters.scheduleDate}
+                  value={scheduleDateFilter || null}
                   inputFormat="DD.MM.YYYY"
                   renderInput={(params) => (
-                    <TextField {...params} sx={{ width: '300px' }} />
+                    <TextField
+                      {...params}
+                      sx={{ width: { xs: '100%', md: '250px' } }}
+                    />
                   )}
-                  onChange={handleMinCreatedDateFilterChange}
+                  onChange={handleScheduleDateFilterChange}
                 />
-                <DesktopDatePicker
-                  ignoreInvalidInputs
-                  label={ADMIN.vpo.filters.maxCreatedAt}
-                  value={maxCreatedDateFilter || null}
-                  inputFormat="DD.MM.YYYY"
-                  renderInput={(params) => (
-                    <TextField {...params} sx={{ width: '300px' }} />
-                  )}
-                  onChange={handleMaxCreatedDateFilterChange}
-                />
-              </Stack>
-              <Stack direction="row" spacing={2} mb={2}>
                 <DesktopDatePicker
                   ignoreInvalidInputs
                   label={ADMIN.vpo.filters.minReceivedHelp}
                   value={minReceivedHelpFilter || null}
                   inputFormat="DD.MM.YYYY"
                   renderInput={(params) => (
-                    <TextField {...params} sx={{ width: '400px' }} />
+                    <TextField
+                      {...params}
+                      sx={{ width: { xs: '100%', md: '320px' } }}
+                    />
                   )}
                   onChange={handleMinReceivedHelpFilterChange}
                 />
@@ -299,7 +282,10 @@ export const VpoTable: React.FC = () => {
                   value={maxReceivedHelpFilter || null}
                   inputFormat="DD.MM.YYYY"
                   renderInput={(params) => (
-                    <TextField {...params} sx={{ width: '400px' }} />
+                    <TextField
+                      {...params}
+                      sx={{ width: { xs: '100%', md: '320px' } }}
+                    />
                   )}
                   onChange={handleMaxReceivedHelpFilterChange}
                 />
@@ -495,13 +481,29 @@ export const VpoTable: React.FC = () => {
               page={page}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleLimitChange}
+              backIconButtonProps={{
+                title: ADMIN.vpo.pagination.prevPage,
+                'aria-label': ADMIN.vpo.pagination.prevPage,
+              }}
+              nextIconButtonProps={{
+                title: ADMIN.vpo.pagination.nextPage,
+                'aria-label': ADMIN.vpo.pagination.nextPage,
+              }}
+              labelRowsPerPage={ADMIN.vpo.pagination.rowsPerPage}
+              labelDisplayedRows={({ from, to, count }) => {
+                return `${from}–${to} ${ADMIN.vpo.pagination.of} ${
+                  count !== -1
+                    ? count
+                    : `${ADMIN.vpo.pagination.moreThan} ${to}`
+                }`;
+              }}
               sx={{
                 display: 'flex',
                 justifyContent: 'end',
               }}
             />
             <Box p={2}>
-              <Stack direction="row" spacing={2} pb={2}>
+              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} pb={2}>
                 <TextField
                   type="number"
                   name="exportLimit"
@@ -516,7 +518,7 @@ export const VpoTable: React.FC = () => {
                   loading={exportLoading}
                   disabled={!vpoResponse.value?.totalItems}
                   onClick={handleExport}
-                  sx={{ height: '100%' }}
+                  sx={{ height: '100%', width: { xs: '100%' } }}
                 >
                   {ADMIN.vpo.export.button}
                 </ButtonWithLoading>
@@ -524,7 +526,7 @@ export const VpoTable: React.FC = () => {
                   component="label"
                   variant="contained"
                   loading={importLoading}
-                  sx={{ height: '100%' }}
+                  sx={{ height: '100%', width: { xs: '100%' } }}
                 >
                   {ADMIN.vpo.import.button}
                   <input

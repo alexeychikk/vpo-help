@@ -14,7 +14,7 @@ import {
   Scheduler as DevExpressScheduler,
   WeekView,
 } from '@devexpress/dx-react-scheduler-material-ui';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Required } from 'utility-types';
 import { AppointmentFormLayout } from './AppointmentFormLayout';
 import { AppointmentTooltipContent } from './AppointmentTooltipContent';
@@ -30,6 +30,8 @@ export type SchedulerProps<
   onChange: (newSchedule: T[]) => Promise<void> | void;
 };
 
+const HEIGHT_OFFSET = 250;
+
 export const Scheduler = <
   T extends Required<AppointmentModel, 'id' | 'startDate'> = Required<
     AppointmentModel,
@@ -42,6 +44,7 @@ export const Scheduler = <
   generateNewId,
   onChange,
 }: SchedulerProps<T>): React.ReactElement => {
+  const [height, setHeight] = useState(window.innerHeight - HEIGHT_OFFSET);
   const handleCommitChanges = useCallback(
     async (changeSet: ChangeSet) => {
       const { added, changed, deleted } = changeSet as ScheduleChangeSet<T>;
@@ -70,12 +73,28 @@ export const Scheduler = <
     [schedule, generateNewId, validate, onChange],
   );
 
-  console.log(schedule);
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | undefined;
+    const handleResize = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const newHeight = window.innerHeight - HEIGHT_OFFSET;
+        if (height !== newHeight) setHeight(newHeight);
+      }, 300);
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DevExpressScheduler
       data={schedule}
-      height="auto"
+      height={height}
       locale={'uk-UA'}
       firstDayOfWeek={1}
     >

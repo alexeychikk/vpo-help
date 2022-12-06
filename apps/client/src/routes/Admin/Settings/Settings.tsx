@@ -31,7 +31,7 @@ import { DesktopDatePickerElement } from '../../../components/DesktopDatePickerE
 import { TextFieldElement } from '../../../components/TextFieldElement';
 import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { htmlService, settingsService } from '../../../services';
-import { formatISOOnlyDate } from '../../../utils';
+import { formatISOStartOfDay } from '../../../utils';
 import { ROUTES } from '../../routes.config';
 
 const toolbar = {
@@ -201,7 +201,7 @@ export const Settings: React.FC = () => {
                 name="endOfWarDate"
                 label={ADMIN.settings.form.endOfWarDate}
                 control={form.control}
-                transform={formatISOOnlyDate}
+                transform={formatISOStartOfDay}
                 sx={{
                   width: '300px',
                 }}
@@ -257,7 +257,7 @@ export const Settings: React.FC = () => {
               sx={{
                 position: 'fixed',
                 top: 'calc(100vh - 72px)',
-                left: 'calc(100vw - 72px)',
+                left: 'calc(100vw - 85px)',
               }}
             >
               <SaveIcon />

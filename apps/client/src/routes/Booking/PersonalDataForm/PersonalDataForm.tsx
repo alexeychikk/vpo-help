@@ -8,7 +8,7 @@ import { PhoneNumberField } from '../../../components/PhoneNumberField';
 import { SelectElement } from '../../../components/SelectElement';
 import { TextFieldElement } from '../../../components/TextFieldElement';
 import { BOOKING, ERROR_MESSAGES } from '../../../constants';
-import { formatISOOnlyDate } from '../../../utils';
+import { formatISOStartOfDay } from '../../../utils';
 
 export const PersonalDataForm: React.FC = () => {
   const { control } = useFormContext<Serialized<VpoModel>>();
@@ -25,7 +25,7 @@ export const PersonalDataForm: React.FC = () => {
           name="vpoIssueDate"
           label={BOOKING.form.vpoIssueDate}
           control={control}
-          transform={formatISOOnlyDate}
+          transform={formatISOStartOfDay}
         />
         <SelectElement
           required
@@ -104,7 +104,7 @@ export const PersonalDataForm: React.FC = () => {
           name="dateOfBirth"
           label={BOOKING.form.dateOfBirth}
           control={control}
-          transform={formatISOOnlyDate}
+          transform={formatISOStartOfDay}
         />
         <TextFieldElement
           required
