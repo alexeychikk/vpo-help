@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Role } from '@vpo-help/model';
@@ -25,9 +25,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload): Promise<UserEntity | VpoEntity> {
-    if (payload.role === Role.Vpo) {
-      return this.vpoService.findById(payload.sub);
+    try {
+      if (payload.role === Role.Vpo) {
+        const vpo = await this.vpoService.findById(payload.sub);
+        return vpo;
+      }
+      const user = await this.userService.findById(payload.sub);
+      return user;
+    } catch (error) {
+      throw new UnauthorizedException();
     }
-    return this.userService.findById(payload.sub);
   }
 }
