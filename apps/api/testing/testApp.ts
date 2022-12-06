@@ -32,7 +32,7 @@ import {
 } from '@vpo-help/server';
 import type { Serialized } from '@vpo-help/utils';
 import { AppModule } from '../src/app.module';
-import { EnvService } from '../src/services';
+import { EnvService, ShutdownService } from '../src/services';
 
 export const TEST_PASSWORD = '11111';
 
@@ -53,11 +53,16 @@ beforeEach(async () => {
     }
   }
 
+  @Injectable()
+  class TestShutdownService {}
+
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [AppModule],
   })
     .overrideProvider(EnvService)
     .useClass(TestEnvService)
+    .overrideProvider(ShutdownService)
+    .useClass(TestShutdownService)
     .compile();
 
   nestApp = moduleFixture.createNestApplication<NestFastifyApplication>(

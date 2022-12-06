@@ -155,8 +155,6 @@ export const BOOKING = {
   errorMessages: {
     'Registration has been already scheduled':
       'Ви вже зареєстровані. Ви можете знайти інформацію про ваше бронювання на головній сторінці за номером довідки ВПО.',
-    'Registration must be scheduled for the future':
-      'Вибраний час бронювання не доступний. Перезавантажте сторінку та спробуйте знову.',
     'Slot with such time was not found in schedule':
       'Вибраний час бронювання не дійсний. Перезавантажте сторінку та спробуйте знову.',
     'Selected time slot is no longer available':

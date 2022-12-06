@@ -31,23 +31,6 @@ describe('POST /vpo', () => {
     `);
   });
 
-  test('rejects vpo scheduled for the past', async () => {
-    const vpo = await testApp.getFakeVpo({ scheduleDate: new Date() });
-
-    const { body } = await testApp.requestApi
-      .post('/vpo')
-      .send(vpo)
-      .expect(400);
-
-    expect(body).toMatchInlineSnapshot(`
-      Object {
-        "error": "Bad Request",
-        "message": "Registration must be scheduled for the future",
-        "statusCode": 400,
-      }
-    `);
-  });
-
   test('rejects vpo that already received help recently (see settings)', async () => {
     const vpo = await testApp.insertVpo({
       receivedHelpDate: subDays(new Date(), 5),

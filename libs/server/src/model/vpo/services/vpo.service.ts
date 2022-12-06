@@ -145,27 +145,21 @@ export class VpoService {
   }
 
   private async validateVpoRegistration(model: VpoModel, entity?: VpoEntity) {
-    if (!isAfter(model.scheduleDate, new Date())) {
-      throw new BadRequestException(
-        `Registration must be scheduled for the future`,
+    if (!entity) return;
+    if (entity.receivedHelpDate) {
+      const settings = await this.settingsService.getCommonSettings();
+      const daysSinceLastHelp = differenceInDays(
+        model.scheduleDate,
+        entity.receivedHelpDate,
       );
-    }
-    if (entity) {
-      if (entity.receivedHelpDate) {
-        const settings = await this.settingsService.getCommonSettings();
-        const daysSinceLastHelp = differenceInDays(
-          model.scheduleDate,
-          entity.receivedHelpDate,
+      if (daysSinceLastHelp < settings.daysToNextVpoRegistration) {
+        throw new ConflictException(
+          `Help can be received once in ${settings.daysToNextVpoRegistration} days`,
         );
-        if (daysSinceLastHelp < settings.daysToNextVpoRegistration) {
-          throw new ConflictException(
-            `Help can be received once in ${settings.daysToNextVpoRegistration} days`,
-          );
-        }
       }
-      if (model.scheduleDate.getTime() === entity.scheduleDate.getTime()) {
-        throw new ConflictException(`Registration has been already scheduled`);
-      }
+    }
+    if (model.scheduleDate.getTime() === entity.scheduleDate.getTime()) {
+      throw new ConflictException(`Registration has been already scheduled`);
     }
   }
 
