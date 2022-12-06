@@ -1,4 +1,4 @@
-import { Length, MinDate } from 'class-validator';
+import { Matches, MinDate } from 'class-validator';
 import { composeDecorators } from '@vpo-help/utils';
 
 export const IsVpoIssueDate = () =>
@@ -9,4 +9,5 @@ export const IsVpoIssueDate = () =>
     }),
   );
 
-export const IsVpoReferenceNumber = () => composeDecorators(Length(3, 50));
+export const IsVpoReferenceNumber = () =>
+  composeDecorators(Matches(/^(\d{4}-)?\d{10}$/i));

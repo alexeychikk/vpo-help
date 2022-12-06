@@ -263,7 +263,8 @@ class TestApp {
         max: 10,
       }),
       vpoIssueDate: faker.date.between(new Date('2022-01-01'), new Date()),
-      vpoReferenceNumber: faker.datatype.uuid(),
+      vpoReferenceNumber:
+        faker.helpers.replaceSymbolWithNumber('####-##########'),
       scheduleDate: addDays(new Date(), 1),
       ...dto,
     };

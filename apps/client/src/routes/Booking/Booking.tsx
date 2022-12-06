@@ -208,7 +208,7 @@ export const Booking = () => {
                       loading={submitting}
                     >
                       {activeStep === steps.length - 1
-                        ? BOOKING.confirmBuuton
+                        ? BOOKING.confirmButton
                         : BOOKING.nextStep}
                     </ButtonWithLoading>
                   )}

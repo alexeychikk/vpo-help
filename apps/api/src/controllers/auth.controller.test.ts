@@ -72,18 +72,18 @@ describe('POST /auth/login/vpo', () => {
       Object {
         "error": "Bad Request",
         "message": Array [
-          "vpoReferenceNumber must be longer than or equal to 3 characters",
+          "vpoReferenceNumber must match /^(\\\\d{4}-)?\\\\d{10}$/i regular expression",
         ],
         "statusCode": 400,
       }
     `);
   });
 
-  test('rejects invalid vpo reference number', async () => {
+  test('rejects inexistent vpo reference number', async () => {
     const { body } = await testApp.requestApi
       .post('/auth/login/vpo')
       .send({
-        vpoReferenceNumber: 'invalid_reference',
+        vpoReferenceNumber: '0000-0000000000',
       })
       .expect(404);
 

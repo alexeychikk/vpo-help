@@ -52,8 +52,10 @@ export const PersonalDataForm: React.FC = () => {
           label={BOOKING.form.vpoReferenceNumber}
           control={control}
           rules={{
-            minLength: { value: 3, message: ERROR_MESSAGES.minLength },
-            maxLength: { value: 50, message: ERROR_MESSAGES.maxLength },
+            pattern: {
+              value: /^(\d{4}-)?\d{10}$/i,
+              message: ERROR_MESSAGES.patternVpoReferenceNumber,
+            },
           }}
           sx={{ width: '300px' }}
         />

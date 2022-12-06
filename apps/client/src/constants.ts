@@ -8,6 +8,7 @@ export const ERROR_MESSAGES = {
   min: 'Недостатня кількість',
   max: 'Перевищена кількість',
   patternPhone: 'Формат має бути +380XXXXXXXXX',
+  patternVpoReferenceNumber: 'Формат має бути 0000-0000000000',
   unknown:
     'Виникла невідома помилка. Зверніться за допомогою до адміністратора веб-ресурсу.',
 };
@@ -124,7 +125,7 @@ export const BOOKING = {
   prevStep: 'Назад',
   nextStep: 'Вперед',
   gotoMain: 'На головну',
-  confirmBuuton: 'Підтверджую',
+  confirmButton: 'Підтверджую',
   form: {
     scheduleDate: 'Дата та час, коли потрібно прибути до Центру допомоги',
     vpoIssueDate: 'Дата видачі довідки',

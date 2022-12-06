@@ -28,25 +28,25 @@ test('vpo list supports min and max filters', async () => {
 
 test('complex vpo list filters', async () => {
   const list = await Promise.all([
-    testApp.insertVpo({ vpoReferenceNumber: 'vpo_001' }),
+    testApp.insertVpo({ vpoReferenceNumber: '0000-0000000001' }),
     testApp.insertVpo({
-      vpoReferenceNumber: 'vpo_002',
+      vpoReferenceNumber: '0000-0000000002',
       receivedHelpDate: new Date('2022-09-01'),
     }),
     testApp.insertVpo({
-      vpoReferenceNumber: 'vpo_003',
+      vpoReferenceNumber: '0000-0000000003',
       receivedHelpDate: new Date('2022-10-01'),
     }),
     testApp.insertVpo({
-      vpoReferenceNumber: 'vpo_004',
+      vpoReferenceNumber: '0000-0000000004',
       receivedHelpDate: new Date('2022-11-01'),
     }),
     testApp.insertVpo({
-      vpoReferenceNumber: 'vpo_105',
+      vpoReferenceNumber: '1234-0000000005',
       receivedHelpDate: new Date('2022-11-01'),
     }),
     testApp.insertVpo({
-      vpoReferenceNumber: 'vpo_006',
+      vpoReferenceNumber: '0000-0000000006',
       receivedHelpDate: new Date('2022-11-01'),
     }),
   ]);
@@ -55,7 +55,7 @@ test('complex vpo list filters', async () => {
     req
       .get(`/vpo`)
       .query({
-        q: JSON.stringify({ vpoReferenceNumber: 'vpo_00' }),
+        q: JSON.stringify({ vpoReferenceNumber: '0000-' }),
         qType: SearchType.Partial,
         [`min-[receivedHelpDate]`]: new Date('2022-10-01').toISOString(),
         [`sort[vpoReferenceNumber]`]: 'desc',
