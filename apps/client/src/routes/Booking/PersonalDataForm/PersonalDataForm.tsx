@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import moment from 'moment';
 import { useFormContext } from 'react-hook-form';
 import type { VpoModel } from '@vpo-help/model';
@@ -163,6 +163,8 @@ export const PersonalDataForm: React.FC = () => {
           sx={{ width: { xs: '300px', md: '400px' } }}
         />
       </Stack>
+
+      <Typography variant="subtitle1">{BOOKING.hint}</Typography>
     </Box>
   );
 };

@@ -142,7 +142,7 @@ export const Booking = () => {
         p: { xs: 0 },
       }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ flexGrow: 1 }}>
         <Paper
           variant="outlined"
           sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}

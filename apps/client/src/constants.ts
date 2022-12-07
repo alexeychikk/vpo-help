@@ -151,6 +151,7 @@ export const BOOKING = {
     numberOfRelativesBelow16: 'Скільки з них дітей до 16 років?',
     numberOfRelativesAbove65: 'Скільки з них дорослих, старшіх за 65 років?',
   },
+  hint: 'Примітка: реєстрація одного члена сім‘ї означає, що ви зареєстрували в черзі усю сім‘ю.',
   bookingInfoTitle: 'Ваше бронювання',
   peopleSuffix: 'ос.',
   errorModalTitle: 'Помилка бронювання',

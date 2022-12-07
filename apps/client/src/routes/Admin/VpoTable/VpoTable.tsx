@@ -43,7 +43,7 @@ export const VpoTable: React.FC = () => {
   const [importLoading, setImportLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
-  const [sortBy, setSortBy] = useState<string>();
+  const [sortBy, setSortBy] = useState<string | undefined>('scheduleDate');
   const [sortDirection, setSortDirection] = useState<SortDirection | undefined>(
     -1,
   );
@@ -54,11 +54,10 @@ export const VpoTable: React.FC = () => {
   const [maxReceivedHelpFilter, setMaxReceivedHelpFilter] = useState<string>();
 
   const vpoResponse = useAsync(async () => {
-    const baseSort = { 'sort[updatedAt]': -1, 'sort[createdAt]': -1 };
-    let sort = baseSort;
+    let sort: Record<string, number> | undefined;
 
-    if (sortBy) {
-      sort = { [`sort[${sortBy}]`]: sortDirection, ...baseSort };
+    if (sortBy && sortDirection) {
+      sort = { [`sort[${sortBy}]`]: sortDirection, 'sort[createdAt]': -1 };
     }
 
     return vpoService.getPaginated({
@@ -126,32 +125,35 @@ export const VpoTable: React.FC = () => {
 
   const applyFilters = () => {
     const newFilters: Record<string, string> = {};
+    const minScheduleDateKey = 'min[scheduleDate]';
+    const maxScheduleDateKey = 'max[scheduleDate]';
+    const minReceivedHelpKey = 'min-[receivedHelpDate]';
+    const maxReceivedHelpKey = 'max-[receivedHelpDate]';
+
     if (search && search.length >= 3) {
       newFilters['q'] = search;
     }
     if (scheduleDateFilter) {
-      newFilters['min[scheduleDate]'] =
-        formatISOStartOfDay(scheduleDateFilter)!;
-      newFilters['max[scheduleDate]'] = formatISOEndOfDay(scheduleDateFilter)!;
+      newFilters[minScheduleDateKey] = formatISOStartOfDay(scheduleDateFilter)!;
+      newFilters[maxScheduleDateKey] = formatISOEndOfDay(scheduleDateFilter)!;
     }
     if (minReceivedHelpFilter) {
-      newFilters['min-[receivedHelpDate]'] = formatISOStartOfDay(
+      newFilters[minReceivedHelpKey] = formatISOStartOfDay(
         minReceivedHelpFilter,
       )!;
     }
     if (maxReceivedHelpFilter) {
-      newFilters['max-[receivedHelpDate]'] = formatISOEndOfDay(
+      newFilters[maxReceivedHelpKey] = formatISOEndOfDay(
         maxReceivedHelpFilter,
       )!;
     }
 
     if (
       filters['q'] !== newFilters['q'] ||
-      filters['min[scheduleDate]'] !== newFilters['min[scheduleDate]'] ||
-      filters['max[scheduleDate]'] !== newFilters['max[scheduleDate]'] ||
-      filters['min-[receivedHelpDate]'] !==
-        newFilters['min-[receivedHelpDate]'] ||
-      filters['max[receivedHelpDate]'] !== newFilters['max[receivedHelpDate]']
+      filters[minScheduleDateKey] !== newFilters[minScheduleDateKey] ||
+      filters[maxScheduleDateKey] !== newFilters[maxScheduleDateKey] ||
+      filters[minReceivedHelpKey] !== newFilters[minReceivedHelpKey] ||
+      filters[maxReceivedHelpKey] !== newFilters[maxReceivedHelpKey]
     ) {
       setFilters(newFilters);
       setPage(0);
@@ -161,11 +163,10 @@ export const VpoTable: React.FC = () => {
   const handleExport = async () => {
     try {
       setExportLoading(true);
-      const baseSort = { 'sort[updatedAt]': -1, 'sort[createdAt]': -1 };
-      let sort = baseSort;
+      let sort: Record<string, number> | undefined;
 
-      if (sortBy) {
-        sort = { [`sort[${sortBy}]`]: sortDirection, ...baseSort };
+      if (sortBy && sortDirection) {
+        sort = { [`sort[${sortBy}]`]: sortDirection, 'sort[createdAt]': -1 };
       }
 
       await vpoService.downloadVpoList({
@@ -468,9 +469,7 @@ export const VpoTable: React.FC = () => {
                         {row.numberOfRelativesAbove65}
                       </TableCell>
                       <TableCell>
-                        {moment(row.updatedAt || row.createdAt).format(
-                          'DD.MM.YYYY',
-                        )}
+                        {moment(row.createdAt).format('DD.MM.YYYY')}
                       </TableCell>
                     </TableRow>
                   ))}
