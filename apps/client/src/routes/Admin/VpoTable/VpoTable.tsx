@@ -135,10 +135,14 @@ export const VpoTable: React.FC = () => {
       newFilters['max[scheduleDate]'] = formatISOEndOfDay(scheduleDateFilter)!;
     }
     if (minReceivedHelpFilter) {
-      newFilters['min-[receivedHelpDate]'] = minReceivedHelpFilter;
+      newFilters['min-[receivedHelpDate]'] = formatISOStartOfDay(
+        minReceivedHelpFilter,
+      )!;
     }
     if (maxReceivedHelpFilter) {
-      newFilters['max[receivedHelpDate]'] = maxReceivedHelpFilter;
+      newFilters['max-[receivedHelpDate]'] = formatISOEndOfDay(
+        maxReceivedHelpFilter,
+      )!;
     }
 
     if (
