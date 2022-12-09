@@ -25,7 +25,7 @@ Client is a [React](https://reactjs.org/) application.
    `npm i`
 3. Build _(in project's folder)_:\
    `npm run build`
-4. Create `.env` file in project's **root** (see [./apps/api/.env.dev](apps/api/.env.dev)) _OR_ provide environment variables to the run command (see the next step). Add `DB_URL=mongodb://localhost:27017/vpo-help` env, change to your db url.
+4. Create `.env` file in project's **root** (see [./apps/api/.env.dev](apps/api/.env.dev)) _OR_ provide environment variables to the run command (see the next step).
 5. Run API server _(in project's folder)_:\
    `npm start`
 
@@ -85,6 +85,17 @@ LoginAsVpoResponseDto {
 }
 ```
 
+### POST /send-vpo-verification
+
+```ts
+// PAYLOAD
+EmailHolderDto {
+  email: String,
+}
+// RESPONSE
+200
+```
+
 ---
 
 ### PUT /schedule
@@ -135,7 +146,9 @@ ScheduleAvailableDto {
 
 ```ts
 // PAYLOAD
-VpoModel {
+RegisterVpoDto {
+  email: String,
+  verificationCode: String,
   vpoIssueDate: DateISOString,
   vpoReferenceNumber: String,
   firstName: String,
@@ -151,7 +164,6 @@ VpoModel {
   scheduleDate: DateISOString,
   receivedHelpDate?: DateISOString,
   receivedGoods?: { [productName]: Number },
-  email?: String,
 }
 // RESPONSE
 { ...VpoUserModel }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import type { EnvBaseService } from '../env';
@@ -7,6 +7,7 @@ import { LoggerModule } from '../logger';
 import { JwtAuthGuard } from './guards';
 import { AuthService, JwtStrategy, PasswordService } from './services';
 
+@Global()
 @Module({
   imports: [
     LoggerModule,

@@ -12,6 +12,8 @@ describe('POST /vpo', () => {
       Object {
         "error": "Bad Request",
         "message": Array [
+          "verificationCode must be longer than or equal to 6 characters",
+          "email must be an email",
           "minimal allowed date for vpoIssueDate is 2022-01-01",
           "vpoReferenceNumber must match /^(\\\\d{4}-)?\\\\d{10}$/i regular expression",
           "firstName must be longer than or equal to 1 characters",
@@ -35,10 +37,16 @@ describe('POST /vpo', () => {
     const vpo = await testApp.insertVpo({
       receivedHelpDate: subDays(new Date(), 5),
     });
+    const { verificationCode } =
+      await testApp.verificationService.createVerificationCodeByEmail(vpo);
 
     const { body } = await testApp.requestApi
       .post('/vpo')
-      .send({ ...vpo, scheduleDate: await testApp.getAvailableDateSlot() })
+      .send({
+        ...vpo,
+        verificationCode,
+        scheduleDate: await testApp.getAvailableDateSlot(),
+      })
       .expect(409);
 
     expect(body).toMatchInlineSnapshot(`
@@ -54,11 +62,13 @@ describe('POST /vpo', () => {
     const vpo = await testApp.insertVpo({
       receivedHelpDate: subDays(new Date(), 100),
     });
+    const { verificationCode } =
+      await testApp.verificationService.createVerificationCodeByEmail(vpo);
     const scheduleDate = await testApp.getAvailableDateSlot(1);
 
     const { body } = await testApp.requestApi
       .post('/vpo')
-      .send({ ...vpo, scheduleDate })
+      .send({ ...vpo, verificationCode, scheduleDate })
       .expect(201);
 
     expect(body).toMatchObject(
@@ -71,9 +81,12 @@ describe('POST /vpo', () => {
 
   test('rejects vpo that registers again on the same date', async () => {
     const vpo = await testApp.registerVpo();
+    const { verificationCode } =
+      await testApp.verificationService.createVerificationCodeByEmail(vpo);
+
     const { body } = await testApp.requestApi
       .post('/vpo')
-      .send(vpo)
+      .send({ ...vpo, verificationCode })
       .expect(409);
 
     expect(body).toMatchInlineSnapshot(`
@@ -88,10 +101,12 @@ describe('POST /vpo', () => {
   test('registers vpo that changes schedule date', async () => {
     const vpo = await testApp.asVpo().getCurrentVpo();
     const scheduleDate = await testApp.getAvailableDateSlot(1);
+    const { verificationCode } =
+      await testApp.verificationService.createVerificationCodeByEmail(vpo);
 
     const { body } = await testApp.requestApi
       .post('/vpo')
-      .send({ ...vpo, scheduleDate })
+      .send({ ...vpo, verificationCode, scheduleDate })
       .expect(201);
 
     expect(body).toMatchObject({
@@ -104,10 +119,12 @@ describe('POST /vpo', () => {
     const vpo = await testApp.getFakeVpo({
       scheduleDate: endOfWeek(new Date()),
     });
+    const { verificationCode } =
+      await testApp.verificationService.createVerificationCodeByEmail(vpo);
 
     const { body } = await testApp.requestApi
       .post('/vpo')
-      .send(vpo)
+      .send({ ...vpo, verificationCode })
       .expect(400);
 
     expect(body).toMatchInlineSnapshot(`
@@ -123,10 +140,12 @@ describe('POST /vpo', () => {
     const vpo = await testApp.getFakeVpo({
       scheduleDate: addMinutes(await testApp.getAvailableDateSlot(), 1),
     });
+    const { verificationCode } =
+      await testApp.verificationService.createVerificationCodeByEmail(vpo);
 
     const { body } = await testApp.requestApi
       .post('/vpo')
-      .send(vpo)
+      .send({ ...vpo, verificationCode })
       .expect(400);
 
     expect(body).toMatchInlineSnapshot(`
@@ -147,6 +166,8 @@ describe('POST /vpo', () => {
     );
 
     const vpo = await testApp.getFakeVpo();
+    const { verificationCode } =
+      await testApp.verificationService.createVerificationCodeByEmail(vpo);
 
     for (let i = 0; i < vpoCount; i++) {
       await testApp.registerVpo();
@@ -154,7 +175,7 @@ describe('POST /vpo', () => {
 
     const { body } = await testApp.requestApi
       .post('/vpo')
-      .send(vpo)
+      .send({ ...vpo, verificationCode })
       .expect(409);
 
     expect(body).toMatchInlineSnapshot(`
@@ -168,6 +189,8 @@ describe('POST /vpo', () => {
 
   test('rejects if the war is over', async () => {
     const vpo = await testApp.getFakeVpo();
+    const { verificationCode } =
+      await testApp.verificationService.createVerificationCodeByEmail(vpo);
 
     await testApp.settingsService.updateCommonSettings({
       endOfWarDate: new Date(),
@@ -175,7 +198,7 @@ describe('POST /vpo', () => {
 
     const { body } = await testApp.requestApi
       .post('/vpo')
-      .send(vpo)
+      .send({ ...vpo, verificationCode })
       .expect(409);
 
     expect(body).toMatchInlineSnapshot(`
@@ -189,9 +212,12 @@ describe('POST /vpo', () => {
 
   test('registers new vpo', async () => {
     const vpo = await testApp.getFakeVpo();
+    const { verificationCode } =
+      await testApp.verificationService.createVerificationCodeByEmail(vpo);
+
     const { body } = await testApp.requestApi
       .post('/vpo')
-      .send(vpo)
+      .send({ ...vpo, verificationCode })
       .expect(201);
 
     expect(body).toMatchObject({

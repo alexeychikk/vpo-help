@@ -6,5 +6,11 @@
     "types": ["jest", "node"],
     "allowJs": true
   },
-  "include": ["./testing", "**/*.test.ts", "**/*.spec.ts", "**/*.d.ts"]
+  "include": [
+    "./testing",
+    "__mocks__",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.d.ts"
+  ]
 }

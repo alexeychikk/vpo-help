@@ -16,6 +16,9 @@ import { ReceivedHelpDto } from './receivedHelp.dto';
 import { VpoUserModel } from './vpoUser.model';
 
 export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
+  @IsEmail()
+  email!: string;
+
   @IsVpoIssueDate()
   vpoIssueDate!: Date;
 
@@ -70,10 +73,6 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @IsNestedArray(() => ReceivedHelpDto)
   @IsOptional()
   receivedGoods?: ReceivedHelpDto[];
-
-  @IsEmail()
-  @IsOptional()
-  email?: string;
 
   toVpoUserModel(): VpoUserModel<string> {
     return new VpoUserModel({

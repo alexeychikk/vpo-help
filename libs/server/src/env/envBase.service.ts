@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { getClassGetters } from '@vpo-help/utils';
 
 export enum NodeEnv {
@@ -31,7 +32,7 @@ export abstract class EnvBaseService {
   }
 
   get DB_URL(): string {
-    return this.getVar('DB_URL', 'mongodb://mongodb:27017/vpo-help');
+    return this.getVar('DB_URL');
   }
 
   get TZ(): string {
@@ -48,6 +49,14 @@ export abstract class EnvBaseService {
 
   get ADMIN_PASSWORD(): string {
     return this.getVar('ADMIN_PASSWORD');
+  }
+
+  get SMTP_TRANSPORT(): SMTPTransport.Options {
+    return this.getJsonVar('SMTP_TRANSPORT');
+  }
+
+  get EMAIL_VERIFICATION_DELAY(): number {
+    return parseInt(this.getVar('EMAIL_VERIFICATION_DELAY', '60'));
   }
 
   get HOST(): string {

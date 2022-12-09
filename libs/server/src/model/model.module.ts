@@ -11,9 +11,23 @@ import {
   SettingsService,
 } from './settings';
 import { UserEntity, UserRepository, UserService } from './user';
-import { CsvService, VpoEntity, VpoRepository, VpoService } from './vpo';
+import {
+  CsvService,
+  VerificationCodeEntity,
+  VerificationCodeRepository,
+  VerificationService,
+  VpoEntity,
+  VpoRepository,
+  VpoService,
+} from './vpo';
 
-const entities = [UserEntity, VpoEntity, SettingsEntity, HtmlPageEntity];
+const entities = [
+  UserEntity,
+  VpoEntity,
+  SettingsEntity,
+  HtmlPageEntity,
+  VerificationCodeEntity,
+];
 
 @Global()
 @Module({
@@ -36,9 +50,22 @@ const entities = [UserEntity, VpoEntity, SettingsEntity, HtmlPageEntity];
       VpoRepository,
       SettingsRepository,
       HtmlPageRepository,
+      VerificationCodeRepository,
     ]),
   ],
-  providers: [UserService, VpoService, SettingsService, CsvService],
-  exports: [UserService, VpoService, SettingsService, CsvService],
+  providers: [
+    UserService,
+    VpoService,
+    SettingsService,
+    CsvService,
+    VerificationService,
+  ],
+  exports: [
+    UserService,
+    VpoService,
+    SettingsService,
+    CsvService,
+    VerificationService,
+  ],
 })
 export class ModelModule {}

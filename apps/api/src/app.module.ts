@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { Module } from '@nestjs/common';
 import {
   AuthModule,
+  EmailModule,
   EnvModule,
   LoggerModule,
   ModelModule,
@@ -21,6 +22,7 @@ import { EnvService, ShutdownService } from './services';
     EnvModule.register(EnvService),
     LoggerModule,
     ModelModule,
+    EmailModule,
     AuthModule,
   ],
   providers: [ShutdownService],

@@ -16,6 +16,10 @@ export class ShutdownService implements OnApplicationShutdown {
 
   async onApplicationShutdown() {
     this.logger.log('Graceful shutdown');
-    await this.connection.close();
+    try {
+      await this.connection.close();
+    } catch (error) {
+      this.logger.warn(error);
+    }
   }
 }

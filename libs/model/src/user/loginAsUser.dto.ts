@@ -1,5 +1,4 @@
 import { IsEmail, Length } from 'class-validator';
-import type { Optional } from 'utility-types';
 
 export class LoginAsUserDto {
   @IsEmail()
@@ -8,7 +7,7 @@ export class LoginAsUserDto {
   @Length(5, 20)
   password!: string;
 
-  constructor(data: Optional<LoginAsUserDto>) {
+  constructor(data: LoginAsUserDto) {
     Object.assign(this, data);
   }
 }

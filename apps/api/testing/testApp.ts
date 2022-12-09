@@ -25,23 +25,26 @@ import type { HtmlPageEntity, VpoEntity } from '@vpo-help/server';
 import {
   AuthService,
   ClassValidationPipe,
+  EmailService,
   EnvBaseService,
   SettingsService,
   UserService,
+  VerificationService,
   VpoService,
 } from '@vpo-help/server';
 import type { Serialized } from '@vpo-help/utils';
 import { AppModule } from '../src/app.module';
 import { EnvService, ShutdownService } from '../src/services';
 
-export const TEST_PASSWORD = '11111';
-
-jest.setTimeout(30000);
-
 let nestApp: NestFastifyApplication;
 
+@Injectable()
+class TestShutdownService {}
+
+export const TEST_PASSWORD = '11111';
 const dbUrls: string[] = [];
 
+jest.setTimeout(30000);
 beforeEach(async () => {
   const dbUrl = `mongodb://localhost:27017/vpo-test-${faker.datatype.uuid()}`;
   dbUrls.push(dbUrl);
@@ -52,9 +55,6 @@ beforeEach(async () => {
       return dbUrl;
     }
   }
-
-  @Injectable()
-  class TestShutdownService {}
 
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [AppModule],
@@ -110,6 +110,14 @@ class TestApp {
     return this.app.get(SettingsService);
   }
 
+  get verificationService() {
+    return this.app.get(VerificationService);
+  }
+
+  get emailService() {
+    return this.app.get(EmailService);
+  }
+
   async loginAsUser(
     dto: LoginAsUserDto,
   ): Promise<Serialized<LoginAsUserResponseDto>> {
@@ -156,7 +164,7 @@ class TestApp {
     return this.vpoService.upsert(model);
   }
 
-  async populateVpo(amount = 10000) {
+  async populateVpo(amount: number) {
     const result = [];
     const perIteration = 100;
     while (amount > 0) {
@@ -249,6 +257,7 @@ class TestApp {
       addressOfRegistration: faker.address.city(),
       addressOfResidence: faker.address.streetAddress(true),
       dateOfBirth: faker.date.past(30),
+      email: faker.internet.email(new ObjectId().toString()),
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       middleName: faker.name.middleName(),

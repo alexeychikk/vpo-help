@@ -9,6 +9,10 @@ import { baseEntityWith, EntityConstructorData } from '../../common';
 export class VpoEntity extends baseEntityWith(
   VpoModel as Class<VpoModel<ObjectId>>,
 ) {
+  @Index('idx_vpo_email')
+  @Column()
+  email!: string;
+
   @Index('idx_vpo_issue_date')
   @Column()
   vpoIssueDate!: Date;
@@ -59,9 +63,6 @@ export class VpoEntity extends baseEntityWith(
 
   @Column()
   receivedGoods?: ReceivedHelpDto[];
-
-  @Column()
-  email?: string;
 
   constructor(data: EntityConstructorData<VpoEntity>) {
     super(data);

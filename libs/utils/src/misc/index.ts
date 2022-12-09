@@ -4,6 +4,7 @@ export * from './date';
 export * from './getClassGetters';
 export * from './getOwnPropertyNames';
 export * from './isClass';
+export * from './minimize';
 export * from './promiseChain.decorator';
 export * from './resolveUntil';
 export * from './serialize';

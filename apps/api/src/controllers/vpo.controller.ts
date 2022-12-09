@@ -13,12 +13,14 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { FastifyRequest } from 'fastify';
 import {
   AccessType,
   FindByIdDto,
   PaginationSearchSortDto,
   Permission,
+  RegisterVpoDto,
   VpoExportQueryDto,
   VpoModel,
 } from '@vpo-help/model';
@@ -28,6 +30,7 @@ import {
   JwtAuthGuard,
   PaginationSearchSort,
   UsePermissions,
+  VerificationService,
   VpoService,
 } from '@vpo-help/server';
 
@@ -36,14 +39,20 @@ import {
 export class VpoController {
   constructor(
     private readonly vpoService: VpoService,
+    private readonly verificationService: VerificationService,
     private readonly csvService: CsvService,
   ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() vpoModel: VpoModel) {
-    const vpo = await this.vpoService.register(vpoModel);
-    return vpo.toVpoUserModel();
+  async register(@Body() dto: RegisterVpoDto) {
+    await this.verificationService.verifyCodeByEmail({
+      email: dto.email,
+      verificationCode: dto.verificationCode,
+    });
+    const model = plainToInstance(VpoModel, instanceToPlain(dto));
+    const entity = await this.vpoService.register(model);
+    return entity.toVpoUserModel();
   }
 
   @Get(':id')
