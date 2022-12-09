@@ -1,4 +1,6 @@
-import { sortBy } from 'lodash';
+import { parse as parseCsv } from 'csv/sync';
+import { format as formatDate } from 'date-fns';
+import { CSV_COLUMN_KEYS } from '@vpo-help/model';
 import { testApp } from '../../testApp';
 
 test('auth', async () => {
@@ -6,20 +8,44 @@ test('auth', async () => {
 });
 
 test('updates multiple vpo-s from a csv file', async () => {
-  const list = sortBy(await testApp.populateVpo(8), 'vpoReferenceNumber');
+  await testApp.populateVpo(8);
+  const newVpo = testApp.getFakeVpoRaw({
+    vpoReferenceNumber: '9999-9999999999',
+  });
+  const newVpoRow = CSV_COLUMN_KEYS.slice(0, -1)
+    .map((col) => {
+      const value = newVpo[col as keyof typeof newVpo];
+      if (value instanceof Date) {
+        return col === 'scheduleDate'
+          ? formatDate(value, 'dd.MM.yyyy HH:mm')
+          : formatDate(value, 'dd.MM.yyyy');
+      }
+      return value;
+    })
+    .join(',');
+
+  const { text } = await testApp
+    .asUser()
+    .requestApiWithAuth((req) =>
+      req.get(`/vpo/export?sort[vpoReferenceNumber]=asc`).buffer(),
+    );
+  const parsedList = parseCsv(text).slice(1);
+
+  const getVpoRow = (index: number) => parsedList[index].slice(0, -1).join(',');
 
   const file = Buffer.from(
-    `vpoReferenceNumber,date,aid kits,щось смачненьке,guns
-${list[0].vpoReferenceNumber},01.01.2022
-${list[1].vpoReferenceNumber},02.01.2022,3
-${list[2].vpoReferenceNumber},03.01.2022,4,5
-${list[3].vpoReferenceNumber},05.01.2022,6,,7
-${list[4].vpoReferenceNumber},06.01.2022,8,9,10
-${list[5].vpoReferenceNumber},07.01.2022,oops,,11
-${list[6].vpoReferenceNumber},08.01.2022,oops,,12,13,14
-${list[7].vpoReferenceNumber}
+    `${CSV_COLUMN_KEYS.join(',')},aid kits,щось смачненьке,guns
+${getVpoRow(0)},01.01.2022
+${getVpoRow(1)},02.01.2022,3
+${getVpoRow(2)},03.01.2022,4,5
+${getVpoRow(3)},05.01.2022,6,,7
+${getVpoRow(4)},06.01.2022,8,9,10
+${getVpoRow(5)},07.01.2022,oops,,11
+${getVpoRow(6)},08.01.2022,oops,,12,13,14
+${getVpoRow(7)}
 vpo_invalid,09.01.2022
 ,10.01.2022
+${newVpoRow},11.01.2022
 `,
   );
 
@@ -33,8 +59,8 @@ vpo_invalid,09.01.2022
     );
 
   expect(body).toEqual({
-    total: 10,
-    processed: 8,
+    total: 11,
+    processed: 9,
     failed: ['9:vpo_invalid', '10:'],
   });
 
@@ -42,7 +68,7 @@ vpo_invalid,09.01.2022
     order: { vpoReferenceNumber: 1 },
   });
 
-  updatedList.slice(0, 8).forEach((vpo) => {
+  updatedList.slice(0, 9).forEach((vpo) => {
     expect(vpo.receivedHelpDate).toBeInstanceOf(Date);
   });
   updatedList.slice(1, 7).forEach((vpo) => {
@@ -52,7 +78,14 @@ vpo_invalid,09.01.2022
     { name: 'aid kits', amount: 0 },
     { name: 'щось смачненьке', amount: 0 },
     { name: 'guns', amount: 12 },
-    { name: 'unknown_5', amount: 13 },
-    { name: 'unknown_6', amount: 14 },
+    { name: 'unknown_3', amount: 13 },
+    { name: 'unknown_4', amount: 14 },
   ]);
+  expect(updatedList[8]).toMatchObject({
+    ...newVpo,
+    dateOfBirth: expect.any(Date),
+    scheduleDate: expect.any(Date),
+    receivedHelpDate: expect.any(Date),
+    vpoIssueDate: expect.any(Date),
+  });
 });

@@ -8,13 +8,22 @@ import {
   StreamableFile,
 } from '@nestjs/common';
 import { parse as parseCsv, stringify as stringifyCsv } from 'csv';
-import { format, parse } from 'date-fns';
+import { format as formatDate, parse as parseDate } from 'date-fns';
+import { pick } from 'lodash';
 import type {
+  BaseModel,
   PaginationSearchSortDto,
   VpoExportQueryDto,
 } from '@vpo-help/model';
-import { ReceivedHelpDto, VpoImportResultDto } from '@vpo-help/model';
-import type { VpoEntity } from '../entities';
+import {
+  CSV_COLUMN_KEYS,
+  ReceivedHelpDto,
+  VpoImportResultDto,
+  VpoModel,
+} from '@vpo-help/model';
+import { validateEntity } from '../../../utils';
+import type { EntityConstructorData } from '../../common';
+import { VpoEntity } from '../entities';
 import { VpoRepository } from './vpo.repository';
 const pump = promisify(pipeline);
 
@@ -38,7 +47,7 @@ export class CsvService {
     const file = stringifyCsv({
       header: query.header,
       cast: {
-        date: (value) => format(value, 'dd.MM.yyyy'),
+        date: (value) => formatDate(value, 'dd.MM.yyyy'),
       },
       columns: query.columns,
     });
@@ -46,12 +55,10 @@ export class CsvService {
     pipeline(
       cursor.stream({
         transform: (doc: VpoEntity) => {
-          const { firstName, lastName, middleName, scheduleDate, ...rest } =
-            doc;
+          const { scheduleDate, ...rest } = doc;
           return {
             ...rest,
-            fullName: `${lastName} ${firstName} ${middleName}`,
-            scheduleDate: format(scheduleDate, 'dd.MM.yyyy HH:mm'),
+            scheduleDate: formatDate(scheduleDate, 'dd.MM.yyyy HH:mm'),
           };
         },
       }) as NodeJS.ReadableStream,
@@ -63,7 +70,7 @@ export class CsvService {
 
     return new StreamableFile(file, {
       type: 'text/csv',
-      disposition: `attachment; filename="vpo_export_${format(
+      disposition: `attachment; filename="vpo_export_${formatDate(
         new Date(),
         'dd.MM.yyyy',
       )}.csv"`,
@@ -77,15 +84,34 @@ export class CsvService {
     const recordsFailed: string[] = [];
     let header: string[];
 
+    const parseCsvDate = (dateStr: string, format = 'dd.MM.yyyy') =>
+      parseDate(dateStr, format, referenceDate);
+
     await pump(
       fileData.file,
-      parseCsv({ relaxColumnCount: true }),
+      parseCsv({ relaxColumnCount: true, trim: true }),
       new Writable({
         objectMode: true,
         highWaterMark: this.importHighWaterMark,
         write: async (columns: string[], encoding, callback) => {
-          const [vpoReferenceNumber, receivedHelpDate, ...goodsColumns] =
-            columns;
+          const [
+            vpoReferenceNumber,
+            vpoIssueDate,
+            lastName,
+            firstName,
+            middleName,
+            dateOfBirth,
+            phoneNumber,
+            email,
+            addressOfRegistration,
+            addressOfResidence,
+            numberOfRelatives,
+            numberOfRelativesBelow16,
+            numberOfRelativesAbove65,
+            scheduleDate,
+            receivedHelpDate,
+          ] = columns.slice(0, CSV_COLUMN_KEYS.length);
+          const goodsColumns = columns.slice(CSV_COLUMN_KEYS.length);
 
           if (rowsCounter === 0) {
             header = [...columns];
@@ -99,20 +125,39 @@ export class CsvService {
             const receivedGoods = goodsColumns.map(
               (value, index) =>
                 new ReceivedHelpDto({
-                  name: header[index + 2] || `unknown_${index + 2}`,
+                  name:
+                    header[index + CSV_COLUMN_KEYS.length] ||
+                    `unknown_${index}`,
                   amount: +value || 0,
                 }),
             );
 
             const record: ImportedVpoRecord = {
-              vpoReferenceNumber,
-              receivedHelpDate: receivedHelpDate
-                ? parse(receivedHelpDate, 'dd.MM.yyyy', referenceDate)
-                : referenceDate,
+              addressOfRegistration,
+              addressOfResidence,
+              dateOfBirth: parseCsvDate(dateOfBirth),
+              email,
+              firstName,
+              lastName,
+              middleName,
+              numberOfRelatives: parseInt(numberOfRelatives || '0'),
+              numberOfRelativesAbove65: parseInt(
+                numberOfRelativesAbove65 || '0',
+              ),
+              numberOfRelativesBelow16: parseInt(
+                numberOfRelativesBelow16 || '0',
+              ),
+              phoneNumber,
               receivedGoods,
+              receivedHelpDate: receivedHelpDate
+                ? parseCsvDate(receivedHelpDate)
+                : referenceDate,
+              scheduleDate: parseCsvDate(scheduleDate, 'dd.MM.yyyy HH:mm'),
+              vpoIssueDate: parseCsvDate(vpoIssueDate),
+              vpoReferenceNumber,
             };
             // TODO: bulk update
-            await this.updateVpo(record);
+            await this.upsertVpo(record);
 
             recordsProcessed++;
           } catch (error) {
@@ -132,16 +177,18 @@ export class CsvService {
     });
   }
 
-  private async updateVpo(record: ImportedVpoRecord) {
+  private async upsertVpo(record: ImportedVpoRecord) {
     const { matchedCount } = await this.vpoRepository.updateOne(
       { vpoReferenceNumber: record.vpoReferenceNumber },
-      { $set: record },
+      { $set: pick(record, ['receivedHelpDate', 'receivedGoods']) },
     );
-    if (!matchedCount) throw new NotFoundException();
+    if (matchedCount) return;
+    const model = await validateEntity(VpoModel, record);
+    await this.vpoRepository.save(new VpoEntity(model as ImportedVpoRecord));
   }
 }
 
-type ImportedVpoRecord = Pick<
-  VpoEntity,
-  'vpoReferenceNumber' | 'receivedHelpDate' | 'receivedGoods'
+type ImportedVpoRecord = Omit<
+  EntityConstructorData<VpoEntity>,
+  keyof BaseModel
 >;

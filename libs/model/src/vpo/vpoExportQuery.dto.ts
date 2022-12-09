@@ -5,9 +5,12 @@ import { IsNestedArray } from '@vpo-help/utils';
 export const DEFAULT_CSV_COLUMNS: VpoExportColumnDto[] = [
   { key: 'vpoReferenceNumber', header: 'Номер довідки ВПО' },
   { key: 'vpoIssueDate', header: 'Дата видачі довідки' },
-  { key: 'fullName', header: 'ПІБ' },
+  { key: 'lastName', header: 'Прізвище' },
+  { key: 'firstName', header: 'Ім‘я' },
+  { key: 'middleName', header: 'По-батькові' },
   { key: 'dateOfBirth', header: 'Дата народження' },
   { key: 'phoneNumber', header: 'Номер телефону' },
+  { key: 'email', header: 'Email' },
   { key: 'addressOfRegistration', header: 'Місто реєстрації' },
   { key: 'addressOfResidence', header: 'Місто проживання' },
   { key: 'numberOfRelatives', header: 'Членів родини' },
@@ -16,6 +19,8 @@ export const DEFAULT_CSV_COLUMNS: VpoExportColumnDto[] = [
   { key: 'scheduleDate', header: 'Дата бронювання' },
   { key: 'receivedHelpDate', header: 'Дата обслуговування' },
 ];
+
+export const CSV_COLUMN_KEYS = DEFAULT_CSV_COLUMNS.map((c) => c.key);
 
 export class VpoExportQueryDto {
   @IsNestedArray(() => VpoExportColumnDto)

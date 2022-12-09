@@ -1,5 +1,6 @@
-import { parse } from 'csv/sync';
-import { DEFAULT_CSV_COLUMNS } from '@vpo-help/model';
+import { parse as parseCsv } from 'csv/sync';
+import { pick } from 'lodash';
+import { CSV_COLUMN_KEYS, DEFAULT_CSV_COLUMNS } from '@vpo-help/model';
 import { expectExtended } from '@vpo-help/testing';
 import { testApp } from '../../testApp';
 
@@ -19,24 +20,27 @@ test('exports a list of vpo-s to a csv file', async () => {
       .expect('Content-Disposition', /^attachment; filename="(.+)\.csv"$/),
   );
 
-  const parsedList = parse(text);
+  const parsedList = parseCsv(text, {
+    columns: CSV_COLUMN_KEYS,
+  });
 
   const [headerRow] = parsedList;
-  expect(headerRow).toHaveLength(DEFAULT_CSV_COLUMNS.length);
+  expect(Object.values(headerRow)).toHaveLength(DEFAULT_CSV_COLUMNS.length);
 
   const dataColumns = parsedList.slice(1) as string[][];
   expect(dataColumns).toHaveLength(list.length);
 
   dataColumns.forEach((row, i) => {
-    expect(row).toHaveLength(DEFAULT_CSV_COLUMNS.length);
-    const [vpoReferenceNumber, , fullName] = row;
-    expect({
-      vpoReferenceNumber,
-      fullName,
-    }).toEqual({
-      vpoReferenceNumber: list[i].vpoReferenceNumber,
-      fullName: `${list[i].lastName} ${list[i].firstName} ${list[i].middleName}`,
-    });
+    expect(Object.values(row)).toHaveLength(DEFAULT_CSV_COLUMNS.length);
+    expect(row).toMatchObject(
+      pick(list[i], [
+        'vpoReferenceNumber',
+        'email',
+        'firstName',
+        'lastName',
+        'middleName',
+      ]),
+    );
   });
 });
 
@@ -47,28 +51,28 @@ test('allows setting csv export columns via query', async () => {
     req
       .get(`/vpo/export`)
       .query({
-        columns: `vpoReferenceNumber,vpoIssueDate:Issue Date,fullName:`,
+        columns: `vpoReferenceNumber,vpoIssueDate:Issue Date,lastName:`,
       })
       .buffer()
       .expect(200),
   );
 
-  const parsedList = parse(text);
+  const parsedList = parseCsv(text);
   const [headerRow] = parsedList;
-  expect(headerRow).toEqual(['Номер довідки ВПО', 'Issue Date', 'fullName']);
+  expect(headerRow).toEqual(['Номер довідки ВПО', 'Issue Date', 'lastName']);
 
   const dataColumns = parsedList.slice(1) as string[][];
   dataColumns.forEach((row, i) => {
     expect(row).toHaveLength(3);
-    const [vpoReferenceNumber, vpoIssueDate, fullName] = row;
+    const [vpoReferenceNumber, vpoIssueDate, lastName] = row;
     expect({
       vpoReferenceNumber,
       vpoIssueDate,
-      fullName,
+      lastName,
     }).toEqual({
       vpoReferenceNumber: list[i].vpoReferenceNumber,
       vpoIssueDate: expectExtended.dateString(),
-      fullName: `${list[i].lastName} ${list[i].firstName} ${list[i].middleName}`,
+      lastName: list[i].lastName,
     });
   });
 });
@@ -86,6 +90,6 @@ test('allows setting csv export header via query', async () => {
       .expect(200),
   );
 
-  const parsedList = parse(text);
+  const parsedList = parseCsv(text);
   expect(parsedList).toHaveLength(list.length);
 });
