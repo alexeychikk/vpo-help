@@ -8,7 +8,11 @@ import {
   StreamableFile,
 } from '@nestjs/common';
 import { parse as parseCsv, stringify as stringifyCsv } from 'csv';
-import { format as formatDate, parse as parseDate } from 'date-fns';
+import {
+  format as formatDate,
+  parse as parseDate,
+  set as setDate,
+} from 'date-fns';
 import { pick } from 'lodash';
 import type {
   BaseModel,
@@ -78,7 +82,12 @@ export class CsvService {
   }
 
   async updateVpoListFromFile(fileData: MultipartFile) {
-    const referenceDate = new Date();
+    const referenceDate = setDate(new Date(), {
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
     let rowsCounter = 0;
     let recordsProcessed = 0;
     const recordsFailed: string[] = [];
