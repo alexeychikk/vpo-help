@@ -49,4 +49,8 @@ export class Auth {
     localStorage.setItem(ACCESS_TOKEN, data.accessToken.access_token);
     return data.user;
   }
+
+  async sendVerificationCode(email: string): Promise<void> {
+    await this.http.post('/send-vpo-verification', { email });
+  }
 }

@@ -3,6 +3,7 @@ import axios from 'axios';
 import FileDownload from 'js-file-download';
 import type {
   PaginatedListDto,
+  RegisterVpoDto,
   VpoImportResultDto,
   VpoModel,
   VpoUserModel,
@@ -18,7 +19,7 @@ export class Vpo {
   }
 
   async register(
-    vpoModel: Serialized<VpoModel>,
+    vpoModel: Serialized<RegisterVpoDto>,
   ): Promise<Serialized<VpoUserModel>> {
     const { data } = await this.http.post<Serialized<VpoUserModel>>(
       '',

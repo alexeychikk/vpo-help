@@ -7,6 +7,7 @@ export const ERROR_MESSAGES = {
   maxLength: 'Перевищена кількість символів',
   min: 'Недостатня кількість',
   max: 'Перевищена кількість',
+  email: 'Формат має бути email@example.com',
   patternPhone: 'Формат має бути +380XXXXXXXXX',
   patternVpoReferenceNumber: 'Формат має бути 0000-0000000000',
   unknown:
@@ -128,11 +129,18 @@ export const BOOKING = {
     'Заповніть персональну інформацію',
     'Підтвердіть бронювання',
   ] as const,
+  close: 'Закрити',
   prevStep: 'Назад',
   nextStep: 'Вперед',
   gotoMain: 'На головну',
   confirmButton: 'Підтверджую',
+  sendVerification: 'Відправити код підтвердження',
+  resendVerification: 'Повторно відправити код підтвердження',
+  verificationTitle: 'Код підтвердження було відправлено на пошту',
   form: {
+    email: 'Електронна пошта',
+    verificationCode: 'Код підтвердження',
+    verificationCodeHelper: 'Якщо не знайшли листа, перевірте папку "Спам"',
     scheduleDate: 'Дата та час, коли потрібно прибути до Центру допомоги',
     vpoIssueDate: 'Дата видачі довідки',
     vpoReferenceNumber: 'Номер довідки ВПО від 2022 року',
@@ -155,12 +163,19 @@ export const BOOKING = {
   bookingInfoTitle: 'Ваше бронювання',
   peopleSuffix: 'ос.',
   errorModalTitle: 'Помилка бронювання',
+  verificationRestriction: {
+    regexp: /Verification code can be sent once in (\d+?) seconds/,
+    getText: (seconds: number) =>
+      `Відправити код повторно можливо раз у ${seconds} сек.`,
+  },
   helpRestriction: {
     regexp: /Help can be received once in (\d+?) days/,
     getText: (days: number) =>
       `Ви вже отримували допомогу. Отримати допомогу повторно можливо раз у ${days} д.`,
   },
   errorMessages: {
+    verificationCode: 'Введенно невірний код підтвердження.',
+    verificationCodeLength: 'Код підтвердження має містити 6 символів.',
     'Registration has been already scheduled':
       'Ви вже зареєстровані. Ви можете знайти інформацію про ваше бронювання на головній сторінці за номером довідки ВПО.',
     'Slot with such time was not found in schedule':

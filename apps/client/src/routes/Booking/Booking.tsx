@@ -20,11 +20,11 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Navigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
-import type { VpoModel, VpoUserModel } from '@vpo-help/model';
+import type { RegisterVpoDto, VpoModel, VpoUserModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
-import { BOOKING } from '../../constants';
+import { BOOKING, ERROR_MESSAGES } from '../../constants';
 import { scheduleService, vpoService } from '../../services';
 import type { ScheduleSlotAvailableDto } from '../../services/schedule';
 import { Footer } from '../Main/Footer';
@@ -41,7 +41,7 @@ export const Booking = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [vpoUser, setVpoUser] = useState<Serialized<VpoUserModel> | null>(null);
-  const form = useForm<Serialized<VpoModel>>({
+  const form = useForm<Serialized<RegisterVpoDto>>({
     mode: 'onBlur',
     defaultValues: {
       numberOfRelatives: 0,
@@ -76,7 +76,7 @@ export const Booking = () => {
     [availableSlotsResponse.value],
   );
 
-  const nextStepOrSubmit: SubmitHandler<Serialized<VpoModel>> = async (
+  const nextStepOrSubmit: SubmitHandler<Serialized<RegisterVpoDto>> = async (
     formValues,
   ) => {
     if (activeStep === steps.length - 1) {
@@ -96,12 +96,12 @@ export const Booking = () => {
       } catch (error) {
         setSubmitting(false);
         if (error instanceof AxiosError) {
+          let clientMessage = ERROR_MESSAGES.unknown;
           if (
             error.response?.status === 400 ||
             error.response?.status === 409
           ) {
             const serverMessage: string = error.response?.data.message;
-            let clientMessage = '';
             if (BOOKING.helpRestriction.regexp.test(serverMessage)) {
               const match = serverMessage.match(
                 BOOKING.helpRestriction.regexp,
@@ -111,9 +111,11 @@ export const Booking = () => {
             } else {
               clientMessage = BOOKING.errorMessages[serverMessage];
             }
-            setErrorMessage(clientMessage);
-            setIsModalOpen(true);
+          } else if (error.response?.status === 401) {
+            clientMessage = BOOKING.errorMessages['verificationCode'];
           }
+          setErrorMessage(clientMessage || ERROR_MESSAGES.unknown);
+          setIsModalOpen(true);
         }
       }
     } else {
@@ -203,7 +205,7 @@ export const Booking = () => {
                     <ButtonWithLoading
                       type="submit"
                       variant="contained"
-                      sx={{ mt: 3, ml: 1 }}
+                      boxSx={{ mt: 3, ml: 1 }}
                       disabled={availableSlotsResponse.loading || submitting}
                       loading={submitting}
                     >
