@@ -63,6 +63,7 @@ export const ADMIN = {
       lastName: 'Прізвище',
       middleName: 'По-батькові',
       phoneNumber: 'Телефон',
+      email: 'Пошта',
       dateOfBirth: 'Дата народження',
       addressOfRegistration: 'Місто згідно паспорту',
       addressOfResidence: 'Місто фактичного проживання',
