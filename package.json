@@ -16,6 +16,10 @@
     "lint:commit": "commitlint --edit"
   },
   "private": true,
+  "engines": {
+    "npm": ">=8.0.0",
+    "node": ">=16.11.0"
+  },
   "dependencies": {
     "@devexpress/dx-react-core": "^3.0.6",
     "@devexpress/dx-react-scheduler": "^3.0.6",
