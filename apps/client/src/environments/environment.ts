@@ -1,7 +1,14 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// When building for production, this file is replaced with `environment.prod.ts`.
-
 export const environment = {
-  production: false,
-  url: 'http://localhost:3332',
+  production: process.env.CLIENT_ENV === 'production',
+  url: process.env.API_URL,
 };
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace NodeJS {
+    interface ProcessEnv {
+      API_URL: string;
+      CLIENT_ENV: string;
+    }
+  }
+}

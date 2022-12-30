@@ -18,16 +18,10 @@
         "assets": ["apps/client/src/favicon.ico", "apps/client/src/assets"],
         "styles": ["apps/client/src/styles.scss"],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "apps/client/webpack.config.js"
       },
       "configurations": {
         "production": {
-          "fileReplacements": [
-            {
-              "replace": "apps/client/src/environments/environment.ts",
-              "with": "apps/client/src/environments/environment.prod.ts"
-            }
-          ],
           "optimization": true,
           "outputHashing": "all",
           "sourceMap": false,
@@ -36,12 +30,6 @@
           "vendorChunk": false
         },
         "analyze": {
-          "fileReplacements": [
-            {
-              "replace": "apps/client/src/environments/environment.ts",
-              "with": "apps/client/src/environments/environment.prod.ts"
-            }
-          ],
           "optimization": true,
           "outputHashing": "all",
           "sourceMap": false,
