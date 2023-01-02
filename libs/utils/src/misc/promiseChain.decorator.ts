@@ -62,7 +62,8 @@ export function PromiseChain(chainKey?: string) {
     }
 
     descriptor.value = function (...args: unknown[]) {
-      let finalChainKey;
+      let finalChainKey: unknown;
+
       if (chainKey) {
         finalChainKey = chainKey;
       } else {
@@ -71,12 +72,20 @@ export function PromiseChain(chainKey?: string) {
           ? meta!.getValue(chainKeyParameter)
           : chainKeyParameter;
       }
+
       const existingPromise =
         promisesMap.get(finalChainKey) || Promise.resolve();
       const promise = existingPromise
         .catch((err) => err)
-        .then(() => method.apply(this, args));
+        .then(() => method.apply(this, args))
+        .then((res) => {
+          if (promisesMap.get(finalChainKey) === promise) {
+            promisesMap.delete(finalChainKey);
+          }
+          return res;
+        });
       promisesMap.set(finalChainKey, promise);
+
       return promise;
     };
 
