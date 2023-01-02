@@ -41,6 +41,7 @@
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/platform-fastify": "8.4.4",
+    "@nestjs/terminus": "^8.1.1",
     "@nestjs/typeorm": "8.0.3",
     "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",

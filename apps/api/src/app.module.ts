@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 
 import { Module } from '@nestjs/common';
+import { TerminusModule } from '@nestjs/terminus';
 import {
   AuthModule,
   EmailModule,
@@ -10,6 +11,7 @@ import {
 } from '@vpo-help/server';
 import {
   AuthController,
+  HealthController,
   HtmlController,
   ScheduleController,
   SettingsController,
@@ -24,10 +26,12 @@ import { EnvService, ShutdownService } from './services';
     ModelModule,
     EmailModule,
     AuthModule,
+    TerminusModule,
   ],
   providers: [ShutdownService],
   controllers: [
     AuthController,
+    HealthController,
     HtmlController,
     ScheduleController,
     SettingsController,
