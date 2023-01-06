@@ -111,6 +111,7 @@ export class CsvService {
             middleName,
             dateOfBirth,
             phoneNumber,
+            taxIdNumber,
             email,
             addressOfRegistration,
             addressOfResidence,
@@ -157,6 +158,7 @@ export class CsvService {
                 numberOfRelativesBelow16 || '0',
               ),
               phoneNumber,
+              taxIdNumber,
               receivedGoods,
               receivedHelpDate: receivedHelpDate
                 ? parseCsvDate(receivedHelpDate)

@@ -34,6 +34,10 @@ export class VpoEntity extends baseEntityWith(
   @Column()
   phoneNumber!: string;
 
+  @Index('idx_vpo_tax_id_number')
+  @Column()
+  taxIdNumber!: string;
+
   @Index('idx_vpo_date_of_birth')
   @Column()
   dateOfBirth!: Date;
@@ -45,13 +49,13 @@ export class VpoEntity extends baseEntityWith(
   addressOfResidence!: string;
 
   @Column()
-  numberOfRelatives!: number;
+  numberOfRelatives?: number;
 
   @Column()
-  numberOfRelativesBelow16!: number;
+  numberOfRelativesBelow16?: number;
 
   @Column()
-  numberOfRelativesAbove65!: number;
+  numberOfRelativesAbove65?: number;
 
   @Index('idx_vpo_schedule_date')
   @Column()

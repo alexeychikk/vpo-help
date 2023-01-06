@@ -10,6 +10,7 @@ export const DEFAULT_CSV_COLUMNS: VpoExportColumnDto[] = [
   { key: 'middleName', header: 'По-батькові' },
   { key: 'dateOfBirth', header: 'Дата народження' },
   { key: 'phoneNumber', header: 'Номер телефону' },
+  { key: 'taxIdNumber', header: 'РНОКПП' },
   { key: 'email', header: 'Email' },
   { key: 'addressOfRegistration', header: 'Місто реєстрації' },
   { key: 'addressOfResidence', header: 'Місто проживання' },

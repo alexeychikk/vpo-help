@@ -11,7 +11,11 @@ import {
 import { IsNestedArray } from '@vpo-help/utils';
 import type { IdType, ModelConstructorData } from '../common';
 import { BaseModel, Role } from '../common';
-import { IsVpoIssueDate, IsVpoReferenceNumber } from './decorators';
+import {
+  IsTaxIdNumber,
+  IsVpoIssueDate,
+  IsVpoReferenceNumber,
+} from './decorators';
 import { ReceivedHelpDto } from './receivedHelp.dto';
 import { VpoUserModel } from './vpoUser.model';
 
@@ -37,6 +41,9 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @IsPhoneNumber()
   phoneNumber!: string;
 
+  @IsTaxIdNumber()
+  taxIdNumber!: string;
+
   @IsDate()
   dateOfBirth!: Date;
 
@@ -49,19 +56,20 @@ export class VpoModel<Id extends IdType = IdType> extends BaseModel<Id> {
   @IsInt()
   @Min(0)
   @Max(50)
-  numberOfRelatives!: number;
+  @IsOptional()
+  numberOfRelatives?: number;
 
   @IsInt()
   @Min(0)
   @Max(50)
   @IsOptional()
-  numberOfRelativesBelow16 = 0;
+  numberOfRelativesBelow16?: number;
 
   @IsInt()
   @Min(0)
   @Max(50)
   @IsOptional()
-  numberOfRelativesAbove65 = 0;
+  numberOfRelativesAbove65?: number;
 
   @IsDate()
   scheduleDate!: Date;
