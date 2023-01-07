@@ -1,4 +1,4 @@
-import { IsDate, IsEnum } from 'class-validator';
+import { IsDate, IsEnum, IsOptional } from 'class-validator';
 import type { IdType, ModelConstructorData } from '../common';
 import { BaseModel, Role } from '../common';
 import { IsVpoReferenceNumber } from './decorators';
@@ -12,6 +12,10 @@ export class VpoUserModel<Id extends IdType = IdType> extends BaseModel<Id> {
 
   @IsDate()
   scheduleDate!: Date;
+
+  @IsDate()
+  @IsOptional()
+  receivedHelpDate?: Date;
 
   constructor(data: ModelConstructorData<VpoUserModel<Id>>) {
     super();

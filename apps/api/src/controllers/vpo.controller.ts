@@ -20,6 +20,7 @@ import {
   FindByIdDto,
   PaginationSearchSortDto,
   Permission,
+  RegisterVpoBulkDto,
   RegisterVpoDto,
   VpoExportQueryDto,
   VpoModel,
@@ -53,6 +54,23 @@ export class VpoController {
     const model = plainToInstance(VpoModel, instanceToPlain(dto));
     const entity = await this.vpoService.register(model);
     return entity.toVpoUserModel();
+  }
+
+  @Post('bulk')
+  @HttpCode(HttpStatus.CREATED)
+  async registerBulk(@Body() dto: RegisterVpoBulkDto) {
+    await this.verificationService.verifyCodeByEmail({
+      email: dto.mainVpo.email,
+      verificationCode: dto.verificationCode,
+    });
+    const { mainVpo, relativeVpos } = await this.vpoService.registerBulk(
+      dto.mainVpo,
+      dto.relativeVpos,
+    );
+    return {
+      mainVpo: mainVpo.toVpoUserModel(),
+      relativeVpos: relativeVpos.map((vpo) => vpo.toVpoUserModel()),
+    };
   }
 
   @Get(':id')

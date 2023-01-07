@@ -14,14 +14,16 @@ import {
 } from 'date-fns';
 import type { Day } from 'date-fns';
 import { groupBy, omit } from 'lodash';
-import {
-  ScheduleAvailableDto,
-  ScheduleSlotAvailableDto,
-} from '@vpo-help/model';
 import type {
   IdType,
   PaginationSearchSortDto,
+  VpoBaseModel,
   VpoModel,
+  VpoRelativeModel,
+} from '@vpo-help/model';
+import {
+  ScheduleAvailableDto,
+  ScheduleSlotAvailableDto,
 } from '@vpo-help/model';
 import { ChainKey, PromiseChain, setTimeOnDate } from '@vpo-help/utils';
 import { SettingsService } from '../../settings';
@@ -51,6 +53,7 @@ export class VpoService {
         'updatedAt',
         'receivedHelpDate',
         'receivedGoods',
+        'mainVpoReferenceNumber',
       ]);
 
       if (entity) {
@@ -63,6 +66,69 @@ export class VpoService {
     });
 
     return entity!;
+  }
+
+  async registerBulk(
+    mainVpoModel: VpoModel,
+    relativeVpoModels: VpoRelativeModel[],
+  ) {
+    const models = [mainVpoModel, ...relativeVpoModels];
+
+    const entities = await Promise.all(
+      models.map((model) =>
+        this.findByReferenceNumber(model.vpoReferenceNumber).catch(
+          () => undefined,
+        ),
+      ),
+    );
+
+    await Promise.all(
+      models.map((model, index) =>
+        this.validateVpoRegistration(model, entities[index]),
+      ),
+    );
+
+    const [mainVpo, ...relativeVpos] = await this.lockByDate(
+      mainVpoModel.scheduleDate,
+      async () => {
+        await this.ensureDateAvailable(mainVpoModel.scheduleDate);
+
+        return Promise.all(
+          models.map(async (model, index) => {
+            let entity = entities[index];
+            const rawModel = omit(model, [
+              'id',
+              'createdAt',
+              'updatedAt',
+              'receivedHelpDate',
+              'receivedGoods',
+              'mainVpoReferenceNumber',
+            ]);
+            rawModel.scheduleDate = mainVpoModel.scheduleDate;
+
+            if (entity) {
+              entity = await this.vpoRepository.saveExisting(
+                Object.assign(entity, rawModel),
+              );
+            } else {
+              entity = await this.vpoRepository.save(
+                new VpoEntity({
+                  ...rawModel,
+                  email: rawModel.email || '',
+                  phoneNumber: rawModel.phoneNumber || '',
+                  taxIdNumber: rawModel.taxIdNumber || '',
+                  mainVpoReferenceNumber: mainVpoModel.vpoReferenceNumber,
+                }),
+              );
+            }
+
+            return entity;
+          }),
+        );
+      },
+    );
+
+    return { mainVpo, relativeVpos };
   }
 
   async upsert(model: VpoModel): Promise<VpoEntity> {
@@ -144,7 +210,10 @@ export class VpoService {
     return result;
   }
 
-  private async validateVpoRegistration(model: VpoModel, entity?: VpoEntity) {
+  private async validateVpoRegistration(
+    model: VpoBaseModel,
+    entity?: VpoEntity,
+  ) {
     if (!entity) return;
     if (entity.receivedHelpDate) {
       const settings = await this.settingsService.getCommonSettings();
