@@ -134,7 +134,11 @@ export const Booking = () => {
           } else if (error.response?.status === 401) {
             clientMessage = BOOKING.errorMessages['verificationCode'];
           }
-          setErrorMessage(clientMessage || ERROR_MESSAGES.unknown);
+          const finalErrorMessage = clientMessage || ERROR_MESSAGES.unknown;
+          if (finalErrorMessage === ERROR_MESSAGES.unknown) {
+            console.error(error.response?.data);
+          }
+          setErrorMessage(finalErrorMessage);
           setIsModalOpen(true);
         }
       }
