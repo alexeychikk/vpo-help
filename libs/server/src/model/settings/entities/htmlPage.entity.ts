@@ -4,7 +4,7 @@ import type { Class } from 'utility-types';
 import { HtmlFieldsMap, HtmlPageModel } from '@vpo-help/model';
 import { baseEntityWith, EntityConstructorData } from '../../common';
 
-@Entity()
+@Entity({ name: 'html_page' })
 export class HtmlPageEntity extends baseEntityWith(
   HtmlPageModel as Class<HtmlPageModel<ObjectId>>,
 ) {

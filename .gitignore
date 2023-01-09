@@ -4,6 +4,7 @@
 /dist
 /tmp
 /mongo_db_data
+/mongo_db_data_prod
 
 # dependencies
 /node_modules

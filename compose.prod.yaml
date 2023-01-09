@@ -2,6 +2,10 @@ services:
   mongodb:
     container_name: vpo_mongo_prod
     image: mongo:5.0
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo_db_data_prod:/data/db
 
   api:
     container_name: vpo_api_prod

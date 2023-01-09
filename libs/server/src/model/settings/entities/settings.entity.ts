@@ -5,7 +5,7 @@ import type { ScheduleDto, SettingsDto } from '@vpo-help/model';
 import { BaseModel, SettingsCategory } from '@vpo-help/model';
 import { baseEntityWith, EntityConstructorData } from '../../common';
 
-@Entity()
+@Entity({ name: 'settings' })
 export class SettingsEntity extends baseEntityWith(
   BaseModel as Class<BaseModel<ObjectId>>,
 ) {

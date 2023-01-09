@@ -38,7 +38,7 @@ const entities = [
         type: 'mongodb',
         url: env.DB_URL,
         entities,
-        synchronize: !env.IS_PROD,
+        synchronize: true,
         useNewUrlParser: true,
         useUnifiedTopology: true,
         driver: mongodb,

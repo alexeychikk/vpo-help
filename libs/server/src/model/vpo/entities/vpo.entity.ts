@@ -5,7 +5,7 @@ import type { ReceivedHelpDto } from '@vpo-help/model';
 import { VpoModel } from '@vpo-help/model';
 import { baseEntityWith, EntityConstructorData } from '../../common';
 
-@Entity()
+@Entity({ name: 'vpo' })
 export class VpoEntity extends baseEntityWith(
   VpoModel as Class<VpoModel<ObjectId>>,
 ) {

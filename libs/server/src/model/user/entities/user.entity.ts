@@ -4,7 +4,7 @@ import type { Class } from 'utility-types';
 import { Role, UserModel } from '@vpo-help/model';
 import { baseEntityWith, EntityConstructorData } from '../../common';
 
-@Entity()
+@Entity({ name: 'user' })
 export class UserEntity extends baseEntityWith(
   UserModel as Class<UserModel<ObjectId>>,
 ) {

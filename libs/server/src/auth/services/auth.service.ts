@@ -39,6 +39,7 @@ export class AuthService implements OnModuleInit {
       await this.userService.findByEmail(this.envService.ADMIN_EMAIL);
     } catch (error) {
       if (error instanceof NotFoundException) {
+        this.logger.log(`Creating admin ${this.envService.ADMIN_EMAIL}`);
         await this.createAdmin({
           email: this.envService.ADMIN_EMAIL,
           password: this.envService.ADMIN_PASSWORD,

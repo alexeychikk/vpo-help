@@ -4,7 +4,7 @@ import type { Class } from 'utility-types';
 import { BaseModel } from '@vpo-help/model';
 import { baseEntityWith, EntityConstructorData } from '../../common';
 
-@Entity()
+@Entity({ name: 'verification_code ' })
 export class VerificationCodeEntity extends baseEntityWith(
   BaseModel as Class<BaseModel<ObjectId>>,
   { updatedAtIndex: false },
