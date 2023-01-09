@@ -1,5 +1,5 @@
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { OnModuleInit } from '@nestjs/common';
-import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type {
   CreateAdminDto,
@@ -23,6 +23,8 @@ import { PasswordService } from './password.service';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
+  private readonly logger = new Logger('AuthService');
+
   constructor(
     @Inject(EnvModule.ENV_SERVICE_PROVIDER_NAME)
     private readonly envService: EnvBaseService,
@@ -36,10 +38,17 @@ export class AuthService implements OnModuleInit {
     try {
       await this.userService.findByEmail(this.envService.ADMIN_EMAIL);
     } catch (error) {
-      await this.createAdmin({
-        email: this.envService.ADMIN_EMAIL,
-        password: this.envService.ADMIN_PASSWORD,
-      });
+      if (error instanceof NotFoundException) {
+        await this.createAdmin({
+          email: this.envService.ADMIN_EMAIL,
+          password: this.envService.ADMIN_PASSWORD,
+        });
+      } else {
+        this.logger.error(
+          `Failed to create admin ${this.envService.ADMIN_EMAIL}`,
+        );
+        this.logger.error(error);
+      }
     }
   }
 
