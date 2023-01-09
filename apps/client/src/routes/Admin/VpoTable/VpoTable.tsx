@@ -365,6 +365,14 @@ export const VpoTable: React.FC = () => {
                       {ADMIN.vpo.table.middleName}
                     </HeadTableCell>
                     <HeadTableCell
+                      name="taxIdNumber"
+                      sortBy={sortBy}
+                      sortDirection={sortDirection}
+                      onSort={handleSortChange}
+                    >
+                      {ADMIN.vpo.table.taxIdNumber}
+                    </HeadTableCell>
+                    <HeadTableCell
                       name="dateOfBirth"
                       sortBy={sortBy}
                       sortDirection={sortDirection}
@@ -461,6 +469,7 @@ export const VpoTable: React.FC = () => {
                       <TableCell>{row.lastName}</TableCell>
                       <TableCell>{row.firstName}</TableCell>
                       <TableCell>{row.middleName}</TableCell>
+                      <TableCell>{row.taxIdNumber || '-'}</TableCell>
                       <TableCell>
                         {moment(row.dateOfBirth).format('DD.MM.YYYY')}
                       </TableCell>

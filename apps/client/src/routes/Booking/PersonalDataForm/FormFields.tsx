@@ -57,7 +57,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({ index, arrayKey }) => {
   const { control, watch } = useFormContext<Serialized<VpoModel>>();
   const dateOfBirth = watch(formKeys.dateOfBirth);
   const isTaxIdRequired =
-    moment().diff(moment(dateOfBirth), 'years', true) > 14;
+    !isArrayFields || moment().diff(moment(dateOfBirth), 'years', true) > 14;
 
   return (
     <>

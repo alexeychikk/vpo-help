@@ -53,6 +53,12 @@ export const FormValues: React.FC<FormValuesProps> = (formValues) => {
             data={formValues.phoneNumber}
           />
         )}
+        {formValues.taxIdNumber && (
+          <BookingInfoItem
+            label={BOOKING.form.taxIdNumber}
+            data={formValues.taxIdNumber}
+          />
+        )}
       </Stack>
       <Stack
         direction={{ md: 'column', lg: 'row' }}

@@ -64,6 +64,7 @@ export const ADMIN = {
       firstName: 'Ім‘я',
       lastName: 'Прізвище',
       middleName: 'По-батькові',
+      taxIdNumber: 'РНОКПП',
       phoneNumber: 'Телефон',
       email: 'Пошта',
       dateOfBirth: 'Дата народження',

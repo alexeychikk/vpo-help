@@ -105,7 +105,11 @@ export const Booking = () => {
               parseInt(formValues.numberOfRelativesBelow16?.toString() || '') ||
               0,
           },
-          relativeVpos,
+          relativeVpos: relativeVpos.map((values) => ({
+            ...values,
+            phoneNumber: formValues.phoneNumber || undefined,
+            taxIdNumber: formValues.taxIdNumber || undefined,
+          })),
         });
         setVpoUser(data.mainVpo);
         setActiveStep(activeStep + 1);
