@@ -20,7 +20,11 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Navigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
-import type { RegisterVpoDto, VpoModel, VpoUserModel } from '@vpo-help/model';
+import type {
+  RegisterVpoDto,
+  VpoRelativeModel,
+  VpoUserModel,
+} from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
@@ -35,13 +39,17 @@ import { SelectTimeSlot } from './SelectTimeSlot';
 
 const steps = BOOKING.stepper;
 
+export type VpoForm = Serialized<RegisterVpoDto> & {
+  relativeVpos: Serialized<VpoRelativeModel>[];
+};
+
 export const Booking = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [vpoUser, setVpoUser] = useState<Serialized<VpoUserModel> | null>(null);
-  const form = useForm<Serialized<RegisterVpoDto>>({
+  const form = useForm<VpoForm>({
     mode: 'onBlur',
     defaultValues: {
       numberOfRelatives: 0,
@@ -76,22 +84,30 @@ export const Booking = () => {
     [availableSlotsResponse.value],
   );
 
-  const nextStepOrSubmit: SubmitHandler<Serialized<RegisterVpoDto>> = async (
-    formValues,
-  ) => {
+  const nextStepOrSubmit: SubmitHandler<VpoForm> = async ({
+    relativeVpos,
+    verificationCode,
+    ...formValues
+  }) => {
     if (activeStep === steps.length - 1) {
       try {
         setSubmitting(true);
-        const data = await vpoService.register({
-          ...formValues,
-          numberOfRelatives:
-            parseInt(formValues.numberOfRelatives.toString()) || 0,
-          numberOfRelativesBelow16:
-            parseInt(formValues.numberOfRelativesBelow16.toString()) || 0,
-          numberOfRelativesAbove65:
-            parseInt(formValues.numberOfRelativesBelow16.toString()) || 0,
+        const data = await vpoService.registerBulk({
+          verificationCode,
+          mainVpo: {
+            ...formValues,
+            numberOfRelatives:
+              parseInt(formValues.numberOfRelatives?.toString() || '') || 0,
+            numberOfRelativesBelow16:
+              parseInt(formValues.numberOfRelativesBelow16?.toString() || '') ||
+              0,
+            numberOfRelativesAbove65:
+              parseInt(formValues.numberOfRelativesBelow16?.toString() || '') ||
+              0,
+          },
+          relativeVpos,
         });
-        setVpoUser(data);
+        setVpoUser(data.mainVpo);
         setActiveStep(activeStep + 1);
       } catch (error) {
         setSubmitting(false);
@@ -206,7 +222,12 @@ export const Booking = () => {
                       type="submit"
                       variant="contained"
                       boxSx={{ mt: 3, ml: 1 }}
-                      disabled={availableSlotsResponse.loading || submitting}
+                      disabled={
+                        availableSlotsResponse.loading ||
+                        submitting ||
+                        (activeStep === steps.length - 1 &&
+                          !form.watch('verificationCode'))
+                      }
                       loading={submitting}
                     >
                       {activeStep === steps.length - 1

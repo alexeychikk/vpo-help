@@ -62,6 +62,16 @@ export const Footer: React.FC = () => {
             />
           </Typography>
         </Box>
+        <Typography
+          variant="body1"
+          sx={{
+            mt: { xs: 3, md: 0 },
+            ml: { xs: 0, md: 3, lg: 6 },
+            maxWidth: { xs: 'none', md: '400px' },
+          }}
+        >
+          {FOOTER.bookingInfo}
+        </Typography>
       </Container>
     </Container>
   );

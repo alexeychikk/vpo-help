@@ -19,6 +19,8 @@ export const FOOTER = {
   addressesStub: 'Тут будуть адреси центрів допомоги ВПО',
   schedule: 'Графік роботи',
   scheduleStub: 'Тут буде графік роботи центрів допомоги ВПО',
+  bookingInfo:
+    'Отримати допомогу в Центрі підтримки ВПО «Життєлюб піклується» можете лише після реєстрації та в зазначений під час реєстрації час.',
 };
 
 export const LOGIN = {
@@ -135,6 +137,9 @@ export const BOOKING = {
   nextStep: 'Вперед',
   gotoMain: 'На головну',
   confirmButton: 'Підтверджую',
+  addRelative: 'Додати данні родича',
+  removeRelative: 'Видалити данні родича',
+  accordionTitlePrefix: 'Запис №',
   sendVerification: 'Відправити код підтвердження',
   resendVerification: 'Повторно відправити код підтвердження',
   verificationTitle: 'Код підтвердження було відправлено на пошту',
@@ -145,9 +150,12 @@ export const BOOKING = {
     scheduleDate: 'Дата та час, коли потрібно прибути до Центру допомоги',
     vpoIssueDate: 'Дата видачі довідки',
     vpoReferenceNumber: 'Номер довідки ВПО від 2022 року',
+    vpoReferenceNumberHelper: '0000-0000000000',
     firstName: 'Ім‘я',
     lastName: 'Прізвище',
     middleName: 'По-батькові',
+    taxIdNumber: 'РНОКПП (ІПН)',
+    taxIdNumberError: 'РНОКПП має складатися з 10 цифр',
     phoneNumber: 'Номер телефону',
     dateOfBirth: 'Дата народження',
     addressOfRegistration: 'Місто реєстрації (згідно паспорту)',
@@ -162,6 +170,8 @@ export const BOOKING = {
   },
   hint: 'Примітка: реєстрація одного члена сім‘ї означає, що ви зареєстрували в черзі усю сім‘ю.',
   bookingInfoTitle: 'Ваше бронювання',
+  bookingExpired:
+    'Дата вашого бронювання в минулому. Якщо ви не мали змоги з‘явитися у визначений час, ви можете записатися на нову дату.',
   peopleSuffix: 'ос.',
   errorModalTitle: 'Помилка бронювання',
   verificationRestriction: {

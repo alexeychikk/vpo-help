@@ -464,18 +464,18 @@ export const VpoTable: React.FC = () => {
                       <TableCell>
                         {moment(row.dateOfBirth).format('DD.MM.YYYY')}
                       </TableCell>
-                      <TableCell>{row.phoneNumber}</TableCell>
-                      <TableCell>{row.email}</TableCell>
+                      <TableCell>{row.phoneNumber || '-'}</TableCell>
+                      <TableCell>{row.email || '-'}</TableCell>
                       <TableCell>{row.addressOfRegistration}</TableCell>
                       <TableCell>{row.addressOfResidence}</TableCell>
                       <TableCell align="right">
-                        {row.numberOfRelatives}
+                        {row.numberOfRelatives || '-'}
                       </TableCell>
                       <TableCell align="right">
-                        {row.numberOfRelativesBelow16}
+                        {row.numberOfRelativesBelow16 || '-'}
                       </TableCell>
                       <TableCell align="right">
-                        {row.numberOfRelativesAbove65}
+                        {row.numberOfRelativesAbove65 || '-'}
                       </TableCell>
                       <TableCell>
                         {moment(row.createdAt).format('DD.MM.YYYY')}

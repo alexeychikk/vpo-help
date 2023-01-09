@@ -12,6 +12,8 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
   vpoReferenceNumber,
   bookingDate,
 }) => {
+  const bookingMomentDate = moment(bookingDate);
+  const isExpired = bookingMomentDate.isBefore(moment());
   return (
     <Box
       sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
@@ -19,11 +21,17 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
       <Typography variant="h5" mb={2}>
         {BOOKING.bookingInfoTitle} (№{vpoReferenceNumber})
       </Typography>
-      <BookingInfoItem
-        label={BOOKING.form.scheduleDate}
-        data={moment(bookingDate).format('HH:mm - DD MMMM YYYY')}
-        sx={{ alignItems: 'center', mb: 4 }}
-      />
+      {isExpired ? (
+        <Typography variant="h6" mb={4}>
+          {BOOKING.bookingExpired}
+        </Typography>
+      ) : (
+        <BookingInfoItem
+          label={BOOKING.form.scheduleDate}
+          data={bookingMomentDate.format('HH:mm - DD MMMM YYYY')}
+          sx={{ alignItems: 'center', mb: 4 }}
+        />
+      )}
     </Box>
   );
 };

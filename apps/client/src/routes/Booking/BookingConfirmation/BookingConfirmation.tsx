@@ -1,4 +1,8 @@
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Dialog,
@@ -11,28 +15,31 @@ import {
 } from '@mui/material';
 import { AxiosError } from 'axios';
 import { isEmail } from 'class-validator';
-import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import type { RegisterVpoDto } from '@vpo-help/model';
-import type { Serialized } from '@vpo-help/utils';
-import { BookingInfoItem } from '../../../components/BookingInfo/BookingInfoItem';
 import { ButtonWithLoading } from '../../../components/ButtonWithLoading';
 import { TextFieldElement } from '../../../components/TextFieldElement';
 import { BOOKING, ERROR_MESSAGES } from '../../../constants';
 import { authService } from '../../../services';
+import type { VpoForm } from '../Booking';
+import { FormValues } from './FormValues';
 
 const RESEND_SECONDS_TIMEOUT = 60;
 
 export const BookingConfirmation: React.FC = () => {
-  const { control, getValues, trigger } =
-    useFormContext<Serialized<RegisterVpoDto>>();
+  const { control, getValues, trigger } = useFormContext<VpoForm>();
   const formValues = getValues();
   const [loading, setLoading] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
   const [timer, setTimer] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [expandedForm, setExpandedForm] = useState<string | false>(false);
+
+  const handleAccordionChange =
+    (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpandedForm(isExpanded ? panel : false);
+    };
 
   const sendVerificationCode = async () => {
     try {
@@ -173,89 +180,39 @@ export const BookingConfirmation: React.FC = () => {
           </Box>
         </Stack>
       )}
-      <Box
-        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}
-      >
-        <BookingInfoItem
-          label={BOOKING.form.scheduleDate}
-          data={moment(formValues.scheduleDate).format('HH:mm - DD MMMM YYYY')}
-        />
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          spacing={{ xs: 2, lg: 5 }}
-          sx={{ my: 3 }}
+      <Box>
+        <Accordion
+          expanded={expandedForm === formValues.vpoReferenceNumber}
+          sx={{ width: '100%' }}
+          onChange={handleAccordionChange(formValues.vpoReferenceNumber)}
         >
-          <BookingInfoItem
-            label={BOOKING.form.vpoIssueDate}
-            data={moment(formValues.vpoIssueDate).format('DD.MM.YYYY')}
-          />
-          <BookingInfoItem
-            label={BOOKING.form.vpoReferenceNumber}
-            data={formValues.vpoReferenceNumber}
-          />
-        </Stack>
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          spacing={{ xs: 2, lg: 5 }}
-          sx={{ mb: 3 }}
-        >
-          <BookingInfoItem
-            label={BOOKING.form.lastName}
-            data={formValues.lastName}
-          />
-          <BookingInfoItem
-            label={BOOKING.form.firstName}
-            data={formValues.firstName}
-          />
-          <BookingInfoItem
-            label={BOOKING.form.middleName}
-            data={formValues.middleName}
-          />
-          <BookingInfoItem
-            label={BOOKING.form.phoneNumber}
-            data={formValues.phoneNumber}
-          />
-        </Stack>
-        <Stack
-          direction={{ md: 'column', lg: 'row' }}
-          spacing={{ xs: 2, lg: 5 }}
-          sx={{ mb: 3 }}
-        >
-          <BookingInfoItem
-            label={BOOKING.form.dateOfBirth}
-            data={moment(formValues.dateOfBirth).format('DD.MM.YYYY')}
-          />
-          <BookingInfoItem
-            label={BOOKING.form.addressOfRegistration}
-            data={formValues.addressOfRegistration}
-          />
-          <BookingInfoItem
-            label={BOOKING.form.addressOfResidence}
-            data={formValues.addressOfResidence}
-          />
-        </Stack>
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          spacing={{ xs: 2, lg: 5 }}
-          sx={{ mb: 3 }}
-        >
-          <BookingInfoItem
-            label={BOOKING.form.numberOfRelatives}
-            data={`${formValues.numberOfRelatives} ${BOOKING.peopleSuffix}`}
-          />
-          {!!formValues.numberOfRelativesBelow16 && (
-            <BookingInfoItem
-              label={BOOKING.form.numberOfRelativesBelow16}
-              data={`${formValues.numberOfRelativesBelow16} ${BOOKING.peopleSuffix}`}
-            />
-          )}
-          {!!formValues.numberOfRelativesAbove65 && (
-            <BookingInfoItem
-              label={BOOKING.form.numberOfRelativesAbove65}
-              data={`${formValues.numberOfRelativesAbove65} ${BOOKING.peopleSuffix}`}
-            />
-          )}
-        </Stack>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>
+              {`${BOOKING.accordionTitlePrefix}${formValues.vpoReferenceNumber}`}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormValues {...formValues} />
+          </AccordionDetails>
+        </Accordion>
+        {formValues.relativeVpos?.map((nestedFormValues) => (
+          <Accordion
+            expanded={expandedForm === nestedFormValues.vpoReferenceNumber}
+            sx={{ width: '100%' }}
+            onChange={handleAccordionChange(
+              nestedFormValues.vpoReferenceNumber,
+            )}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>
+                {`${BOOKING.accordionTitlePrefix}${nestedFormValues.vpoReferenceNumber}`}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <FormValues {...nestedFormValues} />
+            </AccordionDetails>
+          </Accordion>
+        ))}
       </Box>
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <DialogTitle id="alert-dialog-title">

@@ -1,170 +1,154 @@
-import { Box, Stack, Typography } from '@mui/material';
-import moment from 'moment';
-import { useFormContext } from 'react-hook-form';
-import type { VpoModel } from '@vpo-help/model';
-import type { Serialized } from '@vpo-help/utils';
-import { DesktopDatePickerElement } from '../../../components/DesktopDatePickerElement';
-import { PhoneNumberField } from '../../../components/PhoneNumberField';
-import { SelectElement } from '../../../components/SelectElement';
-import { TextFieldElement } from '../../../components/TextFieldElement';
-import { BOOKING, ERROR_MESSAGES } from '../../../constants';
-import { formatISOStartOfDay } from '../../../utils';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Fab,
+  Typography,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { BOOKING } from '../../../constants';
+import type { VpoForm } from '../Booking';
+import { FormFields } from './FormFields';
 
 export const PersonalDataForm: React.FC = () => {
-  const { control } = useFormContext<Serialized<VpoModel>>();
+  const { control, watch, getValues, formState } = useFormContext<VpoForm>();
+  const { errors, submitCount } = formState;
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'relativeVpos',
+    rules: { maxLength: 20 },
+  });
+  const [expandedForm, setExpandedForm] = useState<string | false>(`sibling-1`);
+
+  const handleAccordionChange =
+    (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpandedForm(isExpanded ? panel : false);
+    };
+
+  const handleAddRelative = () => {
+    if (fields.length < 20) {
+      append({ scheduleDate: getValues().scheduleDate } as VpoForm);
+      setExpandedForm(`sibling${fields.length}`);
+    }
+  };
+
+  const handleRemoveRelative = (index: number) => {
+    if (fields.length !== 0) {
+      remove(index);
+      if (expandedForm === `sibling${index}`) {
+        setExpandedForm(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    let firstErrorFieldName = (
+      Object.keys(errors) as (keyof typeof errors)[]
+    )[0];
+
+    if (firstErrorFieldName) {
+      if (Array.isArray(errors[firstErrorFieldName!])) {
+        firstErrorFieldName = Object.keys(
+          errors[firstErrorFieldName!]!,
+        )[0] as keyof typeof errors[typeof firstErrorFieldName];
+      } else {
+        firstErrorFieldName =
+          '-1' as keyof typeof errors[typeof firstErrorFieldName];
+      }
+
+      setExpandedForm(`sibling${firstErrorFieldName}`);
+    }
+  }, [errors, submitCount]);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-      <Stack
-        direction={{ xs: 'column', lg: 'row' }}
-        spacing={{ xs: 1, lg: 3 }}
-        sx={{ mb: 3 }}
+      <Accordion
+        expanded={expandedForm === `sibling-1`}
+        sx={{ width: '100%' }}
+        onChange={handleAccordionChange(`sibling-1`)}
       >
-        <DesktopDatePickerElement
-          required
-          ignoreInvalidInputs
-          name="vpoIssueDate"
-          label={BOOKING.form.vpoIssueDate}
-          control={control}
-          transform={formatISOStartOfDay}
-        />
-        <SelectElement
-          required
-          name="addressOfResidence"
-          label={BOOKING.form.addressOfResidence}
-          helperText={BOOKING.form.addressOfResidenceHelper}
-          control={control}
-          rules={{
-            validate: {
-              city: (value) =>
-                value
-                  ? value !== BOOKING.form.addressOfResidenceValue
-                    ? BOOKING.form.addressOfResidenceError
-                    : undefined
-                  : undefined,
-            },
-          }}
-          sx={{ width: { xs: '300px', md: '450px' } }}
-          options={BOOKING.form.addressOfResidenceOptions}
-        />
-        <TextFieldElement
-          required
-          name="vpoReferenceNumber"
-          label={BOOKING.form.vpoReferenceNumber}
-          control={control}
-          rules={{
-            pattern: {
-              value: /^(\d{4}-)?\d{10}$/i,
-              message: ERROR_MESSAGES.patternVpoReferenceNumber,
-            },
-          }}
-          sx={{ width: '300px' }}
-        />
-      </Stack>
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        spacing={{ xs: 1, lg: 3 }}
-        sx={{ mb: 3 }}
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Box
+            sx={{
+              display: 'flex',
+              width: '100%',
+              alignItems: 'center',
+            }}
+          >
+            <Typography>
+              {`${BOOKING.accordionTitlePrefix}${
+                watch('vpoReferenceNumber') ||
+                BOOKING.form.vpoReferenceNumberHelper
+              }`}
+            </Typography>
+            <Button size="small" disabled sx={{ minWidth: '0', ml: 1 }}>
+              <DeleteOutlineIcon />
+            </Button>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails>
+          <FormFields />
+        </AccordionDetails>
+      </Accordion>
+      {fields.map((field, index) => (
+        <Accordion
+          key={field.id}
+          expanded={expandedForm === `sibling${index}`}
+          sx={{ width: '100%' }}
+          onChange={handleAccordionChange(`sibling${index}`)}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Box
+              sx={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'center',
+              }}
+            >
+              <Typography>
+                {`${BOOKING.accordionTitlePrefix}${
+                  watch(`relativeVpos.${index}.vpoReferenceNumber`) ||
+                  BOOKING.form.vpoReferenceNumberHelper
+                }`}
+              </Typography>
+              <Button
+                size="small"
+                aria-label="remove"
+                title={BOOKING.removeRelative}
+                onClick={(event: React.SyntheticEvent) => {
+                  event.stopPropagation();
+                  handleRemoveRelative(index);
+                }}
+                sx={{ minWidth: '0', ml: 1 }}
+              >
+                <DeleteOutlineIcon />
+              </Button>
+            </Box>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormFields index={index} arrayKey="relativeVpos" />
+          </AccordionDetails>
+        </Accordion>
+      ))}
+      <Box
+        sx={{ display: 'flex', width: '100%', justifyContent: 'center', p: 2 }}
       >
-        <TextFieldElement
-          required
-          name="lastName"
-          label={BOOKING.form.lastName}
-          control={control}
-          rules={{
-            maxLength: { value: 50, message: ERROR_MESSAGES.maxLength },
-          }}
-        />
-        <TextFieldElement
-          required
-          name="firstName"
-          label={BOOKING.form.firstName}
-          control={control}
-          rules={{
-            maxLength: { value: 50, message: ERROR_MESSAGES.maxLength },
-          }}
-        />
-        <TextFieldElement
-          required
-          name="middleName"
-          label={BOOKING.form.middleName}
-          control={control}
-          rules={{
-            maxLength: { value: 50, message: ERROR_MESSAGES.maxLength },
-          }}
-        />
-      </Stack>
-      <Stack
-        direction={{ md: 'column', lg: 'row' }}
-        spacing={{ xs: 1, lg: 3 }}
-        sx={{ mb: 3 }}
-      >
-        <DesktopDatePickerElement
-          required
-          ignoreInvalidInputs
-          name="dateOfBirth"
-          label={BOOKING.form.dateOfBirth}
-          control={control}
-          transform={formatISOStartOfDay}
-        />
-        <TextFieldElement
-          required
-          name="addressOfRegistration"
-          label={BOOKING.form.addressOfRegistration}
-          control={control}
-          rules={{
-            maxLength: { value: 200, message: ERROR_MESSAGES.maxLength },
-          }}
-          sx={{ width: '300px' }}
-        />
-        <PhoneNumberField
-          required
-          name="phoneNumber"
-          label={BOOKING.form.phoneNumber}
-          control={control}
-        />
-      </Stack>
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        spacing={{ xs: 1, lg: 3 }}
-        sx={{ mb: 3 }}
-      >
-        <TextFieldElement
-          required
-          type="number"
-          name="numberOfRelatives"
-          label={BOOKING.form.numberOfRelatives}
-          control={control}
-          rules={{
-            min: { value: 0, message: ERROR_MESSAGES.min },
-            max: { value: 50, message: ERROR_MESSAGES.max },
-          }}
-          sx={{ width: { xs: '300px', md: '450px' } }}
-        />
-        <TextFieldElement
-          type="number"
-          name="numberOfRelativesBelow16"
-          label={BOOKING.form.numberOfRelativesBelow16}
-          control={control}
-          rules={{
-            min: { value: 0, message: ERROR_MESSAGES.min },
-            max: { value: 50, message: ERROR_MESSAGES.max },
-          }}
-          sx={{ width: '300px' }}
-        />
-        <TextFieldElement
-          type="number"
-          name="numberOfRelativesAbove65"
-          label={BOOKING.form.numberOfRelativesAbove65}
-          control={control}
-          rules={{
-            min: { value: 0, message: ERROR_MESSAGES.min },
-            max: { value: 50, message: ERROR_MESSAGES.max },
-          }}
-          sx={{ width: { xs: '300px', md: '400px' } }}
-        />
-      </Stack>
-
-      <Typography variant="subtitle1">{BOOKING.hint}</Typography>
+        <Fab
+          color="primary"
+          aria-label="add"
+          title={BOOKING.addRelative}
+          disabled={fields.length >= 20}
+          onClick={handleAddRelative}
+        >
+          <AddIcon />
+        </Fab>
+      </Box>
     </Box>
   );
 };

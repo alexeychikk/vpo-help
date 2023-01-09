@@ -3,6 +3,7 @@ import axios from 'axios';
 import FileDownload from 'js-file-download';
 import type {
   PaginatedListDto,
+  RegisterVpoBulkDto,
   RegisterVpoDto,
   VpoImportResultDto,
   VpoModel,
@@ -24,6 +25,16 @@ export class Vpo {
     const { data } = await this.http.post<Serialized<VpoUserModel>>(
       '',
       vpoModel,
+    );
+    return data;
+  }
+
+  async registerBulk(
+    dto: Serialized<RegisterVpoBulkDto>,
+  ): Promise<RegisterVpoBulkResponseData> {
+    const { data } = await this.http.post<RegisterVpoBulkResponseData>(
+      '/bulk',
+      dto,
     );
     return data;
   }
@@ -74,4 +85,9 @@ export type PaginationSearchSortParams = {
   page: number;
   limit: number;
   [x: string]: string | number;
+};
+
+export type RegisterVpoBulkResponseData = {
+  mainVpo: Serialized<VpoUserModel>;
+  relativeVpos: Serialized<VpoUserModel>[];
 };
