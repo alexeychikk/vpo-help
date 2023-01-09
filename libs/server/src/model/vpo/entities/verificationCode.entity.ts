@@ -7,6 +7,7 @@ import { baseEntityWith, EntityConstructorData } from '../../common';
 @Entity()
 export class VerificationCodeEntity extends baseEntityWith(
   BaseModel as Class<BaseModel<ObjectId>>,
+  { updatedAtIndex: false },
 ) {
   @Index('idx_verification_code_email')
   @Column()

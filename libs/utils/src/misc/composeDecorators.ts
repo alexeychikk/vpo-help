@@ -1,13 +1,15 @@
+export type AnyDecorator =
+  | ClassDecorator
+  | MethodDecorator
+  | PropertyDecorator
+  | ParameterDecorator;
+
 /**
  * Slightly modified version of
  * @see https://github.com/nestjs/nest/blob/master/packages/common/decorators/core/apply-decorators.ts
  * that also accepts ParameterDecorator
  */
-export function composeDecorators(
-  ...decorators: Array<
-    ClassDecorator | MethodDecorator | PropertyDecorator | ParameterDecorator
-  >
-) {
+export function composeDecorators(...decorators: Array<AnyDecorator>) {
   // eslint-disable-next-line @typescript-eslint/ban-types
   return <TFunction extends Function, Y>(
     target: TFunction | object,

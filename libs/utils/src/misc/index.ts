@@ -1,6 +1,7 @@
 export * from './composeDecorators';
 export * from './copyMetadata';
 export * from './date';
+export * from './decorateIf.decorator';
 export * from './getClassGetters';
 export * from './getOwnPropertyNames';
 export * from './isClass';

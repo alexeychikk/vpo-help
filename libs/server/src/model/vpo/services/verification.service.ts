@@ -62,6 +62,7 @@ export class VerificationService {
       dto.verificationCode,
       entity.codeHash,
     );
+    await this.verificationCodeRepository.remove(entity);
   }
 
   async findByEmail(email: string): Promise<VerificationCodeEntity> {
