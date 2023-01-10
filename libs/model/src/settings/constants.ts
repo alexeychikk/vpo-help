@@ -4,7 +4,7 @@ import { SettingsDto } from './settings.dto';
 export const DEFAULT_SETTINGS = new SettingsDto({
   daysToNextVpoRegistration: 60,
   endOfWarDate: new Date('2025-01-01'),
-  scheduleDaysAvailable: 2,
+  scheduleDaysAvailable: 3,
 });
 
 export const DEFAULT_DAY_SCHEDULE = [

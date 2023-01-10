@@ -5,6 +5,9 @@ import type { Serialized } from '@vpo-help/utils';
 import { testApp } from '../../testApp';
 
 test('available schedule slots come in order after update', async () => {
+  await testApp.settingsService.updateCommonSettings({
+    scheduleDaysAvailable: 2,
+  });
   advanceTo(new Date('2022-11-22 12:00')); // Tuesday
 
   await testApp.settingsService.updateSchedule(

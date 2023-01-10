@@ -5,6 +5,9 @@ import type { Serialized } from '@vpo-help/utils';
 import { testApp } from '../../testApp';
 
 test('takes into account registered vpo-s', async () => {
+  await testApp.settingsService.updateCommonSettings({
+    scheduleDaysAvailable: 2,
+  });
   advanceTo(new Date('2022-11-22')); // Tuesday
 
   await testApp.settingsService.updateSchedule(
