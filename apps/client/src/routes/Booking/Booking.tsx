@@ -34,6 +34,8 @@ import type { ScheduleSlotAvailableDto } from '../../services/schedule';
 import { Footer } from '../Main/Footer';
 import { ROUTES } from '../routes.config';
 import { BookingConfirmation } from './BookingConfirmation';
+import { Info } from './Info';
+import { NoSlots } from './NoSlots';
 import { PersonalDataForm } from './PersonalDataForm';
 import { SelectTimeSlot } from './SelectTimeSlot';
 
@@ -41,6 +43,7 @@ const steps = BOOKING.stepper;
 
 export type VpoForm = Serialized<RegisterVpoDto> & {
   relativeVpos: Serialized<VpoRelativeModel>[];
+  isInfoRead: boolean;
 };
 
 export const Booking = () => {
@@ -72,10 +75,12 @@ export const Booking = () => {
     (step: number) => {
       switch (step) {
         case 0:
-          return <SelectTimeSlot slots={availableSlotsResponse.value!} />;
+          return <Info />;
         case 1:
-          return <PersonalDataForm />;
+          return <SelectTimeSlot slots={availableSlotsResponse.value!} />;
         case 2:
+          return <PersonalDataForm />;
+        case 3:
           return <BookingConfirmation />;
         default:
           throw new Error('Unknown step');
@@ -87,6 +92,7 @@ export const Booking = () => {
   const nextStepOrSubmit: SubmitHandler<VpoForm> = async ({
     relativeVpos,
     verificationCode,
+    isInfoRead,
     ...formValues
   }) => {
     if (activeStep === steps.length - 1) {
@@ -160,8 +166,6 @@ export const Booking = () => {
       component="main"
       maxWidth={false}
       sx={{
-        minWidth: '500px',
-
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
@@ -169,85 +173,94 @@ export const Booking = () => {
       }}
     >
       <Container maxWidth="xl" sx={{ flexGrow: 1 }}>
-        <Paper
-          variant="outlined"
-          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-        >
-          <Typography component="h1" variant="h4" align="center">
-            {BOOKING.title}
-          </Typography>
-          <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <FormProvider {...form}>
-            <Box
-              noValidate
-              component="form"
-              onSubmit={form.handleSubmit(nextStepOrSubmit)}
+        {!availableSlotsResponse.loading &&
+        availableSlotsResponse.value &&
+        !Object.keys(availableSlotsResponse.value).length ? (
+          <NoSlots />
+        ) : (
+          <Paper
+            variant="outlined"
+            sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+          >
+            <Typography component="h1" variant="h4" align="center">
+              {BOOKING.title}
+            </Typography>
+            <Stepper
+              activeStep={activeStep}
+              sx={{ flexWrap: { xs: 'wrap', md: 'nowrap' }, pt: 3, pb: 5 }}
             >
-              {activeStep === steps.length && vpoUser ? (
-                <BookingInfo
-                  vpoReferenceNumber={vpoUser.vpoReferenceNumber}
-                  bookingDate={vpoUser.scheduleDate}
-                />
-              ) : availableSlotsResponse.loading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                  <CircularProgress size={50} />
-                </Box>
-              ) : (
-                getStepContent(activeStep)
-              )}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                {activeStep !== steps.length && (
-                  <Button
-                    variant="outlined"
-                    href={ROUTES.MAIN.path}
-                    sx={{ mt: 3, ml: 1 }}
-                  >
-                    {BOOKING.gotoMain}
-                  </Button>
+              {steps.map((label) => (
+                <Step key={label} sx={{ pb: { xs: 1, md: 0 } }}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            <FormProvider {...form}>
+              <Box
+                noValidate
+                component="form"
+                onSubmit={form.handleSubmit(nextStepOrSubmit)}
+              >
+                {activeStep === steps.length && vpoUser ? (
+                  <BookingInfo
+                    vpoReferenceNumber={vpoUser.vpoReferenceNumber}
+                    bookingDate={vpoUser.scheduleDate}
+                  />
+                ) : availableSlotsResponse.loading ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress size={50} />
+                  </Box>
+                ) : (
+                  getStepContent(activeStep)
                 )}
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  {activeStep !== 0 && activeStep !== steps.length && (
-                    <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                      {BOOKING.prevStep}
-                    </Button>
-                  )}
-                  {activeStep === steps.length ? (
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  {activeStep !== steps.length && (
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       href={ROUTES.MAIN.path}
                       sx={{ mt: 3, ml: 1 }}
                     >
                       {BOOKING.gotoMain}
                     </Button>
-                  ) : (
-                    <ButtonWithLoading
-                      type="submit"
-                      variant="contained"
-                      boxSx={{ mt: 3, ml: 1 }}
-                      disabled={
-                        availableSlotsResponse.loading ||
-                        submitting ||
-                        (activeStep === steps.length - 1 &&
-                          !form.watch('verificationCode'))
-                      }
-                      loading={submitting}
-                    >
-                      {activeStep === steps.length - 1
-                        ? BOOKING.confirmButton
-                        : BOOKING.nextStep}
-                    </ButtonWithLoading>
                   )}
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    {activeStep !== 0 && activeStep !== steps.length && (
+                      <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                        {BOOKING.prevStep}
+                      </Button>
+                    )}
+                    {activeStep === steps.length ? (
+                      <Button
+                        variant="contained"
+                        href={ROUTES.MAIN.path}
+                        sx={{ mt: 3, ml: 1 }}
+                      >
+                        {BOOKING.gotoMain}
+                      </Button>
+                    ) : (
+                      <ButtonWithLoading
+                        type="submit"
+                        variant="contained"
+                        boxSx={{ mt: 3, ml: 1 }}
+                        disabled={
+                          availableSlotsResponse.loading ||
+                          submitting ||
+                          (activeStep === steps.length - 1 &&
+                            !form.watch('verificationCode'))
+                        }
+                        loading={submitting}
+                      >
+                        {activeStep === steps.length - 1
+                          ? BOOKING.confirmButton
+                          : BOOKING.nextStep}
+                      </ButtonWithLoading>
+                    )}
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-          </FormProvider>
-        </Paper>
+            </FormProvider>
+          </Paper>
+        )}
       </Container>
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <DialogTitle id="alert-dialog-title">

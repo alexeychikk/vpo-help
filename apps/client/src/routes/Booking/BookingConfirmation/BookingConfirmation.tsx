@@ -187,9 +187,7 @@ export const BookingConfirmation: React.FC = () => {
           onChange={handleAccordionChange(formValues.vpoReferenceNumber)}
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>
-              {`${BOOKING.accordionTitlePrefix}${formValues.vpoReferenceNumber}`}
-            </Typography>
+            <Typography>{BOOKING.accordionTitlePrefix}</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <FormValues {...formValues} />
@@ -205,7 +203,7 @@ export const BookingConfirmation: React.FC = () => {
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>
-                {`${BOOKING.accordionTitlePrefix}${nestedFormValues.vpoReferenceNumber}`}
+                {`${BOOKING.accordionRelativeTitlePrefix}${nestedFormValues.vpoReferenceNumber}`}
               </Typography>
             </AccordionSummary>
             <AccordionDetails>

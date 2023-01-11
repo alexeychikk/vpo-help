@@ -74,6 +74,16 @@ export const FormFields: React.FC<FormFieldsProps> = ({ index, arrayKey }) => {
           control={control}
           transform={formatISOStartOfDay}
           maxDate={moment()}
+          rules={{
+            validate: {
+              minDate: (value) => {
+                return value && moment(value).isBefore(moment('2022-02-24'))
+                  ? BOOKING.form.vpoIssueDateError
+                  : undefined;
+              },
+            },
+          }}
+          sx={{ width: { xs: '100%', md: '260px', lg: 'unset' } }}
         />
         <SelectElement
           required
@@ -84,10 +94,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({ index, arrayKey }) => {
           rules={{
             validate: {
               city: (value) =>
-                value
-                  ? value !== BOOKING.form.addressOfResidenceValue
-                    ? BOOKING.form.addressOfResidenceError
-                    : undefined
+                value && value !== BOOKING.form.addressOfResidenceValue
+                  ? BOOKING.form.addressOfResidenceError
                   : undefined,
             },
           }}
@@ -196,6 +204,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({ index, arrayKey }) => {
             type="number"
             name={formKeys.numberOfRelatives}
             label={BOOKING.form.numberOfRelatives}
+            helperText={BOOKING.form.numberOfRelativesHelper}
             control={control}
             rules={{
               min: { value: 0, message: ERROR_MESSAGES.min },

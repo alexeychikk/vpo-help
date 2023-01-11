@@ -81,12 +81,7 @@ export const PersonalDataForm: React.FC = () => {
               alignItems: 'center',
             }}
           >
-            <Typography>
-              {`${BOOKING.accordionTitlePrefix}${
-                watch('vpoReferenceNumber') ||
-                BOOKING.form.vpoReferenceNumberHelper
-              }`}
-            </Typography>
+            <Typography>{BOOKING.accordionTitlePrefix}</Typography>
             <Button size="small" disabled sx={{ minWidth: '0', ml: 1 }}>
               <DeleteOutlineIcon />
             </Button>
@@ -112,7 +107,7 @@ export const PersonalDataForm: React.FC = () => {
               }}
             >
               <Typography>
-                {`${BOOKING.accordionTitlePrefix}${
+                {`${BOOKING.accordionRelativeTitlePrefix}${
                   watch(`relativeVpos.${index}.vpoReferenceNumber`) ||
                   BOOKING.form.vpoReferenceNumberHelper
                 }`}
@@ -139,15 +134,15 @@ export const PersonalDataForm: React.FC = () => {
       <Box
         sx={{ display: 'flex', width: '100%', justifyContent: 'center', p: 2 }}
       >
-        <Fab
-          color="primary"
+        <Button
+          variant="contained"
           aria-label="add"
-          title={BOOKING.addRelative}
+          startIcon={<AddIcon />}
           disabled={fields.length >= 20}
           onClick={handleAddRelative}
         >
-          <AddIcon />
-        </Fab>
+          {BOOKING.addRelative}
+        </Button>
       </Box>
     </Box>
   );
