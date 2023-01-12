@@ -14,13 +14,6 @@ export const ERROR_MESSAGES = {
     'Виникла невідома помилка. Зверніться за допомогою до адміністратора веб-ресурсу.',
 };
 
-export const FOOTER = {
-  addresses: 'Адреси центрів допомоги',
-  addressesStub: 'Тут будуть адреси центрів допомоги ВПО',
-  schedule: 'Графік роботи',
-  scheduleStub: 'Тут буде графік роботи центрів допомоги ВПО',
-};
-
 export const LOGIN = {
   title: 'Вхід',
   button: 'Увійти',
@@ -41,87 +34,6 @@ export const MAIN = {
   },
   startBooking: 'Забронювати місце в черзі',
   backToMain: 'Повернутися на головну',
-};
-
-export const ADMIN = {
-  header: {
-    pages: {
-      VPO: 'Список ВПО',
-      SCHEDULE: 'Розклад',
-      SETTINGS: 'Налаштування',
-    } as const,
-    logout: 'Вийти',
-  },
-  vpo: {
-    title: 'Список ВПО',
-    table: {
-      vpoReferenceNumber: 'Номер довідки',
-      vpoIssueDate: 'Дата видачі довідки',
-      scheduleDate: 'Заброньований час',
-      receivedHelpDate: 'Отримано допомогу',
-      firstName: 'Ім‘я',
-      lastName: 'Прізвище',
-      middleName: 'По-батькові',
-      taxIdNumber: 'РНОКПП',
-      phoneNumber: 'Телефон',
-      email: 'Пошта',
-      dateOfBirth: 'Дата народження',
-      addressOfRegistration: 'Місто згідно паспорту',
-      addressOfResidence: 'Місто фактичного проживання',
-      numberOfRelatives: 'Родичі',
-      numberOfRelativesBelow16: 'Діти',
-      numberOfRelativesAbove65: 'Літні люди',
-      createAt: 'Дата реєстрації',
-    },
-    pagination: {
-      prevPage: 'На минулу сторінку',
-      nextPage: 'На попередню сторінку',
-      rowsPerPage: 'Записів на сторінку:',
-      of: 'з',
-      moreThan: 'більше ніж',
-    },
-    filters: {
-      title: 'Фільтри',
-      search: 'Повнотекстовий пошук',
-      searchError: 'Для пошуку введіть не меньше 3 символів',
-      scheduleDate: 'Заброньована дата',
-      minReceivedHelp: 'Мін. дата отримання допомоги',
-      maxReceivedHelp: 'Макс. дата отримання допомоги',
-      reset: 'Скинути фільтри',
-      apply: 'Застосувати фільтри',
-    },
-    export: {
-      limit: 'Кількість записів',
-      button: 'Експортувати',
-      error: 'Помилка при експорті файла',
-    },
-    import: {
-      file: 'Оберіть файл',
-      button: 'Імпортувати файл',
-      error: 'Виникла помилка для деяких записів при импорті файла',
-    },
-  },
-  schedule: {
-    title: 'Розклад',
-  },
-  settings: {
-    title: 'Налаштування',
-    form: {
-      daysToNextVpoRegistration: 'Кількість днів до повторної реєстрації ВПО',
-      endOfWarDate: 'Дата, до якої реєстрація доступна для ВПО',
-      scheduleDaysAvailable:
-        'Кількість днів, яка доступна на вибір для ВПО при реєстрації',
-      addresses: FOOTER.addresses,
-      schedule: FOOTER.schedule,
-    },
-  },
-  saveButton: 'Зберегти',
-  errorModal: {
-    title: 'Помилка',
-    content:
-      'Виникла помилка при збереженні данних. Перезавантажте сторінку та спробуйте знову. Якщо помилка повториться, зверніться за допомогою до адміністратора веб-ресурсу.',
-    closeButton: 'Закрити',
-  },
 };
 
 export const BOOKING = {
@@ -200,6 +112,7 @@ export const BOOKING = {
     'minimal allowed date for vpoIssueDate is 2022-01-01':
       'Бронювання можливе тільки для власників довідок ВПО від 2022 року.',
   } as Record<string, string>,
+  address: 'Адресa центру',
   noSlots: 'На данний момент немає вільних місць у черзі. Спробуйте пізніше.',
   infoTitle:
     'Умови реєстрації на отримання допомоги у Центрі підтримки ВПО "Життєлюб піклується"',
@@ -213,6 +126,86 @@ export const BOOKING = {
 
 У разі неявки в Центр у заброньований вами час, ви зможете зареєструватися ще раз не раніше, ніж через 2 місяці.
 Слідкуйте за інформацією на сторінці Життєлюб <a href="https://www.facebook.com/projectgiznelub">www.facebook.com/projectgiznelub</a>`,
+};
+
+export const ADMIN = {
+  header: {
+    pages: {
+      VPO: 'Список ВПО',
+      SCHEDULE: 'Розклад',
+      SETTINGS: 'Налаштування',
+    } as const,
+    logout: 'Вийти',
+  },
+  vpo: {
+    title: 'Список ВПО',
+    table: {
+      vpoReferenceNumber: 'Номер довідки',
+      vpoIssueDate: 'Дата видачі довідки',
+      scheduleDate: 'Заброньований час',
+      receivedHelpDate: 'Отримано допомогу',
+      firstName: 'Ім‘я',
+      lastName: 'Прізвище',
+      middleName: 'По-батькові',
+      taxIdNumber: 'РНОКПП',
+      phoneNumber: 'Телефон',
+      email: 'Пошта',
+      dateOfBirth: 'Дата народження',
+      addressOfRegistration: 'Місто згідно паспорту',
+      addressOfResidence: 'Місто фактичного проживання',
+      numberOfRelatives: 'Родичі',
+      numberOfRelativesBelow16: 'Діти',
+      numberOfRelativesAbove65: 'Літні люди',
+      createAt: 'Дата реєстрації',
+    },
+    pagination: {
+      prevPage: 'На минулу сторінку',
+      nextPage: 'На попередню сторінку',
+      rowsPerPage: 'Записів на сторінку:',
+      of: 'з',
+      moreThan: 'більше ніж',
+    },
+    filters: {
+      title: 'Фільтри',
+      search: 'Повнотекстовий пошук',
+      searchError: 'Для пошуку введіть не меньше 3 символів',
+      scheduleDate: 'Заброньована дата',
+      minReceivedHelp: 'Мін. дата отримання допомоги',
+      maxReceivedHelp: 'Макс. дата отримання допомоги',
+      reset: 'Скинути фільтри',
+      apply: 'Застосувати фільтри',
+    },
+    export: {
+      limit: 'Кількість записів',
+      button: 'Експортувати',
+      error: 'Помилка при експорті файла',
+    },
+    import: {
+      file: 'Оберіть файл',
+      button: 'Імпортувати файл',
+      error: 'Виникла помилка для деяких записів при импорті файла',
+    },
+  },
+  schedule: {
+    title: 'Розклад',
+  },
+  settings: {
+    title: 'Налаштування',
+    form: {
+      daysToNextVpoRegistration: 'Кількість днів до повторної реєстрації ВПО',
+      endOfWarDate: 'Дата, до якої реєстрація доступна для ВПО',
+      scheduleDaysAvailable:
+        'Кількість днів, яка доступна на вибір для ВПО при реєстрації',
+      addresses: BOOKING.address,
+    },
+  },
+  saveButton: 'Зберегти',
+  errorModal: {
+    title: 'Помилка',
+    content:
+      'Виникла помилка при збереженні данних. Перезавантажте сторінку та спробуйте знову. Якщо помилка повториться, зверніться за допомогою до адміністратора веб-ресурсу.',
+    closeButton: 'Закрити',
+  },
 };
 
 export const SCHEDULER = {

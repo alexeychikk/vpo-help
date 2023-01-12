@@ -10,7 +10,11 @@ import { useController, useFormContext } from 'react-hook-form';
 import { BOOKING } from '../../../constants';
 import type { VpoForm } from '../Booking';
 
-export const Info: React.FC = () => {
+export type InfoProps = {
+  address?: string;
+};
+
+export const Info: React.FC<InfoProps> = (props) => {
   const { control } = useFormContext<VpoForm>();
   const {
     field,
@@ -38,6 +42,21 @@ export const Info: React.FC = () => {
             __html: BOOKING.info,
           }}
         />
+        {props.address && (
+          <Box sx={{ display: 'flex', alignItems: 'center' }} mt={2}>
+            <span>{BOOKING.address}:</span>
+            <pre
+              style={{
+                lineHeight: 0,
+                display: 'inline-block',
+                marginLeft: '5px',
+              }}
+              dangerouslySetInnerHTML={{
+                __html: props.address,
+              }}
+            />
+          </Box>
+        )}
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
         <FormControl error={!!error} component="fieldset" variant="standard">

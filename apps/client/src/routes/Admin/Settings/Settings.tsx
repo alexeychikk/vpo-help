@@ -44,7 +44,6 @@ export const Settings: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const form = useForm<Serialized<SettingsDto>>();
   const [addresses, setAddresses] = useState(EditorState.createEmpty());
-  const [schedule, setSchedule] = useState(EditorState.createEmpty());
 
   const settingsResponse = useAsync(async () => {
     const settings = await settingsService.getSettings();
@@ -66,16 +65,6 @@ export const Settings: React.FC = () => {
         ),
       );
     }
-    const scheduleContentBlock = info.content['schedule']
-      ? htmlToDraft(info.content['schedule'])
-      : undefined;
-    if (scheduleContentBlock) {
-      setSchedule(
-        EditorState.createWithContent(
-          ContentState.createFromBlockArray(scheduleContentBlock.contentBlocks),
-        ),
-      );
-    }
     return info.content;
   });
 
@@ -87,12 +76,9 @@ export const Settings: React.FC = () => {
       formValues.scheduleDaysAvailable;
 
   const isInfoChanged = () =>
-    (addresses &&
-      infoResponse.value?.['addresses'] !==
-        draftToHtml(convertToRaw(addresses.getCurrentContent()))) ||
-    (schedule &&
-      infoResponse.value?.['schedule'] !==
-        draftToHtml(convertToRaw(schedule.getCurrentContent())));
+    addresses &&
+    infoResponse.value?.['addresses'] !==
+      draftToHtml(convertToRaw(addresses.getCurrentContent()));
 
   const saveSettings: SubmitHandler<Serialized<SettingsDto>> = async (
     formValues,
@@ -115,11 +101,6 @@ export const Settings: React.FC = () => {
         if (addresses) {
           content['addresses'] = draftToHtml(
             convertToRaw(addresses.getCurrentContent()),
-          );
-        }
-        if (schedule) {
-          content['schedule'] = draftToHtml(
-            convertToRaw(schedule.getCurrentContent()),
           );
         }
         await htmlService.updatePage('info', { content });
@@ -233,20 +214,6 @@ export const Settings: React.FC = () => {
                   padding: '0 15px',
                 }}
                 onEditorStateChange={(value) => setAddresses(value)}
-              />
-            </Box>
-            <Box pb={2}>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                {ADMIN.settings.form.schedule}
-              </Typography>
-              <Editor
-                toolbar={toolbar}
-                editorState={schedule}
-                editorStyle={{
-                  border: 'solid 1px rgba(0, 0, 0, 0.23)',
-                  padding: '0 15px',
-                }}
-                onEditorStateChange={(value) => setSchedule(value)}
               />
             </Box>
             <Fab

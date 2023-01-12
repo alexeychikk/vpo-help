@@ -29,9 +29,8 @@ import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
 import { BOOKING, ERROR_MESSAGES } from '../../constants';
-import { scheduleService, vpoService } from '../../services';
+import { htmlService, scheduleService, vpoService } from '../../services';
 import type { ScheduleSlotAvailableDto } from '../../services/schedule';
-import { Footer } from '../Main/Footer';
 import { ROUTES } from '../routes.config';
 import { BookingConfirmation } from './BookingConfirmation';
 import { Info } from './Info';
@@ -70,12 +69,16 @@ export const Booking = () => {
       return acc;
     }, {} as Record<string, ScheduleSlotAvailableDto[]>);
   }, []);
+  const infoResponse = useAsync(async () => {
+    const info = await htmlService.getPage('info');
+    return info.content;
+  });
 
   const getStepContent = useCallback(
     (step: number) => {
       switch (step) {
         case 0:
-          return <Info />;
+          return <Info address={infoResponse.value?.['addresses']} />;
         case 1:
           return <SelectTimeSlot slots={availableSlotsResponse.value!} />;
         case 2:
@@ -86,7 +89,8 @@ export const Booking = () => {
           throw new Error('Unknown step');
       }
     },
-    [availableSlotsResponse.value],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [availableSlotsResponse.value, infoResponse.value?.['addresses']],
   );
 
   const nextStepOrSubmit: SubmitHandler<VpoForm> = async ({
@@ -157,7 +161,8 @@ export const Booking = () => {
     setActiveStep(activeStep - 1);
   };
 
-  if (availableSlotsResponse.error) {
+  if (availableSlotsResponse.error || infoResponse.error) {
+    console.error(availableSlotsResponse.error, infoResponse.error);
     return <Navigate to={ROUTES.MAIN.path} />;
   }
 
@@ -206,7 +211,7 @@ export const Booking = () => {
                     vpoReferenceNumber={vpoUser.vpoReferenceNumber}
                     bookingDate={vpoUser.scheduleDate}
                   />
-                ) : availableSlotsResponse.loading ? (
+                ) : availableSlotsResponse.loading || infoResponse.loading ? (
                   <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                     <CircularProgress size={50} />
                   </Box>
@@ -280,7 +285,6 @@ export const Booking = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Footer />
     </Container>
   );
 };
