@@ -76,11 +76,14 @@ export const FormFields: React.FC<FormFieldsProps> = ({ index, arrayKey }) => {
           maxDate={moment()}
           rules={{
             validate: {
-              minDate: (value) => {
-                return value && moment(value).isBefore(moment('2022-02-24'))
-                  ? BOOKING.form.vpoIssueDateError
-                  : undefined;
-              },
+              minDate: (value) =>
+                value && moment(value).isBefore(moment('2022-02-24'))
+                  ? BOOKING.form.vpoIssueMinDateError
+                  : undefined,
+              maxDate: (value) =>
+                value && moment(value).isAfter(moment())
+                  ? BOOKING.form.vpoIssueMaxDateError
+                  : undefined,
             },
           }}
           sx={{ width: { xs: '100%', md: '260px', lg: 'unset' } }}

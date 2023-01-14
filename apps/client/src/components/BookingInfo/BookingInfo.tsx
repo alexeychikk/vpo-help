@@ -39,7 +39,7 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
       sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
     >
       <Typography variant="h5" mb={2}>
-        {BOOKING.bookingInfoTitle} (№{vpoReferenceNumber})
+        {BOOKING.bookingInfoTitle}
       </Typography>
       {isExpired ? (
         <Typography variant="h6" mb={4}>

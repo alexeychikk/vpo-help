@@ -2,7 +2,7 @@ export const ACCESS_TOKEN = 'ACCESS_TOKEN';
 
 export const ERROR_MESSAGES = {
   required: 'Має бути заповнене',
-  requiredDate: 'Має бути датою формату ДД.ММ.РР',
+  requiredDate: 'Має бути датою формату ДД.ММ.РРРР',
   minLength: 'Недостатня кількість символів',
   maxLength: 'Перевищена кількість символів',
   min: 'Недостатня кількість',
@@ -62,8 +62,9 @@ export const BOOKING = {
     verificationCodeHelper: 'Якщо не знайшли листа, перевірте папку "Спам"',
     scheduleDate: 'Дата та час, коли потрібно прибути до Центру допомоги',
     vpoIssueDate: 'Дата видачі довідки',
-    vpoIssueDateError:
+    vpoIssueMinDateError:
       'Бронювання доступне тільки з довідкою виданою після 24.02.2022',
+    vpoIssueMaxDateError: 'Дата повинна бути в минулому',
     vpoReferenceNumber: 'Номер довідки ВПО від 2022 року',
     vpoReferenceNumberHelper: '0000-0000000000',
     firstName: 'Ім‘я',
@@ -85,7 +86,7 @@ export const BOOKING = {
     numberOfRelativesAbove65: 'Скільки з них дорослих, старшіх за 65 років?',
   },
   hint: 'Примітка: реєстрація одного члена сім‘ї означає, що ви зареєстрували в черзі усю сім‘ю.',
-  bookingInfoTitle: 'Ваше бронювання',
+  bookingInfoTitle: 'Ваше бронювання (для одного або на сім‘ю)',
   bookingExpired:
     'Дата вашого бронювання в минулому. Якщо ви не мали змоги з‘явитися у визначений час, ви можете записатися на нову дату.',
   peopleSuffix: 'ос.',

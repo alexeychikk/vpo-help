@@ -70,7 +70,7 @@ export const DesktopDatePickerElement = <T extends Record<string, unknown>>(
           onBlur={(event) => {
             if (
               (!event.target.value ||
-                !/\d\d.\d\d.\d\d/.test(event.target.value)) &&
+                !/\d\d.\d\d.\d\d\d\d/.test(event.target.value)) &&
               context
             ) {
               context.setValue(name, undefined as PathValue<T, Path<T>>);

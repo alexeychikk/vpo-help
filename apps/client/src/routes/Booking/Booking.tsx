@@ -117,8 +117,8 @@ export const Booking = () => {
           },
           relativeVpos: relativeVpos.map((values) => ({
             ...values,
-            phoneNumber: formValues.phoneNumber || undefined,
-            taxIdNumber: formValues.taxIdNumber || undefined,
+            phoneNumber: values.phoneNumber || undefined,
+            taxIdNumber: values.taxIdNumber || undefined,
           })),
         });
         setVpoUser(data.mainVpo);
