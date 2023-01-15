@@ -34,6 +34,7 @@ export const PERMISSIONS: {
   },
   [Role.Vpo]: {
     [Permission.Schedule]: [AccessType.Read],
+    [Permission.Settings]: [AccessType.Read],
     [Permission.Html]: [AccessType.Read],
   },
 };

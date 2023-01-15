@@ -30,8 +30,6 @@ export class SettingsController {
   }
 
   @Get()
-  @UsePermissions({ [Permission.Settings]: [AccessType.Read] })
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async getSettings() {
     return this.settingsService.getCommonSettings();

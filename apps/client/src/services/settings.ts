@@ -12,11 +12,7 @@ export class Settings {
   }
 
   async getSettings(): Promise<Serialized<SettingsDto>> {
-    const { data } = await this.http.get<Serialized<SettingsDto>>('', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
-      },
-    });
+    const { data } = await this.http.get<Serialized<SettingsDto>>('');
     return data;
   }
 

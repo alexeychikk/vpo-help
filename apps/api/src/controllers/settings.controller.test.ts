@@ -53,14 +53,8 @@ describe('PUT /settings', () => {
 });
 
 describe('GET /settings', () => {
-  test('auth', async () => {
-    await testApp.expectAdmin((req) => req.get('/settings'));
-  });
-
   test('returns common settings', async () => {
-    const { body } = await testApp
-      .asUser()
-      .requestApiWithAuth((req) => req.get('/settings').expect(200));
+    const { body } = await testApp.requestApi.get('/settings').expect(200);
 
     expect(body).toMatchObject({
       daysToNextVpoRegistration: expect.any(Number),

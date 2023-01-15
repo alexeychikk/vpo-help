@@ -50,7 +50,7 @@ describe('POST /vpo', () => {
     expect(body).toMatchInlineSnapshot(`
       Object {
         "error": "Conflict",
-        "message": "Help can be received once in 60 days",
+        "message": "Help can be received once in 180 days",
         "statusCode": 409,
       }
     `);
@@ -58,7 +58,7 @@ describe('POST /vpo', () => {
 
   test('registers vpo that can receive help again', async () => {
     const vpo = await testApp.insertVpo({
-      receivedHelpDate: subDays(new Date(), 100),
+      receivedHelpDate: subDays(new Date(), 181),
     });
     const { verificationCode } =
       await testApp.verificationService.createVerificationCodeByEmail(vpo);
@@ -168,7 +168,7 @@ describe('POST /vpo', () => {
       await testApp.verificationService.createVerificationCodeByEmail(vpo);
 
     for (let i = 0; i < vpoCount; i++) {
-      await testApp.registerVpo();
+      await testApp.registerVpo({ scheduleDate: vpo.scheduleDate });
     }
 
     const { body } = await testApp.requestApi
