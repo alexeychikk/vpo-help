@@ -191,7 +191,7 @@ describe('POST /vpo', () => {
       await testApp.verificationService.createVerificationCodeByEmail(vpo);
 
     await testApp.settingsService.updateCommonSettings({
-      endOfWarDate: new Date(),
+      endOfRegistrationDate: new Date(),
     });
 
     const { body } = await testApp.requestApi

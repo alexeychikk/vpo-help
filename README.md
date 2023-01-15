@@ -212,7 +212,7 @@ _Auth, Permissions:_ **["SETTINGS.WRITE"]**
 // PAYLOAD
 UpdateSettingsDto {
   daysToNextVpoRegistration?: Number,
-  endOfWarDate?: DateISOString,
+  endOfRegistrationDate?: DateISOString,
   scheduleDaysAvailable?: Number,
 }
 // RESPONSE

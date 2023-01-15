@@ -14,7 +14,7 @@ describe('PUT /settings', () => {
         .put('/settings')
         .send({
           daysToNextVpoRegistration: 'foo',
-          endOfWarDate: 'bar',
+          endOfRegistrationDate: 'bar',
           scheduleDaysAvailable: 'baz',
           invalid: 'setting',
         })
@@ -27,7 +27,7 @@ describe('PUT /settings', () => {
         "message": Array [
           "daysToNextVpoRegistration must not be less than 1",
           "daysToNextVpoRegistration must be an integer number",
-          "endOfWarDate must be a Date instance",
+          "endOfRegistrationDate must be a Date instance",
           "scheduleDaysAvailable must not be greater than 31",
           "scheduleDaysAvailable must not be less than 1",
           "scheduleDaysAvailable must be an integer number",
@@ -40,7 +40,7 @@ describe('PUT /settings', () => {
   test('updates settings', async () => {
     const dto = new SettingsDto({
       daysToNextVpoRegistration: 100,
-      endOfWarDate: new Date('2023-01-01'),
+      endOfRegistrationDate: new Date('2023-01-01'),
       scheduleDaysAvailable: 5,
     });
 
@@ -64,7 +64,7 @@ describe('GET /settings', () => {
 
     expect(body).toMatchObject({
       daysToNextVpoRegistration: expect.any(Number),
-      endOfWarDate: expectExtended.dateISOString(),
+      endOfRegistrationDate: expectExtended.dateISOString(),
       scheduleDaysAvailable: expect.any(Number),
     });
   });

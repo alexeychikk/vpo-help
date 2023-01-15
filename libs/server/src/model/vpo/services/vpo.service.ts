@@ -158,7 +158,7 @@ export class VpoService {
       items: [],
     });
     const startDate = new Date();
-    if (!isBefore(startDate, common.endOfWarDate)) return result;
+    if (!isBefore(startDate, common.endOfRegistrationDate)) return result;
 
     const vpoList = await this.vpoRepository.findByScheduleDate(startDate);
     const groupedVpoList = groupBy(vpoList, (vpo) =>
@@ -174,7 +174,7 @@ export class VpoService {
 
       for (const slot of slots) {
         const slotDateFrom = setTimeOnDate(slot.timeFrom, date);
-        if (!isBefore(slotDateFrom, common.endOfWarDate)) break;
+        if (!isBefore(slotDateFrom, common.endOfRegistrationDate)) break;
         const slotDateTo = setTimeOnDate(slot.timeTo, date);
         if (!isAfter(slotDateTo, date)) continue;
 
@@ -188,7 +188,7 @@ export class VpoService {
             dateTo: slotDateTo,
           }),
         );
-        if (!isBefore(slotDateTo, common.endOfWarDate)) break;
+        if (!isBefore(slotDateTo, common.endOfRegistrationDate)) break;
       }
 
       if (dateSlots.length) {
@@ -204,7 +204,7 @@ export class VpoService {
       }
 
       date = addDays(startOfDay(date), 1);
-      if (!isBefore(date, common.endOfWarDate)) break;
+      if (!isBefore(date, common.endOfRegistrationDate)) break;
     }
 
     return result;

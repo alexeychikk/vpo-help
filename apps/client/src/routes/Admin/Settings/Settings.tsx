@@ -71,7 +71,8 @@ export const Settings: React.FC = () => {
   const isSettingsChanged = (formValues: Serialized<SettingsDto>) =>
     settingsResponse.value?.daysToNextVpoRegistration !==
       formValues.daysToNextVpoRegistration ||
-    settingsResponse.value?.endOfWarDate !== formValues.endOfWarDate ||
+    settingsResponse.value?.endOfRegistrationDate !==
+      formValues.endOfRegistrationDate ||
     settingsResponse.value?.scheduleDaysAvailable !==
       formValues.scheduleDaysAvailable;
 
@@ -89,7 +90,7 @@ export const Settings: React.FC = () => {
         const data = await settingsService.saveSettings({
           daysToNextVpoRegistration:
             parseInt(formValues.daysToNextVpoRegistration.toString()) || 0,
-          endOfWarDate: formValues.endOfWarDate,
+          endOfRegistrationDate: formValues.endOfRegistrationDate,
           scheduleDaysAvailable:
             parseInt(formValues.scheduleDaysAvailable.toString()) || 0,
         });
@@ -179,8 +180,8 @@ export const Settings: React.FC = () => {
               <DesktopDatePickerElement
                 required
                 ignoreInvalidInputs
-                name="endOfWarDate"
-                label={ADMIN.settings.form.endOfWarDate}
+                name="endOfRegistrationDate"
+                label={ADMIN.settings.form.endOfRegistrationDate}
                 control={form.control}
                 transform={formatISOStartOfDay}
                 sx={{

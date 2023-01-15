@@ -7,7 +7,7 @@ export class SettingsDto {
   daysToNextVpoRegistration!: number;
 
   @IsDate()
-  endOfWarDate!: Date;
+  endOfRegistrationDate!: Date;
 
   @IsInt()
   @Min(1)
@@ -24,7 +24,7 @@ export class UpdateSettingsDto extends SettingsDto {
   daysToNextVpoRegistration!: number;
 
   @IsOptional()
-  endOfWarDate!: Date;
+  endOfRegistrationDate!: Date;
 
   @IsOptional()
   scheduleDaysAvailable!: number;
