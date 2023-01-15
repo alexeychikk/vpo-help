@@ -125,8 +125,9 @@ export const Booking = () => {
         setActiveStep(activeStep + 1);
       } catch (error) {
         setSubmitting(false);
+        let clientMessage = ERROR_MESSAGES.unknown;
+        // shitcode overload
         if (error instanceof AxiosError) {
-          let clientMessage = ERROR_MESSAGES.unknown;
           if (
             error.response?.status === 400 ||
             error.response?.status === 409
@@ -144,13 +145,13 @@ export const Booking = () => {
           } else if (error.response?.status === 401) {
             clientMessage = BOOKING.errorMessages['verificationCode'];
           }
-          const finalErrorMessage = clientMessage || ERROR_MESSAGES.unknown;
-          if (finalErrorMessage === ERROR_MESSAGES.unknown) {
-            console.error(error.response?.data);
-          }
-          setErrorMessage(finalErrorMessage);
-          setIsModalOpen(true);
         }
+        const finalErrorMessage = clientMessage || ERROR_MESSAGES.unknown;
+        if (finalErrorMessage === ERROR_MESSAGES.unknown) {
+          console.error(error);
+        }
+        setErrorMessage(finalErrorMessage);
+        setIsModalOpen(true);
       }
     } else {
       setActiveStep(activeStep + 1);
