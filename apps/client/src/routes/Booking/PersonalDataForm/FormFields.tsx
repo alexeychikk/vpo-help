@@ -152,6 +152,21 @@ export const FormFields: React.FC<FormFieldsProps> = ({ index, arrayKey }) => {
             maxLength: { value: 50, message: ERROR_MESSAGES.maxLength },
           }}
         />
+        <DesktopDatePickerElement
+          required
+          ignoreInvalidInputs
+          name={formKeys.dateOfBirth}
+          label={BOOKING.form.dateOfBirth}
+          control={control}
+          transform={formatISOStartOfDay}
+          maxDate={moment()}
+        />
+      </Stack>
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={{ xs: 1, lg: 3 }}
+        sx={{ mb: 3 }}
+      >
         <TextFieldElement
           required={isTaxIdRequired}
           name={formKeys.taxIdNumber}
@@ -163,21 +178,6 @@ export const FormFields: React.FC<FormFieldsProps> = ({ index, arrayKey }) => {
               message: BOOKING.form.taxIdNumberError,
             },
           }}
-        />
-      </Stack>
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        spacing={{ xs: 1, lg: 3 }}
-        sx={{ mb: 3 }}
-      >
-        <DesktopDatePickerElement
-          required
-          ignoreInvalidInputs
-          name={formKeys.dateOfBirth}
-          label={BOOKING.form.dateOfBirth}
-          control={control}
-          transform={formatISOStartOfDay}
-          maxDate={moment()}
         />
         <TextFieldElement
           required
