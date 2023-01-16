@@ -211,6 +211,7 @@ export const Booking = () => {
                   <BookingInfo
                     vpoReferenceNumber={vpoUser.vpoReferenceNumber}
                     bookingDate={vpoUser.scheduleDate}
+                    receivedHelpDate={vpoUser.receivedHelpDate}
                   />
                 ) : availableSlotsResponse.loading || infoResponse.loading ? (
                   <Box sx={{ display: 'flex', justifyContent: 'center' }}>

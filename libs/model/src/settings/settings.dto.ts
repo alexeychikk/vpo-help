@@ -9,6 +9,9 @@ export class SettingsDto {
   @IsDate()
   endOfRegistrationDate!: Date;
 
+  @IsDate()
+  prevEndOfRegistrationDate!: Date;
+
   @IsInt()
   @Min(1)
   @Max(31)
@@ -19,15 +22,25 @@ export class SettingsDto {
   }
 }
 
-export class UpdateSettingsDto extends SettingsDto {
+export class UpdateSettingsDto {
+  @IsInt()
+  @Min(1)
   @IsOptional()
-  daysToNextVpoRegistration!: number;
+  daysToNextVpoRegistration?: number;
 
+  @IsDate()
   @IsOptional()
-  endOfRegistrationDate!: Date;
+  endOfRegistrationDate?: Date;
 
+  @IsInt()
+  @Min(1)
+  @Max(31)
   @IsOptional()
-  scheduleDaysAvailable!: number;
+  scheduleDaysAvailable?: number;
+
+  constructor(data: Optional<UpdateSettingsDto>) {
+    Object.assign(this, data);
+  }
 }
 
 export enum SettingsCategory {

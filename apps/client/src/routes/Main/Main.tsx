@@ -102,8 +102,13 @@ export const Main = () => {
               <BookingInfo
                 vpoReferenceNumber={user.vpoReferenceNumber}
                 bookingDate={user.scheduleDate}
+                receivedHelpDate={user.receivedHelpDate}
               />
-              <Button variant="contained" onClick={() => setUser(null)}>
+              <Button
+                variant="contained"
+                onClick={() => setUser(null)}
+                sx={{ maxWidth: '20em', margin: '0 auto' }}
+              >
                 {MAIN.backToMain}
               </Button>
             </Box>

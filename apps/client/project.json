@@ -59,6 +59,12 @@
       "options": {
         "lintFilePatterns": ["apps/client/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "ts": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["tsc -p apps/api/tsconfig.app.json --noEmit"]
+      }
     }
   },
   "tags": []

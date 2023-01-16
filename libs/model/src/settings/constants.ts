@@ -1,10 +1,11 @@
-import { addMonths } from 'date-fns';
+import { addMonths, endOfDay, endOfYesterday } from 'date-fns';
 import { ScheduleDto, ScheduleSlotDto } from './schedule.dto';
 import { SettingsDto } from './settings.dto';
 
 export const DEFAULT_SETTINGS = new SettingsDto({
   daysToNextVpoRegistration: 180,
-  endOfRegistrationDate: addMonths(new Date(), 2),
+  prevEndOfRegistrationDate: endOfYesterday(),
+  endOfRegistrationDate: endOfDay(addMonths(new Date(), 2)),
   scheduleDaysAvailable: 5,
 });
 

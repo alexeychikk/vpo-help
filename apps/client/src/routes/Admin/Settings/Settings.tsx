@@ -31,7 +31,7 @@ import { DesktopDatePickerElement } from '../../../components/DesktopDatePickerE
 import { TextFieldElement } from '../../../components/TextFieldElement';
 import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { htmlService, settingsService } from '../../../services';
-import { formatISOStartOfDay } from '../../../utils';
+import { formatISOEndOfDay } from '../../../utils';
 import { ROUTES } from '../../routes.config';
 
 const toolbar = {
@@ -183,7 +183,7 @@ export const Settings: React.FC = () => {
                 name="endOfRegistrationDate"
                 label={ADMIN.settings.form.endOfRegistrationDate}
                 control={form.control}
-                transform={formatISOStartOfDay}
+                transform={formatISOEndOfDay}
                 sx={{
                   width: '300px',
                 }}

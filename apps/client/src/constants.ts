@@ -1,3 +1,7 @@
+import type { SettingsDto, VpoUserModel } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
+import { dateLoader, nextDayLoader } from './utils';
+
 export const ACCESS_TOKEN = 'ACCESS_TOKEN';
 
 export const ERROR_MESSAGES = {
@@ -87,8 +91,23 @@ export const BOOKING = {
   },
   hint: 'Примітка: реєстрація одного члена сім‘ї означає, що ви зареєстрували в черзі усю сім‘ю.',
   bookingInfoTitle: 'Ваше бронювання (для одного або на сім‘ю)',
-  bookingExpired:
-    'Дата вашого бронювання в минулому. Якщо ви не мали змоги з‘явитися у визначений час, ви можете записатися на нову дату.',
+  helpReceived: (
+    settings: Partial<Serialized<SettingsDto>> = {},
+    user: Partial<Serialized<VpoUserModel>> = {},
+  ) =>
+    `Ви вже отримали допомогу ${dateLoader(
+      user.receivedHelpDate,
+    )}. Отримати допомогу повторно можливо не раніше, ніж ${nextDayLoader(
+      settings.daysToNextVpoRegistration && user.receivedHelpDate
+        ? user.receivedHelpDate
+        : undefined,
+      settings.daysToNextVpoRegistration,
+    )}.`,
+  bookingExpired: (settings: Partial<Serialized<SettingsDto>> = {}) =>
+    `Дата вашого бронювання в минулому. 
+Якщо ви не мали змоги з‘явитися у визначений час, ви можете записатися на нову дату не раніше, ніж ${nextDayLoader(
+      settings.endOfRegistrationDate,
+    )}.`,
   peopleSuffix: 'ос.',
   errorModalTitle: 'Помилка бронювання',
   verificationRestriction: {
@@ -112,6 +131,8 @@ export const BOOKING = {
       'Вибраний час бронювання вже зайнятий. Перезавантажте сторінку та спробуйте знову.',
     'minimal allowed date for vpoIssueDate is 2022-01-01':
       'Бронювання можливе тільки для власників довідок ВПО від 2022 року.',
+    'You have already registered in current registration period':
+      'Ви вже реєструвалися у поточний період реєстрації. Ви можете знайти інформацію про ваше бронювання на головній сторінці за номером довідки ВПО.',
   } as Record<string, string>,
   address: 'Адресa центру',
   noSlots: 'На данний момент немає вільних місць у черзі. Спробуйте пізніше.',
@@ -119,13 +140,17 @@ export const BOOKING = {
     'Умови реєстрації на отримання допомоги у Центрі підтримки ВПО "Життєлюб піклується"',
   confirmInfo: 'Прочитав та погоджуюсь',
   infoConfirmationRequired: 'Підтвердіть, що прочитали та згодні',
-  info: `Зареєструватися на отримання допомоги в Центрі можуть громадяни та їх родичі, які отримали  статус ВПО після 24.02.2022 у місті Києв, та знаходяться за містом фактичного проживання.
+  info: (
+    settings: Partial<Serialized<SettingsDto>> = {},
+  ) => `Зареєструватися на отримання допомоги в Центрі можуть громадяни та їх родичі, які отримали статус ВПО після 24.02.2022 у місті Києві, та знаходяться за містом фактичного проживання.
 
 Для отримання допомоги в Центрі необхідно мати з собою оригінали ваших документів (Довідку ВПО з реєстрацією після 24.02.2022, довідку ІПН, паспорт) та документів членів вашої родини, яких ви зареєстрували в черзі.
 
 Отримати допомогу в Центрі можна лише після реєстрації та в заброньований під час реєстрації час.
 
-У разі неявки в Центр у заброньований вами час, ви зможете зареєструватися ще раз не раніше, ніж через 2 місяці.
+У разі неявки в Центр у заброньований вами час, ви зможете зареєструватися ще раз не раніше, ніж ${nextDayLoader(
+    settings.endOfRegistrationDate,
+  )}.
 Слідкуйте за інформацією на сторінці Життєлюб <a href="https://www.facebook.com/projectgiznelub">www.facebook.com/projectgiznelub</a>`,
 };
 

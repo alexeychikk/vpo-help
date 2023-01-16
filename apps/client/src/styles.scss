@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 /* You can add global styles to this file, and also import other style files */
 @import '@fontsource/roboto/300.css';
 @import '@fontsource/roboto/400.css';
@@ -13,5 +15,66 @@ pre {
   p {
     margin: 0;
     line-height: 1;
+  }
+}
+
+$dot-loader-color: #1976d2;
+$dot-loader-size: 8px;
+$dot-loader-position: 9999px;
+$dot-first-position: $dot-loader-position - $dot-loader-size -
+  math.div($dot-loader-size, 2);
+$dot-last-position: $dot-loader-position + $dot-loader-size +
+  math.div($dot-loader-size, 2);
+.dot-loader {
+  margin: 0 $dot-loader-size * 2;
+  display: inline-block;
+  position: relative;
+  left: -$dot-loader-position;
+  width: $dot-loader-size;
+  height: $dot-loader-size;
+  border-radius: math.div($dot-loader-size, 2);
+  background-color: $dot-loader-color;
+  color: $dot-loader-color;
+  box-shadow: $dot-first-position 0 0 0 $dot-loader-color,
+    $dot-loader-position 0 0 0 $dot-loader-color,
+    $dot-last-position 0 0 0 $dot-loader-color;
+  animation: dot-typing 1.5s infinite linear;
+}
+
+@keyframes dot-typing {
+  0% {
+    box-shadow: $dot-first-position 0 0 0 $dot-loader-color,
+      $dot-loader-position 0 0 0 $dot-loader-color,
+      $dot-last-position 0 0 0 $dot-loader-color;
+  }
+  16.667% {
+    box-shadow: $dot-first-position (-$dot-loader-size) 0 0 $dot-loader-color,
+      $dot-loader-position 0 0 0 $dot-loader-color,
+      $dot-last-position 0 0 0 $dot-loader-color;
+  }
+  33.333% {
+    box-shadow: $dot-first-position 0 0 0 $dot-loader-color,
+      $dot-loader-position 0 0 0 $dot-loader-color,
+      $dot-last-position 0 0 0 $dot-loader-color;
+  }
+  50% {
+    box-shadow: $dot-first-position 0 0 0 $dot-loader-color,
+      $dot-loader-position (-$dot-loader-size) 0 0 $dot-loader-color,
+      $dot-last-position 0 0 0 $dot-loader-color;
+  }
+  66.667% {
+    box-shadow: $dot-first-position 0 0 0 $dot-loader-color,
+      $dot-loader-position 0 0 0 $dot-loader-color,
+      $dot-last-position 0 0 0 $dot-loader-color;
+  }
+  83.333% {
+    box-shadow: $dot-first-position 0 0 0 $dot-loader-color,
+      $dot-loader-position 0 0 0 $dot-loader-color,
+      $dot-last-position (-$dot-loader-size) 0 0 $dot-loader-color;
+  }
+  100% {
+    box-shadow: $dot-first-position 0 0 0 $dot-loader-color,
+      $dot-loader-position 0 0 0 $dot-loader-color,
+      $dot-last-position 0 0 0 $dot-loader-color;
   }
 }

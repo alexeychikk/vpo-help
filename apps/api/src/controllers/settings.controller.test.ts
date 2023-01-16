@@ -1,4 +1,5 @@
-import { SettingsDto } from '@vpo-help/model';
+import { addDays } from 'date-fns';
+import { UpdateSettingsDto } from '@vpo-help/model';
 import { expectExtended } from '@vpo-help/testing';
 import { serialize } from '@vpo-help/utils';
 import { testApp } from '../../testing';
@@ -38,9 +39,9 @@ describe('PUT /settings', () => {
   });
 
   test('updates settings', async () => {
-    const dto = new SettingsDto({
+    const dto = new UpdateSettingsDto({
       daysToNextVpoRegistration: 100,
-      endOfRegistrationDate: new Date('2023-01-01'),
+      endOfRegistrationDate: addDays(new Date(), 60),
       scheduleDaysAvailable: 5,
     });
 
@@ -48,7 +49,10 @@ describe('PUT /settings', () => {
       .asUser()
       .requestApiWithAuth((req) => req.put('/settings').send(dto).expect(200));
 
-    expect(body).toEqual(serialize(dto));
+    expect(body).toMatchObject({
+      ...serialize(dto),
+      prevEndOfRegistrationDate: expectExtended.dateISOString(),
+    });
   });
 });
 

@@ -4,24 +4,29 @@ import { Navigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import { BOOKING } from '../../constants';
 import { ROUTES } from '../../routes/routes.config';
-import { htmlService } from '../../services';
+import { htmlService, settingsService } from '../../services';
 import { BookingInfoItem } from './BookingInfoItem';
 
 export type BookingInfoProps = {
   vpoReferenceNumber: string;
   bookingDate: string;
+  receivedHelpDate?: string;
 };
 
 export const BookingInfo: React.FC<BookingInfoProps> = ({
   vpoReferenceNumber,
   bookingDate,
+  receivedHelpDate,
 }) => {
   const bookingMomentDate = moment(bookingDate);
-  const isExpired = bookingMomentDate.isBefore(moment());
+  const isHelpReceived = !!receivedHelpDate;
+  const isExpired = !isHelpReceived && bookingMomentDate.isBefore(moment());
+  const isScheduled = !isHelpReceived && !isExpired;
   const infoResponse = useAsync(async () => {
     const info = await htmlService.getPage('info');
     return info.content;
   });
+  const settingsResponse = useAsync(() => settingsService.getSettings());
 
   if (infoResponse.loading) {
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -41,11 +46,28 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
       <Typography variant="h5" mb={2}>
         {BOOKING.bookingInfoTitle}
       </Typography>
-      {isExpired ? (
+
+      {isHelpReceived && (
         <Typography variant="h6" mb={4}>
-          {BOOKING.bookingExpired}
+          <span
+            dangerouslySetInnerHTML={{
+              __html: BOOKING.helpReceived(settingsResponse.value, {
+                receivedHelpDate,
+              }),
+            }}
+          />
         </Typography>
-      ) : (
+      )}
+      {isExpired && (
+        <Typography variant="h6" mb={4}>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: BOOKING.bookingExpired(settingsResponse.value),
+            }}
+          />
+        </Typography>
+      )}
+      {isScheduled && (
         <>
           <BookingInfoItem
             label={BOOKING.form.scheduleDate}

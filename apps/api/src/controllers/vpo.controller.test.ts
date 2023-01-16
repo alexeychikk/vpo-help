@@ -57,9 +57,12 @@ describe('POST /vpo', () => {
   });
 
   test('registers vpo that can receive help again', async () => {
+    const oldScheduleDate = subDays(new Date(), 181);
     const vpo = await testApp.insertVpo({
-      receivedHelpDate: subDays(new Date(), 181),
+      scheduleDate: oldScheduleDate,
+      receivedHelpDate: oldScheduleDate,
     });
+
     const { verificationCode } =
       await testApp.verificationService.createVerificationCodeByEmail(vpo);
     const scheduleDate = await testApp.getAvailableDateSlot(1);
@@ -94,23 +97,6 @@ describe('POST /vpo', () => {
         "statusCode": 409,
       }
     `);
-  });
-
-  test('registers vpo that changes schedule date', async () => {
-    const vpo = await testApp.asVpo().getCurrentVpo();
-    const scheduleDate = await testApp.getAvailableDateSlot(1);
-    const { verificationCode } =
-      await testApp.verificationService.createVerificationCodeByEmail(vpo);
-
-    const { body } = await testApp.requestApi
-      .post('/vpo')
-      .send({ ...vpo, verificationCode, scheduleDate })
-      .expect(201);
-
-    expect(body).toMatchObject({
-      ...(await testApp.getCurrentVpoUser()),
-      scheduleDate: scheduleDate.toISOString(),
-    });
   });
 
   test('rejects if there is no time slots for a given day of the week', async () => {

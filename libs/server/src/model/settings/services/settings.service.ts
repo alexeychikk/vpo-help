@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
+import { isEqual } from 'date-fns';
 import { sortBy } from 'lodash';
 import type {
   ScheduleDto,
@@ -94,7 +95,23 @@ export class SettingsService implements OnModuleInit {
   async updateCommonSettings(
     dto: Partial<UpdateSettingsDto>,
   ): Promise<SettingsDto> {
-    return this.updateSettings(SettingsCategory.Common, dto);
+    const settings = await this.getSettings<SettingsDto>(
+      SettingsCategory.Common,
+    );
+
+    if (
+      dto.endOfRegistrationDate &&
+      !isEqual(dto.endOfRegistrationDate, settings.endOfRegistrationDate)
+    ) {
+      settings.prevEndOfRegistrationDate = settings.endOfRegistrationDate;
+    }
+    Object.assign(settings, dto);
+
+    await this.settingsRepository.updateSettings(
+      SettingsCategory.Common,
+      settings,
+    );
+    return settings;
   }
 
   async updateSchedule(dto: Partial<ScheduleDto>): Promise<ScheduleDto> {

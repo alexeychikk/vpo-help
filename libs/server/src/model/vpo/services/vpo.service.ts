@@ -215,8 +215,8 @@ export class VpoService {
     entity?: VpoEntity,
   ) {
     if (!entity) return;
+    const settings = await this.settingsService.getCommonSettings();
     if (entity.receivedHelpDate) {
-      const settings = await this.settingsService.getCommonSettings();
       const daysSinceLastHelp = differenceInDays(
         model.scheduleDate,
         entity.receivedHelpDate,
@@ -229,6 +229,14 @@ export class VpoService {
     }
     if (model.scheduleDate.getTime() === entity.scheduleDate.getTime()) {
       throw new ConflictException(`Registration has been already scheduled`);
+    }
+    if (
+      !settings.prevEndOfRegistrationDate ||
+      isAfter(entity.scheduleDate, settings.prevEndOfRegistrationDate)
+    ) {
+      throw new ConflictException(
+        `You have already registered in current registration period`,
+      );
     }
   }
 

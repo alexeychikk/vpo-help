@@ -7,7 +7,9 @@ import {
   Typography,
 } from '@mui/material';
 import { useController, useFormContext } from 'react-hook-form';
+import { useAsync } from 'react-use';
 import { BOOKING } from '../../../constants';
+import { settingsService } from '../../../services';
 import type { VpoForm } from '../Booking';
 
 export type InfoProps = {
@@ -30,6 +32,8 @@ export const Info: React.FC<InfoProps> = (props) => {
     },
   });
 
+  const settingsResponse = useAsync(() => settingsService.getSettings());
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h5" textAlign="center" mb={2}>
@@ -39,7 +43,7 @@ export const Info: React.FC<InfoProps> = (props) => {
         <pre
           style={{ lineHeight: 'inherit' }}
           dangerouslySetInnerHTML={{
-            __html: BOOKING.info,
+            __html: BOOKING.info(settingsResponse.value),
           }}
         />
         {props.address && (
