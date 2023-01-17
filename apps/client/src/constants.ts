@@ -53,10 +53,10 @@ export const BOOKING = {
   nextStep: 'Вперед',
   gotoMain: 'На головну',
   confirmButton: 'Підтверджую',
-  addRelative: 'Додати данні родича',
-  removeRelative: 'Видалити данні родича',
-  accordionTitlePrefix: 'Ваші данні',
-  accordionRelativeTitlePrefix: 'Данні родича зі справкою №',
+  addRelative: 'Додати дані родича',
+  removeRelative: 'Видалити дані родича',
+  accordionTitlePrefix: 'Ваші дані',
+  accordionRelativeTitlePrefix: 'Дані родича зі справкою №',
   sendVerification: 'Відправити код підтвердження',
   resendVerification: 'Повторно відправити код підтвердження',
   verificationTitle: 'Код підтвердження було відправлено на пошту',
@@ -64,7 +64,8 @@ export const BOOKING = {
     email: 'Електронна пошта',
     verificationCode: 'Код підтвердження',
     verificationCodeHelper: 'Якщо не знайшли листа, перевірте папку "Спам"',
-    scheduleDate: 'Дата та час, коли потрібно прибути до Центру допомоги',
+    scheduleDate:
+      'Дата та час, коли потрібно прибути до Центру підтримки людей зі статусом ВПО «Життєлюб піклується»',
     vpoIssueDate: 'Дата видачі довідки',
     vpoIssueMinDateError:
       'Бронювання доступне тільки з довідкою виданою після 24.02.2022',
@@ -73,24 +74,25 @@ export const BOOKING = {
     vpoReferenceNumberHelper: '0000-0000000000',
     firstName: 'Ім‘я',
     lastName: 'Прізвище',
-    middleName: 'По-батькові',
+    middleName: 'По батькові',
     taxIdNumber: 'РНОКПП (ІПН)',
     taxIdNumberError: 'РНОКПП має складатися з 10 цифр',
     phoneNumber: 'Номер телефону',
     dateOfBirth: 'Дата народження',
-    addressOfRegistration: 'Місто реєстрації (згідно паспорту)',
+    addressOfRegistration: 'Місце реєстрації (за паспортом)',
     addressOfResidenceValue: 'Київ',
     addressOfResidenceError: 'Бронювання доступне тільки для Києва',
     addressOfResidenceOptions: ['Київ', 'Інше місто'],
-    addressOfResidence: 'Місто фактичного проживання (згідно Довідці ВПО)',
-    addressOfResidenceHelper: 'Бронювання доступне тільки для Києва',
+    addressOfResidence: 'Місто фактичного проживання (згідно з довідкою ВПО)',
+    addressOfResidenceHelper:
+      '​Бронювання доступне тільки для зареєстрованих у Києві',
     numberOfRelatives: 'Скільки членів вашої родини переїхали з вами?',
-    numberOfRelativesHelper: 'Данні родичів потрібно додати нижче',
+    numberOfRelativesHelper: 'Дані родичів потрібно додати нижче',
     numberOfRelativesBelow16: 'Скільки з них дітей до 16 років?',
-    numberOfRelativesAbove65: 'Скільки з них дорослих, старшіх за 65 років?',
+    numberOfRelativesAbove65: 'Скільки з них дорослих, старших за 65 років?',
   },
   hint: 'Примітка: реєстрація одного члена сім‘ї означає, що ви зареєстрували в черзі усю сім‘ю.',
-  bookingInfoTitle: 'Ваше бронювання (для одного або на сім‘ю)',
+  bookingInfoTitle: 'Ваше бронювання (для одного або сім‘ї)',
   helpReceived: (
     settings: Partial<Serialized<SettingsDto>> = {},
     user: Partial<Serialized<VpoUserModel>> = {},
@@ -104,8 +106,8 @@ export const BOOKING = {
       settings.daysToNextVpoRegistration,
     )}.`,
   bookingExpired: (settings: Partial<Serialized<SettingsDto>> = {}) =>
-    `Дата вашого бронювання в минулому. 
-Якщо ви не мали змоги з‘явитися у визначений час, ви можете записатися на нову дату не раніше, ніж ${nextDayLoader(
+    `Дата, на яку ви зареєструвались, минула.
+Ви можете забронювати нову дату та час відвідин Центру після ${nextDayLoader(
       settings.endOfRegistrationDate,
     )}.`,
   peopleSuffix: 'ос.',
@@ -134,24 +136,27 @@ export const BOOKING = {
     'You have already registered in current registration period':
       'Ви вже реєструвалися у поточний період реєстрації. Ви можете знайти інформацію про ваше бронювання на головній сторінці за номером довідки ВПО.',
   } as Record<string, string>,
-  address: 'Адресa центру',
+  address: 'Адресa центру:',
   noSlots: 'На данний момент немає вільних місць у черзі. Спробуйте пізніше.',
   infoTitle:
     'Умови реєстрації на отримання допомоги у Центрі підтримки ВПО "Життєлюб піклується"',
-  confirmInfo: 'Прочитав та погоджуюсь',
+  confirmInfo: `Я прочитав/-ла, погоджуюсь і даю згоду на обробку моїх персональних даних. Дані будуть зберігатися та оброблятися відповідно до Закону України «Про захист персональних даних» (№2297-17)`,
   infoConfirmationRequired: 'Підтвердіть, що прочитали та згодні',
   info: (
     settings: Partial<Serialized<SettingsDto>> = {},
-  ) => `Зареєструватися на отримання допомоги в Центрі можуть громадяни та їх родичі, які отримали статус ВПО після 24.02.2022 у місті Києві, та знаходяться за містом фактичного проживання.
+  ) => `Зареєструватися на отримання допомоги в Центрі можуть громадяни та їхні родичі, які отримали статус ВПО після 24.02.2022 у Києві, та мешкають і знаходяться у цьому місті.
 
-Для отримання допомоги в Центрі необхідно мати з собою оригінали ваших документів (Довідку ВПО з реєстрацією після 24.02.2022, довідку ІПН, паспорт) та документів членів вашої родини, яких ви зареєстрували в черзі.
+Для отримання допомоги в Центрі, необхідно мати з собою оригінали ваших документів, а також документів членів вашої родини, яких ви зареєстрували в черзі:<ul style="margin: 0;line-height: 0.3rem;">
+    <li style="line-height: 1.3rem;">довідок ВПО з реєстрацією після 24.02.2022;</li>
+    <li style="line-height: 1.3rem;">довідок ІПН (РНОКПП);</li>
+    <li style="line-height: 1.3rem;">паспортів.</li>
+  </ul>
+Отримати допомогу в Центрі можна лише після реєстрації та в заброньований вами час.
 
-Отримати допомогу в Центрі можна лише після реєстрації та в заброньований під час реєстрації час.
-
-У разі неявки в Центр у заброньований вами час, ви зможете зареєструватися ще раз не раніше, ніж ${nextDayLoader(
+У разі неявки в Центрі у заброньований вами час ви зможете зареєструватися ще раз не раніше ${nextDayLoader(
     settings.endOfRegistrationDate,
   )}.
-Слідкуйте за інформацією на сторінці Життєлюб <a href="https://www.facebook.com/projectgiznelub">www.facebook.com/projectgiznelub</a>`,
+Слідкуйте за оновленнями на сторінці фонду «Життєлюб» у Фейсбуці <a href="https://www.facebook.com/projectgiznelub">www.facebook.com/projectgiznelub</a>`,
 };
 
 export const ADMIN = {

@@ -36,7 +36,7 @@ export const Info: React.FC<InfoProps> = (props) => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="h5" textAlign="center" mb={2}>
+      <Typography variant="h5" textAlign="center" mb={4}>
         {BOOKING.infoTitle}
       </Typography>
       <Typography component="div" variant="body1">
@@ -48,7 +48,7 @@ export const Info: React.FC<InfoProps> = (props) => {
         />
         {props.address && (
           <Box sx={{ display: 'flex', alignItems: 'center' }} mt={2}>
-            <span>{BOOKING.address}:</span>
+            <span>{BOOKING.address}</span>
             <pre
               style={{
                 lineHeight: 0,
@@ -67,6 +67,7 @@ export const Info: React.FC<InfoProps> = (props) => {
           <FormControlLabel
             control={<Checkbox name={field.name} onChange={field.onChange} />}
             label={BOOKING.confirmInfo}
+            sx={{ maxWidth: '600px', mt: 2 }}
           />
           <FormHelperText>{error?.message}</FormHelperText>
         </FormControl>

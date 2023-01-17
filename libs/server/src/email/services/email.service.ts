@@ -22,7 +22,9 @@ export class EmailService {
   protected async sendByTemplate<T extends EmailTemplate>(template: T) {
     const renderResult = template.render();
     const templateDefaults: Partial<MailOptionsDto> = {
-      from: template.from || `"ЦЕНТР ДОПОМОГИ ВПО" <vpo@happyold.com.ua>`,
+      from:
+        template.from ||
+        `"ЦЕНТР ДОПОМОГИ «ЖИТТЄЛЮБ ПІКЛУЄТЬСЯ»" <vpo@happyold.com.ua>`,
       to: template.to,
       subject: template.subject,
     };

@@ -3,7 +3,7 @@ import { EmailTemplate } from './emailTemplate';
 export class VpoVerificationTemplate extends EmailTemplate<{
   verificationCode: string;
 }> {
-  subject = `КОД ПІДТВЕРДЖЕННЯ РЕЄСТРАЦІЇ В ЦЕНТРІ ДОПОМОГИ ВПО`;
+  subject = `КОД ПІДТВЕРДЖЕННЯ РЕЄСТРАЦІЇ В ЦЕНТРІ «ЖИТТЄЛЮБ ПІКЛУЄТЬСЯ»`;
 
   render() {
     return `
@@ -27,8 +27,8 @@ body {
 }
 </style>
 <p class="hint">
-  Для завершення <b>реєстрації</b> введіть наступний код <br> в формі 
-  реєстрації на сайті <b>Центру Допомоги ВПО</b>:
+  Для завершення <b>реєстрації</b> введіть наступний код у формі реєстрації <br/>
+  до <b>Центру підтримки людей зі статусом ВПО «Життєлюб піклується»</b>:
 </p>
 <h1 class="v-code">${this.data.verificationCode}</h1>
 `;
