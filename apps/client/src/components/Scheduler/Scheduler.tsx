@@ -16,6 +16,7 @@ import {
 } from '@devexpress/dx-react-scheduler-material-ui';
 import { useCallback, useEffect, useState } from 'react';
 import type { Required } from 'utility-types';
+import { AppointmentContent } from './AppointmentContent';
 import { AppointmentFormLayout } from './AppointmentFormLayout';
 import { AppointmentTooltipContent } from './AppointmentTooltipContent';
 import { DayScaleCell } from './DayScaleCell';
@@ -107,7 +108,7 @@ export const Scheduler = <
         cellDuration={30}
         dayScaleCellComponent={DayScaleCell}
       />
-      <Appointments />
+      <Appointments appointmentContentComponent={AppointmentContent} />
       <AppointmentTooltip
         showCloseButton
         showOpenButton
