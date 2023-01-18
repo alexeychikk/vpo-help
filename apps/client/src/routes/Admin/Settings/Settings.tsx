@@ -18,7 +18,8 @@ import { AxiosError } from 'axios';
 import { ContentState, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
-import { useState } from 'react';
+import moment from 'moment';
+import { useRef, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import type { SubmitHandler } from 'react-hook-form';
@@ -31,7 +32,7 @@ import { DesktopDatePickerElement } from '../../../components/DesktopDatePickerE
 import { TextFieldElement } from '../../../components/TextFieldElement';
 import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { htmlService, settingsService } from '../../../services';
-import { formatISOEndOfDay } from '../../../utils';
+import { formatISOEndOfDay, formatISOStartOfDay } from '../../../utils';
 import { ROUTES } from '../../routes.config';
 
 const toolbar = {
@@ -39,6 +40,8 @@ const toolbar = {
 };
 
 export const Settings: React.FC = () => {
+  const startDateRef = useRef<string>();
+  const endDateRef = useRef<string>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,6 +50,8 @@ export const Settings: React.FC = () => {
 
   const settingsResponse = useAsync(async () => {
     const settings = await settingsService.getSettings();
+    startDateRef.current = settings.startOfRegistrationDate;
+    endDateRef.current = settings.endOfRegistrationDate;
     form.reset(settings);
     return settings;
   });
@@ -71,6 +76,8 @@ export const Settings: React.FC = () => {
   const isSettingsChanged = (formValues: Serialized<SettingsDto>) =>
     settingsResponse.value?.daysToNextVpoRegistration !==
       formValues.daysToNextVpoRegistration ||
+    settingsResponse.value?.startOfRegistrationDate !==
+      formValues.startOfRegistrationDate ||
     settingsResponse.value?.endOfRegistrationDate !==
       formValues.endOfRegistrationDate ||
     settingsResponse.value?.scheduleDaysAvailable !==
@@ -90,6 +97,7 @@ export const Settings: React.FC = () => {
         const data = await settingsService.saveSettings({
           daysToNextVpoRegistration:
             parseInt(formValues.daysToNextVpoRegistration.toString()) || 0,
+          startOfRegistrationDate: formValues.startOfRegistrationDate,
           endOfRegistrationDate: formValues.endOfRegistrationDate,
           scheduleDaysAvailable:
             parseInt(formValues.scheduleDaysAvailable.toString()) || 0,
@@ -174,18 +182,7 @@ export const Settings: React.FC = () => {
                   min: { value: 1, message: ERROR_MESSAGES.min },
                 }}
                 sx={{
-                  width: '300px',
-                }}
-              />
-              <DesktopDatePickerElement
-                required
-                ignoreInvalidInputs
-                name="endOfRegistrationDate"
-                label={ADMIN.settings.form.endOfRegistrationDate}
-                control={form.control}
-                transform={formatISOEndOfDay}
-                sx={{
-                  width: '300px',
+                  width: { xs: '100%', md: '400px' },
                 }}
               />
               <TextFieldElement
@@ -199,8 +196,45 @@ export const Settings: React.FC = () => {
                   max: { value: 31, message: ERROR_MESSAGES.max },
                 }}
                 sx={{
-                  width: '400px',
+                  width: { xs: '100%', md: '400px' },
                 }}
+              />
+            </Stack>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              spacing={{ xs: 2, lg: 3 }}
+              sx={{ py: 3 }}
+            >
+              <DesktopDatePickerElement
+                required
+                ignoreInvalidInputs
+                name="startOfRegistrationDate"
+                label={ADMIN.settings.form.startOfRegistrationDate}
+                helperText={ADMIN.settings.form.startOfRegistrationDateHelper}
+                control={form.control}
+                transform={formatISOStartOfDay}
+                rules={{
+                  validate: {
+                    mustBeBeforeEndDate: (value) => {
+                      const endDate = form.watch('endOfRegistrationDate');
+                      return value && !moment(value).isBefore(endDate)
+                        ? ADMIN.settings.form
+                            .startOfRegistrationDateBeforeEndError
+                        : undefined;
+                    },
+                  },
+                }}
+                sx={{ width: { xs: '100%', md: '400px' } }}
+              />
+              <DesktopDatePickerElement
+                required
+                ignoreInvalidInputs
+                name="endOfRegistrationDate"
+                label={ADMIN.settings.form.endOfRegistrationDate}
+                helperText={ADMIN.settings.form.endOfRegistrationDateHelper}
+                control={form.control}
+                transform={formatISOEndOfDay}
+                sx={{ width: { xs: '100%', md: '400px' } }}
               />
             </Stack>
             <Box pb={2}>

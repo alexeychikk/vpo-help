@@ -224,7 +224,14 @@ export const ADMIN = {
     title: 'Налаштування',
     form: {
       daysToNextVpoRegistration: 'Кількість днів до повторної реєстрації ВПО',
-      endOfRegistrationDate: 'Дата, до якої реєстрація доступна для ВПО',
+      startOfRegistrationDate: 'Дата початку реєстрації',
+      startOfRegistrationDateHelper:
+        'Не забудьте змінити кінцеву дату реєстрації',
+      startOfRegistrationDateBeforeEndError:
+        'Початкова дата реєстрації повинна бути до кінцевої',
+      endOfRegistrationDate: 'Дата кінця реєстрації',
+      endOfRegistrationDateHelper:
+        'Не забудьте змінити початкову дату реєстрації',
       scheduleDaysAvailable:
         'Кількість днів, яка доступна на вибір для ВПО при реєстрації',
       addresses: BOOKING.address,
