@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { isEqual } from 'date-fns';
+import { isBefore } from 'date-fns';
 import { sortBy } from 'lodash';
 import type {
   ScheduleDto,
@@ -98,14 +98,18 @@ export class SettingsService implements OnModuleInit {
     const settings = await this.getSettings<SettingsDto>(
       SettingsCategory.Common,
     );
+    Object.assign(settings, dto);
 
     if (
-      dto.endOfRegistrationDate &&
-      !isEqual(dto.endOfRegistrationDate, settings.endOfRegistrationDate)
+      !isBefore(
+        settings.startOfRegistrationDate,
+        settings.endOfRegistrationDate,
+      )
     ) {
-      settings.prevEndOfRegistrationDate = settings.endOfRegistrationDate;
+      throw new ConflictException(
+        `startOfRegistrationDate must be before endOfRegistrationDate`,
+      );
     }
-    Object.assign(settings, dto);
 
     await this.settingsRepository.updateSettings(
       SettingsCategory.Common,

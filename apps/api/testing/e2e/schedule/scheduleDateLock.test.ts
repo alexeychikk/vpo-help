@@ -4,6 +4,10 @@ import { ScheduleDto } from '@vpo-help/model';
 import { testApp } from '../../testApp';
 
 test('registering multiple accounts on the same time slot', async () => {
+  await testApp.settingsService.updateCommonSettings({
+    startOfRegistrationDate: new Date('2022-11-27'),
+    endOfRegistrationDate: new Date('2022-11-30'),
+  });
   advanceTo(new Date('2022-11-27')); // Sunday
 
   await testApp.settingsService.updateSchedule(

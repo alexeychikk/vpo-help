@@ -176,6 +176,7 @@ export class VpoService {
         const slotDateFrom = setTimeOnDate(slot.timeFrom, date);
         if (!isBefore(slotDateFrom, common.endOfRegistrationDate)) break;
         const slotDateTo = setTimeOnDate(slot.timeTo, date);
+        if (!isAfter(slotDateTo, common.startOfRegistrationDate)) continue;
         if (!isAfter(slotDateTo, date)) continue;
 
         const takenSlotsCount =
@@ -230,10 +231,7 @@ export class VpoService {
     if (model.scheduleDate.getTime() === entity.scheduleDate.getTime()) {
       throw new ConflictException(`Registration has been already scheduled`);
     }
-    if (
-      !settings.prevEndOfRegistrationDate ||
-      isAfter(entity.scheduleDate, settings.prevEndOfRegistrationDate)
-    ) {
+    if (!isBefore(entity.scheduleDate, settings.startOfRegistrationDate)) {
       throw new ConflictException(
         `You have already registered in current registration period`,
       );

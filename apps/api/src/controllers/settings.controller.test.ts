@@ -38,6 +38,26 @@ describe('PUT /settings', () => {
     `);
   });
 
+  test('startOfRegistrationDate must be before endOfRegistrationDate', async () => {
+    const { body } = await testApp.asUser().requestApiWithAuth((req) =>
+      req
+        .put('/settings')
+        .send({
+          startOfRegistrationDate: new Date(),
+          endOfRegistrationDate: new Date(Date.now() - 1000),
+        })
+        .expect(409),
+    );
+
+    expect(body).toMatchInlineSnapshot(`
+      Object {
+        "error": "Conflict",
+        "message": "startOfRegistrationDate must be before endOfRegistrationDate",
+        "statusCode": 409,
+      }
+    `);
+  });
+
   test('updates settings', async () => {
     const dto = new UpdateSettingsDto({
       daysToNextVpoRegistration: 100,
@@ -51,7 +71,7 @@ describe('PUT /settings', () => {
 
     expect(body).toMatchObject({
       ...serialize(dto),
-      prevEndOfRegistrationDate: expectExtended.dateISOString(),
+      startOfRegistrationDate: expectExtended.dateISOString(),
     });
   });
 });

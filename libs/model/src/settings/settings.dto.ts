@@ -7,10 +7,10 @@ export class SettingsDto {
   daysToNextVpoRegistration!: number;
 
   @IsDate()
-  endOfRegistrationDate!: Date;
+  startOfRegistrationDate!: Date;
 
   @IsDate()
-  prevEndOfRegistrationDate!: Date;
+  endOfRegistrationDate!: Date;
 
   @IsInt()
   @Min(1)
@@ -27,6 +27,10 @@ export class UpdateSettingsDto {
   @Min(1)
   @IsOptional()
   daysToNextVpoRegistration?: number;
+
+  @IsDate()
+  @IsOptional()
+  startOfRegistrationDate?: Date;
 
   @IsDate()
   @IsOptional()

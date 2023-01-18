@@ -7,6 +7,8 @@ import { testApp } from '../../testApp';
 test('takes into account current time', async () => {
   await testApp.settingsService.updateCommonSettings({
     scheduleDaysAvailable: 2,
+    startOfRegistrationDate: new Date('2022-11-22'),
+    endOfRegistrationDate: new Date('2022-11-30'),
   });
   advanceTo(new Date('2022-11-22 15:00')); // Tuesday
 

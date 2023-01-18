@@ -4,7 +4,7 @@ import { SettingsDto } from './settings.dto';
 
 export const DEFAULT_SETTINGS = new SettingsDto({
   daysToNextVpoRegistration: 180,
-  prevEndOfRegistrationDate: endOfYesterday(),
+  startOfRegistrationDate: endOfYesterday(),
   endOfRegistrationDate: endOfDay(addMonths(new Date(), 2)),
   scheduleDaysAvailable: 5,
 });

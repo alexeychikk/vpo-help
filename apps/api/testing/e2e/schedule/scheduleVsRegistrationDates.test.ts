@@ -4,22 +4,23 @@ import { ScheduleDto } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { testApp } from '../../testApp';
 
-test('available schedule slots depend on start/end registration dates', async () => {
+test('available schedule slots come in order after update', async () => {
   await testApp.settingsService.updateCommonSettings({
-    scheduleDaysAvailable: 10,
-    startOfRegistrationDate: new Date('2022-11-22 13:30'),
-    endOfRegistrationDate: new Date('2022-11-22 15:30'),
+    scheduleDaysAvailable: 2,
+    startOfRegistrationDate: new Date('2022-11-22'),
+    endOfRegistrationDate: new Date('2022-11-30'),
   });
   advanceTo(new Date('2022-11-22 12:00')); // Tuesday
 
   await testApp.settingsService.updateSchedule(
     new ScheduleDto({
-      2: [
-        { timeFrom: '12:00', timeTo: '13:00', numberOfPersons: 1 },
-        { timeFrom: '13:00', timeTo: '14:00', numberOfPersons: 1 },
-        { timeFrom: '14:00', timeTo: '15:00', numberOfPersons: 1 },
-        { timeFrom: '15:00', timeTo: '16:00', numberOfPersons: 1 },
+      3: [
+        { timeFrom: '18:00', timeTo: '19:00', numberOfPersons: 1 },
         { timeFrom: '16:00', timeTo: '17:00', numberOfPersons: 1 },
+      ],
+      2: [
+        { timeFrom: '14:00', timeTo: '15:00', numberOfPersons: 1 },
+        { timeFrom: '13:00', timeTo: '14:00', numberOfPersons: 1 },
       ],
     }),
   );
@@ -37,8 +38,12 @@ test('available schedule slots depend on start/end registration dates', async ()
       dateTo: new Date('2022-11-22 15:00').toISOString(),
     },
     {
-      dateFrom: new Date('2022-11-22 15:00').toISOString(),
-      dateTo: new Date('2022-11-22 16:00').toISOString(),
+      dateFrom: new Date('2022-11-23 16:00').toISOString(),
+      dateTo: new Date('2022-11-23 17:00').toISOString(),
+    },
+    {
+      dateFrom: new Date('2022-11-23 18:00').toISOString(),
+      dateTo: new Date('2022-11-23 19:00').toISOString(),
     },
   ]);
 });
