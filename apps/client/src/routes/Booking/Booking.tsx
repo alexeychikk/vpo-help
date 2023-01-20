@@ -28,6 +28,7 @@ import type {
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
+import { NavLinkButton } from '../../components/NavLinkButton';
 import { BOOKING, ERROR_MESSAGES } from '../../constants';
 import { htmlService, scheduleService, vpoService } from '../../services';
 import type { ScheduleSlotAvailableDto } from '../../services/schedule';
@@ -222,13 +223,13 @@ export const Booking = () => {
                 )}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   {activeStep !== steps.length && (
-                    <Button
+                    <NavLinkButton
                       variant="outlined"
-                      href={ROUTES.MAIN.path}
+                      to={ROUTES.MAIN.path}
                       sx={{ mt: 3, ml: 1 }}
                     >
                       {BOOKING.gotoMain}
-                    </Button>
+                    </NavLinkButton>
                   )}
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     {activeStep !== 0 && activeStep !== steps.length && (
@@ -237,13 +238,13 @@ export const Booking = () => {
                       </Button>
                     )}
                     {activeStep === steps.length ? (
-                      <Button
+                      <NavLinkButton
                         variant="contained"
-                        href={ROUTES.MAIN.path}
+                        to={ROUTES.MAIN.path}
                         sx={{ mt: 3, ml: 1 }}
                       >
                         {BOOKING.gotoMain}
-                      </Button>
+                      </NavLinkButton>
                     ) : (
                       <ButtonWithLoading
                         type="submit"
@@ -282,9 +283,9 @@ export const Booking = () => {
           <Button onClick={() => setIsModalOpen(false)} sx={{ mr: 2 }}>
             {BOOKING.prevStep}
           </Button>
-          <Button href={ROUTES.MAIN.path} variant="contained" autoFocus>
+          <NavLinkButton to={ROUTES.MAIN.path} variant="contained" autoFocus>
             {BOOKING.gotoMain}
-          </Button>
+          </NavLinkButton>
         </DialogActions>
       </Dialog>
     </Container>

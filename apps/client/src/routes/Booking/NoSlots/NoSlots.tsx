@@ -1,4 +1,5 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import { NavLinkButton } from '../../../components/NavLinkButton';
 import { BOOKING } from '../../../constants';
 import { ROUTES } from '../../routes.config';
 
@@ -16,9 +17,9 @@ export const NoSlots: React.FC = () => {
       <Typography variant="h5" textAlign="center" mb={2}>
         {BOOKING.noSlots}
       </Typography>
-      <Button href={ROUTES.MAIN.path} variant="contained">
+      <NavLinkButton to={ROUTES.MAIN.path} variant="contained">
         {BOOKING.gotoMain}
-      </Button>
+      </NavLinkButton>
     </Box>
   );
 };

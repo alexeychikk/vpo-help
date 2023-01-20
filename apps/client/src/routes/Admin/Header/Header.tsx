@@ -2,29 +2,29 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar,
   Box,
-  Button,
   Container,
   IconButton,
   Menu,
   MenuItem,
   Toolbar,
-  Typography,
 } from '@mui/material';
 import React from 'react';
+import { NavLink } from '../../../components/NavLink';
+import { NavLinkButton } from '../../../components/NavLinkButton';
 import { ACCESS_TOKEN, ADMIN } from '../../../constants';
 import { ROUTES } from '../../routes.config';
 
 const pages = [
   {
-    href: '/admin/vpo',
+    to: '/admin/vpo',
     label: ADMIN.header.pages.VPO,
   },
   {
-    href: '/admin/schedule',
+    to: '/admin/schedule',
     label: ADMIN.header.pages.SCHEDULE,
   },
   {
-    href: '/admin/settings',
+    to: '/admin/settings',
     label: ADMIN.header.pages.SETTINGS,
   },
 ];
@@ -77,37 +77,37 @@ export const Header: React.FC = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page.href}>
-                  <Button
-                    key={page.href}
-                    href={page.href}
-                    component="a"
-                    sx={{ color: 'black' }}
+                <MenuItem key={page.to}>
+                  <NavLink
+                    key={page.to}
+                    to={page.to}
+                    sx={{ typography: 'button', color: 'black' }}
                   >
                     {page.label}
-                  </Button>
+                  </NavLink>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Button
-                key={page.href}
-                href={page.href}
-                sx={{ m: 2, color: 'white', display: 'block' }}
+              <NavLinkButton
+                key={page.to}
+                to={page.to}
+                sx={{ m: 2, display: 'block' }}
+                sxButton={{ color: 'white' }}
               >
                 {page.label}
-              </Button>
+              </NavLinkButton>
             ))}
           </Box>
-          <Button
-            sx={{ color: 'white' }}
-            href={ROUTES.LOGIN.path}
+          <NavLinkButton
+            sxButton={{ color: 'white' }}
+            to={ROUTES.LOGIN.path}
             onClick={handleLogout}
           >
             {ADMIN.header.logout}
-          </Button>
+          </NavLinkButton>
         </Toolbar>
       </Container>
     </AppBar>

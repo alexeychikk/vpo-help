@@ -17,6 +17,7 @@ import type { VpoUserModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
+import { NavLinkButton } from '../../components/NavLinkButton';
 import { TextFieldElement } from '../../components/TextFieldElement';
 import { MAIN } from '../../constants';
 import { authService, htmlService } from '../../services';
@@ -174,15 +175,15 @@ export const Main = () => {
                 </Box>
               </Box>
               <Box>
-                <Button
+                <NavLinkButton
                   variant="contained"
                   size="large"
                   endIcon={<ArrowForwardIosIcon />}
                   sx={{ mt: 2, pl: 5, pr: 5 }}
-                  href={ROUTES.BOOKING.path}
+                  to={ROUTES.BOOKING.path}
                 >
                   {MAIN.startBooking}
-                </Button>
+                </NavLinkButton>
               </Box>
             </Box>
           )}
