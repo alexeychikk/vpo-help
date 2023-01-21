@@ -18,7 +18,7 @@ export const PhoneNumberField = <T extends Record<string, unknown>>(
   props: PhoneNumberFieldProps<T>,
 ): React.ReactElement => {
   return (
-    <TextFieldElement
+    <TextFieldElement<T>
       {...props}
       type="tel"
       helperText="+380XXXXXXXXX"

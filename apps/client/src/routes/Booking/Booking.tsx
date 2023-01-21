@@ -202,7 +202,7 @@ export const Booking = () => {
                 </Step>
               ))}
             </Stepper>
-            <FormProvider {...form}>
+            <FormProvider<VpoForm> {...form}>
               <Box
                 noValidate
                 component="form"

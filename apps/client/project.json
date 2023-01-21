@@ -63,7 +63,7 @@
     "ts": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": ["tsc -p apps/api/tsconfig.app.json --noEmit"]
+        "commands": ["tsc -p apps/client/tsconfig.app.json --noEmit"]
       }
     }
   },
