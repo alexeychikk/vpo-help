@@ -4,7 +4,7 @@ export class LoginAsUserDto {
   @IsEmail()
   email!: string;
 
-  @Length(5, 20)
+  @Length(5, 64)
   password!: string;
 
   constructor(data: LoginAsUserDto) {

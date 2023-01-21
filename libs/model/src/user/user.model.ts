@@ -19,7 +19,7 @@ export class CreateAdminDto {
   @IsEmail()
   email!: string;
 
-  @Length(4, 50)
+  @Length(4, 64)
   password!: string;
 
   constructor(data: CreateAdminDto) {
