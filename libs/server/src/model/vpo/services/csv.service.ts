@@ -142,6 +142,11 @@ export class CsvService {
                 }),
             );
 
+            const parsedScheduleDate = parseCsvDate(
+              scheduleDate,
+              'dd.MM.yyyy HH:mm',
+            );
+
             const record: ImportedVpoRecord = {
               addressOfRegistration,
               addressOfResidence,
@@ -162,8 +167,8 @@ export class CsvService {
               receivedGoods,
               receivedHelpDate: receivedHelpDate
                 ? parseCsvDate(receivedHelpDate)
-                : referenceDate,
-              scheduleDate: parseCsvDate(scheduleDate, 'dd.MM.yyyy HH:mm'),
+                : parsedScheduleDate,
+              scheduleDate: parsedScheduleDate,
               vpoIssueDate: parseCsvDate(vpoIssueDate),
               vpoReferenceNumber,
             };

@@ -7,7 +7,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { addDays } from 'date-fns';
+import { addDays, set as setDate } from 'date-fns';
 import { times } from 'lodash';
 import { ObjectId } from 'mongodb';
 import supertest from 'supertest';
@@ -275,7 +275,10 @@ class TestApp {
       vpoIssueDate: faker.date.between(new Date('2022-01-01'), new Date()),
       vpoReferenceNumber:
         faker.helpers.replaceSymbolWithNumber('####-##########'),
-      scheduleDate: addDays(new Date(), 1),
+      scheduleDate: setDate(addDays(new Date(), 1), {
+        seconds: 0,
+        milliseconds: 0,
+      }),
       ...dto,
     };
   }

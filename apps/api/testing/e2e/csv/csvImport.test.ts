@@ -8,7 +8,7 @@ test('auth', async () => {
 });
 
 test('updates multiple vpo-s from a csv file', async () => {
-  await testApp.populateVpo(8);
+  const vpos = await testApp.populateVpo(8);
   const newVpo = testApp.getFakeVpoRaw({
     vpoReferenceNumber: '9999-9999999999',
   });
@@ -81,6 +81,7 @@ ${newVpoRow},11.01.2022
     { name: 'unknown_3', amount: 13 },
     { name: 'unknown_4', amount: 14 },
   ]);
+  expect(updatedList[7].receivedHelpDate).toEqual(vpos[7].scheduleDate);
   expect(updatedList[8]).toMatchObject({
     ...newVpo,
     dateOfBirth: expect.any(Date),
