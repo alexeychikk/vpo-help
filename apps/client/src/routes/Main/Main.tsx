@@ -19,7 +19,7 @@ import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
 import { NavLinkButton } from '../../components/NavLinkButton';
 import { TextFieldElement } from '../../components/TextFieldElement';
-import { MAIN } from '../../constants';
+import { ERROR_MESSAGES, MAIN } from '../../constants';
 import { authService, htmlService } from '../../services';
 import { ROUTES } from '../routes.config';
 
@@ -140,6 +140,12 @@ export const Main = () => {
                     label={MAIN.findBooking.label}
                     sx={{ mr: 2 }}
                     control={form.control}
+                    rules={{
+                      pattern: {
+                        value: /^(\d{4}-)?\d{10}$/i,
+                        message: ERROR_MESSAGES.patternVpoReferenceNumber,
+                      },
+                    }}
                   />
                   <ButtonWithLoading
                     type="submit"
