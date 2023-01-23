@@ -13,6 +13,7 @@ export class RegisterVpoBulkDto {
   relativeVpos: VpoRelativeModel[] = [];
 
   @Length(6, 6)
+  @IsOptional()
   verificationCode!: string;
 
   constructor(data: RegisterVpoBulkDto) {

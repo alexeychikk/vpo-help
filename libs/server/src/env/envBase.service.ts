@@ -55,6 +55,10 @@ export abstract class EnvBaseService {
     return this.getJsonVar('SMTP_TRANSPORT');
   }
 
+  get EMAIL_VERIFICATION_ENABLED(): boolean {
+    return !!this.getJsonVar('EMAIL_VERIFICATION_ENABLED', false);
+  }
+
   get EMAIL_VERIFICATION_DELAY(): number {
     return parseInt(this.getVar('EMAIL_VERIFICATION_DELAY', '60'));
   }

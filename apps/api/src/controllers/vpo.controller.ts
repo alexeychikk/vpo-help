@@ -34,11 +34,13 @@ import {
   VerificationService,
   VpoService,
 } from '@vpo-help/server';
+import { EnvService } from '../services';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'vpo' })
 export class VpoController {
   constructor(
+    private readonly envService: EnvService,
     private readonly vpoService: VpoService,
     private readonly verificationService: VerificationService,
     private readonly csvService: CsvService,
@@ -47,10 +49,12 @@ export class VpoController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() dto: RegisterVpoDto) {
-    await this.verificationService.verifyCodeByEmail({
-      email: dto.email,
-      verificationCode: dto.verificationCode,
-    });
+    if (this.envService.EMAIL_VERIFICATION_ENABLED) {
+      await this.verificationService.verifyCodeByEmail({
+        email: dto.email,
+        verificationCode: dto.verificationCode,
+      });
+    }
     const model = plainToInstance(VpoModel, instanceToPlain(dto));
     const entity = await this.vpoService.register(model);
     return entity.toVpoUserModel();
@@ -59,10 +63,12 @@ export class VpoController {
   @Post('bulk')
   @HttpCode(HttpStatus.CREATED)
   async registerBulk(@Body() dto: RegisterVpoBulkDto) {
-    await this.verificationService.verifyCodeByEmail({
-      email: dto.mainVpo.email,
-      verificationCode: dto.verificationCode,
-    });
+    if (this.envService.EMAIL_VERIFICATION_ENABLED) {
+      await this.verificationService.verifyCodeByEmail({
+        email: dto.mainVpo.email,
+        verificationCode: dto.verificationCode,
+      });
+    }
     const { mainVpo, relativeVpos } = await this.vpoService.registerBulk(
       dto.mainVpo,
       dto.relativeVpos,

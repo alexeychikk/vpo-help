@@ -5,6 +5,7 @@ Object.assign(process.env, {
   LANG: 'en_US.UTF-8', // seems like this has no effect in jest
   ADMIN_EMAIL: 'admin@example.com',
   ADMIN_PASSWORD: 'admin',
+  EMAIL_VERIFICATION_ENABLED: 'true',
   SMTP_TRANSPORT: JSON.stringify({
     host: 'smtp.ethereal.email',
     port: 587,

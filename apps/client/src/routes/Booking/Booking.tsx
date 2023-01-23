@@ -30,6 +30,7 @@ import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
 import { NavLinkButton } from '../../components/NavLinkButton';
 import { BOOKING, ERROR_MESSAGES } from '../../constants';
+import { environment } from '../../environments/environment';
 import { htmlService, scheduleService, vpoService } from '../../services';
 import type { ScheduleSlotAvailableDto } from '../../services/schedule';
 import { ROUTES } from '../routes.config';
@@ -254,7 +255,9 @@ export const Booking = () => {
                           availableSlotsResponse.loading ||
                           submitting ||
                           (activeStep === steps.length - 1 &&
-                            !form.watch('verificationCode'))
+                            (environment.emailVerificationEnabled
+                              ? !form.watch('verificationCode')
+                              : false))
                         }
                         loading={submitting}
                       >

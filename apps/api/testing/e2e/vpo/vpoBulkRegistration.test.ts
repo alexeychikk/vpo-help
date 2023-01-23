@@ -38,7 +38,6 @@ describe('POST /vpo/bulk', () => {
           "relativeVpos.0.addressOfRegistration must be longer than or equal to 1 characters",
           "relativeVpos.0.addressOfResidence must be longer than or equal to 1 characters",
           "relativeVpos.0.scheduleDate must be a Date instance",
-          "verificationCode must be longer than or equal to 6 characters",
         ],
         "statusCode": 400,
       }

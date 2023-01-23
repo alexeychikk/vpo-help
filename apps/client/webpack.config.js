@@ -12,6 +12,9 @@ module.exports = (config) => {
       new webpack.DefinePlugin({
         'process.env.CLIENT_ENV': JSON.stringify(process.env.CLIENT_ENV),
         'process.env.API_URL': JSON.stringify(process.env.API_URL),
+        'process.env.EMAIL_VERIFICATION_ENABLED': JSON.stringify(
+          process.env.EMAIL_VERIFICATION_ENABLED,
+        ),
       }),
     ],
   };

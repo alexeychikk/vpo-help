@@ -20,6 +20,7 @@ import { useFormContext } from 'react-hook-form';
 import { ButtonWithLoading } from '../../../components/ButtonWithLoading';
 import { TextFieldElement } from '../../../components/TextFieldElement';
 import { BOOKING, ERROR_MESSAGES } from '../../../constants';
+import { environment } from '../../../environments/environment';
 import { authService } from '../../../services';
 import type { VpoForm } from '../Booking';
 import { FormValues } from './FormValues';
@@ -61,7 +62,7 @@ export const BookingConfirmation: React.FC = () => {
           setTimer(seconds);
           clientMessage = BOOKING.verificationRestriction.getText(seconds);
         } else {
-          clientMessage = ERROR_MESSAGES.unknown;
+          clientMessage = ERROR_MESSAGES.overload;
         }
         setErrorMessage(clientMessage);
         setIsModalOpen(true);
@@ -81,7 +82,7 @@ export const BookingConfirmation: React.FC = () => {
 
   return (
     <Stack direction="column" spacing={4}>
-      {verificationSent ? (
+      {environment.emailVerificationEnabled && verificationSent ? (
         <Box>
           <Typography variant="subtitle1" mb={2}>
             {BOOKING.verificationTitle}
@@ -120,7 +121,10 @@ export const BookingConfirmation: React.FC = () => {
                 loading={loading}
                 disabled={isTimerVisible}
                 onClick={sendVerificationCode}
-                boxSx={{ display: 'flex', width: { xs: '100%', md: 'auto' } }}
+                boxSx={{
+                  display: 'flex',
+                  width: { xs: '100%', md: 'auto' },
+                }}
                 sx={{ height: '56px', flexGrow: { xs: 1 } }}
               >
                 {BOOKING.resendVerification}
@@ -155,31 +159,34 @@ export const BookingConfirmation: React.FC = () => {
             }}
             sx={{ width: { xs: '100%', md: '300px' } }}
           />
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              width: { xs: '100%' },
-            }}
-          >
-            <ButtonWithLoading
-              variant="contained"
-              loading={loading}
-              disabled={isTimerVisible}
-              onClick={sendVerificationCode}
-              boxSx={{ display: 'flex', width: { xs: '100%', md: 'auto' } }}
-              sx={{ height: '56px', flexGrow: { xs: 1 } }}
+          {environment.emailVerificationEnabled && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                width: { xs: '100%' },
+              }}
             >
-              {BOOKING.sendVerification}
-            </ButtonWithLoading>
-            {isTimerVisible && (
-              <Typography variant="subtitle1" ml={2}>
-                {timer}
-              </Typography>
-            )}
-          </Box>
+              <ButtonWithLoading
+                variant="contained"
+                loading={loading}
+                disabled={isTimerVisible}
+                onClick={sendVerificationCode}
+                boxSx={{ display: 'flex', width: { xs: '100%', md: 'auto' } }}
+                sx={{ height: '56px', flexGrow: { xs: 1 } }}
+              >
+                {BOOKING.sendVerification}
+              </ButtonWithLoading>
+              {isTimerVisible && (
+                <Typography variant="subtitle1" ml={2}>
+                  {timer}
+                </Typography>
+              )}
+            </Box>
+          )}
         </Stack>
       )}
+
       <Box>
         <Accordion
           expanded={expandedForm === formValues.vpoReferenceNumber}

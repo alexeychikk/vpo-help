@@ -12,7 +12,6 @@ describe('POST /vpo', () => {
       Object {
         "error": "Bad Request",
         "message": Array [
-          "verificationCode must be longer than or equal to 6 characters",
           "minimal allowed date for vpoIssueDate is 2022-01-01",
           "vpoReferenceNumber must match /^(\\\\d{4}-)?\\\\d{10}$/i regular expression",
           "firstName must be longer than or equal to 1 characters",

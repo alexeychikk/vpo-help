@@ -3,6 +3,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   HttpCode,
+  NotFoundException,
   Post,
   UseInterceptors,
 } from '@nestjs/common';
@@ -12,11 +13,13 @@ import {
   EmailService,
   VerificationService,
 } from '@vpo-help/server';
+import { EnvService } from '../services';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller({ path: 'auth' })
 export class AuthController {
   constructor(
+    private readonly envService: EnvService,
     private readonly authService: AuthService,
     private readonly verificationService: VerificationService,
     private readonly emailService: EmailService,
@@ -37,6 +40,10 @@ export class AuthController {
   @Post('send-vpo-verification')
   @HttpCode(200)
   async sendVpoVerification(@Body() dto: EmailHolderDto) {
+    if (!this.envService.EMAIL_VERIFICATION_ENABLED) {
+      throw new NotFoundException();
+    }
+
     const { verificationCode } =
       await this.verificationService.createVerificationCodeByEmail(dto);
     await this.emailService.sendVpoVerification({
