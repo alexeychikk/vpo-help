@@ -1,9 +1,15 @@
 import { Box, Typography } from '@mui/material';
+import type { SettingsDto } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import { NavLinkButton } from '../../../components/NavLinkButton';
 import { BOOKING } from '../../../constants';
 import { ROUTES } from '../../routes.config';
 
-export const NoSlots: React.FC = () => {
+export type NoSlotsProps = {
+  settings?: Serialized<SettingsDto>;
+};
+
+export const NoSlots: React.FC<NoSlotsProps> = (props) => {
   return (
     <Box
       sx={{
@@ -15,7 +21,11 @@ export const NoSlots: React.FC = () => {
       }}
     >
       <Typography variant="h5" textAlign="center" mb={2}>
-        {BOOKING.noSlots}
+        <span
+          dangerouslySetInnerHTML={{
+            __html: BOOKING.noSlots(props.settings),
+          }}
+        />
       </Typography>
       <NavLinkButton to={ROUTES.MAIN.path} variant="contained">
         {BOOKING.gotoMain}

@@ -31,7 +31,12 @@ import { ButtonWithLoading } from '../../components/ButtonWithLoading';
 import { NavLinkButton } from '../../components/NavLinkButton';
 import { BOOKING, ERROR_MESSAGES } from '../../constants';
 import { environment } from '../../environments/environment';
-import { htmlService, scheduleService, vpoService } from '../../services';
+import {
+  htmlService,
+  scheduleService,
+  settingsService,
+  vpoService,
+} from '../../services';
 import type { ScheduleSlotAvailableDto } from '../../services/schedule';
 import { ROUTES } from '../routes.config';
 import { BookingConfirmation } from './BookingConfirmation';
@@ -71,16 +76,24 @@ export const Booking = () => {
       return acc;
     }, {} as Record<string, ScheduleSlotAvailableDto[]>);
   }, []);
+
   const infoResponse = useAsync(async () => {
     const info = await htmlService.getPage('info');
     return info.content;
   });
 
+  const settingsResponse = useAsync(() => settingsService.getSettings());
+
   const getStepContent = useCallback(
     (step: number) => {
       switch (step) {
         case 0:
-          return <Info address={infoResponse.value?.['addresses']} />;
+          return (
+            <Info
+              address={infoResponse.value?.['addresses']}
+              settings={settingsResponse.value}
+            />
+          );
         case 1:
           return <SelectTimeSlot slots={availableSlotsResponse.value!} />;
         case 2:
@@ -184,7 +197,7 @@ export const Booking = () => {
         {!availableSlotsResponse.loading &&
         availableSlotsResponse.value &&
         !Object.keys(availableSlotsResponse.value).length ? (
-          <NoSlots />
+          <NoSlots settings={settingsResponse.value} />
         ) : (
           <Paper
             variant="outlined"

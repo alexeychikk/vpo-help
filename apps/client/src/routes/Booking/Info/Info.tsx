@@ -7,13 +7,14 @@ import {
   Typography,
 } from '@mui/material';
 import { useController, useFormContext } from 'react-hook-form';
-import { useAsync } from 'react-use';
+import type { SettingsDto } from '@vpo-help/model';
+import type { Serialized } from '@vpo-help/utils';
 import { BOOKING } from '../../../constants';
-import { settingsService } from '../../../services';
 import type { VpoForm } from '../Booking';
 
 export type InfoProps = {
   address?: string;
+  settings?: Serialized<SettingsDto>;
 };
 
 export const Info: React.FC<InfoProps> = (props) => {
@@ -32,8 +33,6 @@ export const Info: React.FC<InfoProps> = (props) => {
     },
   });
 
-  const settingsResponse = useAsync(() => settingsService.getSettings());
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h5" textAlign="center" mb={4}>
@@ -43,7 +42,7 @@ export const Info: React.FC<InfoProps> = (props) => {
         <pre
           style={{ lineHeight: 'inherit' }}
           dangerouslySetInnerHTML={{
-            __html: BOOKING.info(settingsResponse.value),
+            __html: BOOKING.info(props.settings),
           }}
         />
         {props.address && (
