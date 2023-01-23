@@ -28,7 +28,8 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import type { SortDirection } from '@vpo-help/model';
 import { ButtonWithLoading } from '../../../components/ButtonWithLoading';
-import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
+import { ErrorModal } from '../../../components/ErrorModal';
+import { ACCESS_TOKEN, ADMIN } from '../../../constants';
 import { vpoService } from '../../../services';
 import { formatISOEndOfDay, formatISOStartOfDay } from '../../../utils';
 import { ROUTES } from '../../routes.config';
@@ -49,7 +50,8 @@ export const VpoTable: React.FC = () => {
   );
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [search, setSearch] = useState<string>();
-  const [scheduleDateFilter, setScheduleDateFilter] = useState<string>();
+  const [minScheduleDateFilter, setMinScheduleDateFilter] = useState<string>();
+  const [maxScheduleDateFilter, setMaxScheduleDateFilter] = useState<string>();
   const [minReceivedHelpFilter, setMinReceivedHelpFilter] = useState<string>();
   const [maxReceivedHelpFilter, setMaxReceivedHelpFilter] = useState<string>();
 
@@ -83,8 +85,12 @@ export const VpoTable: React.FC = () => {
     setSearch(event.target.value);
   };
 
-  const handleScheduleDateFilterChange = (date: moment.Moment | null) => {
-    setScheduleDateFilter(date?.toISOString() || undefined);
+  const handleMinScheduleDateFilterChange = (date: moment.Moment | null) => {
+    setMinScheduleDateFilter(date?.toISOString() || undefined);
+  };
+
+  const handleMaxScheduleDateFilterChange = (date: moment.Moment | null) => {
+    setMaxScheduleDateFilter(date?.toISOString() || undefined);
   };
 
   const handleMinReceivedHelpFilterChange = (date: moment.Moment | null) => {
@@ -103,7 +109,20 @@ export const VpoTable: React.FC = () => {
       return <Navigate to={ROUTES.LOGIN.path} />;
     }
     console.error(vpoResponse.error.stack || vpoResponse.error);
-    return <Typography variant="h3">{ERROR_MESSAGES.unknown}</Typography>;
+
+    return (
+      <ErrorModal
+        isOpen={true}
+        title={ADMIN.errorModal.title}
+        message={vpoResponse.error.message}
+      >
+        <DialogActions>
+          <Button variant="contained" onClick={() => setIsModalOpen(false)}>
+            {ADMIN.errorModal.closeButton}
+          </Button>
+        </DialogActions>
+      </ErrorModal>
+    );
   }
 
   const handleSortChange = (
@@ -116,7 +135,8 @@ export const VpoTable: React.FC = () => {
 
   const resetFilters = () => {
     setSearch(undefined);
-    setScheduleDateFilter(undefined);
+    setMinScheduleDateFilter(undefined);
+    setMaxScheduleDateFilter(undefined);
     setMinReceivedHelpFilter(undefined);
     setMaxReceivedHelpFilter(undefined);
     setFilters({});
@@ -133,9 +153,15 @@ export const VpoTable: React.FC = () => {
     if (search && search.length >= 3) {
       newFilters['q'] = search;
     }
-    if (scheduleDateFilter) {
-      newFilters[minScheduleDateKey] = formatISOStartOfDay(scheduleDateFilter)!;
-      newFilters[maxScheduleDateKey] = formatISOEndOfDay(scheduleDateFilter)!;
+    if (minScheduleDateFilter) {
+      newFilters[minScheduleDateKey] = formatISOStartOfDay(
+        minScheduleDateFilter,
+      )!;
+    }
+    if (maxScheduleDateFilter) {
+      newFilters[maxScheduleDateKey] = formatISOEndOfDay(
+        maxScheduleDateFilter,
+      )!;
     }
     if (minReceivedHelpFilter) {
       newFilters[minReceivedHelpKey] = formatISOStartOfDay(
@@ -257,8 +283,8 @@ export const VpoTable: React.FC = () => {
                 />
                 <DesktopDatePicker
                   ignoreInvalidInputs
-                  label={ADMIN.vpo.filters.scheduleDate}
-                  value={scheduleDateFilter || null}
+                  label={ADMIN.vpo.filters.minScheduleDate}
+                  value={minScheduleDateFilter || null}
                   inputFormat="DD.MM.YYYY"
                   renderInput={(params) => (
                     <TextField
@@ -266,8 +292,23 @@ export const VpoTable: React.FC = () => {
                       sx={{ width: { xs: '100%', md: '250px' } }}
                     />
                   )}
-                  onChange={handleScheduleDateFilterChange}
+                  onChange={handleMinScheduleDateFilterChange}
                 />
+                <DesktopDatePicker
+                  ignoreInvalidInputs
+                  label={ADMIN.vpo.filters.maxScheduleDate}
+                  value={maxScheduleDateFilter || null}
+                  inputFormat="DD.MM.YYYY"
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      sx={{ width: { xs: '100%', md: '250px' } }}
+                    />
+                  )}
+                  onChange={handleMaxScheduleDateFilterChange}
+                />
+              </Stack>
+              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={2}>
                 <DesktopDatePicker
                   ignoreInvalidInputs
                   label={ADMIN.vpo.filters.minReceivedHelp}
@@ -562,21 +603,18 @@ export const VpoTable: React.FC = () => {
             </Box>
           </>
         )}
-        <Dialog open={isModalOpen} onClose={handleCloseModal}>
-          <DialogTitle id="alert-dialog-title">
-            {ADMIN.errorModal.title}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {errorMessage || ADMIN.errorModal.content}
-            </DialogContentText>
-          </DialogContent>
+        <ErrorModal
+          isOpen={isModalOpen}
+          title={ADMIN.errorModal.title}
+          message={errorMessage || ADMIN.errorModal.content}
+          onClose={handleCloseModal}
+        >
           <DialogActions>
-            <Button onClick={handleCloseModal} variant="contained" autoFocus>
+            <Button variant="contained" onClick={handleCloseModal}>
               {ADMIN.errorModal.closeButton}
             </Button>
           </DialogActions>
-        </Dialog>
+        </ErrorModal>
       </Paper>
     </Container>
   );

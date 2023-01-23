@@ -4,11 +4,7 @@ import {
   Button,
   CircularProgress,
   Container,
-  Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Fab,
   Paper,
   Typography,
@@ -20,8 +16,9 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import type { Optional } from 'utility-types';
 import type { ScheduleDto } from '@vpo-help/model';
+import { ErrorModal } from '../../../components/ErrorModal';
 import { Scheduler } from '../../../components/Scheduler';
-import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
+import { ACCESS_TOKEN, ADMIN } from '../../../constants';
 import { scheduleService } from '../../../services';
 import { ROUTES } from '../../routes.config';
 
@@ -33,6 +30,7 @@ export const Schedule: React.FC = () => {
     null,
   );
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isScheduleChanged, setIsScheduleChanged] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const scheduleResponse = useAsync(async () => {
@@ -96,6 +94,7 @@ export const Schedule: React.FC = () => {
           return navigate(ROUTES.LOGIN.path, { replace: true });
         }
 
+        setErrorMessage(error.response?.data.message);
         setIsModalOpen(true);
       }
     }
@@ -128,7 +127,19 @@ export const Schedule: React.FC = () => {
       return <Navigate to={ROUTES.LOGIN.path} />;
     }
     console.error(scheduleResponse.error.stack || scheduleResponse.error);
-    return <Typography variant="h3">{ERROR_MESSAGES.unknown}</Typography>;
+    return (
+      <ErrorModal
+        isOpen={true}
+        title={ADMIN.errorModal.title}
+        message={scheduleResponse.error.message}
+      >
+        <DialogActions>
+          <Button variant="contained" onClick={() => setIsModalOpen(false)}>
+            {ADMIN.errorModal.closeButton}
+          </Button>
+        </DialogActions>
+      </ErrorModal>
+    );
   }
 
   return (
@@ -172,25 +183,19 @@ export const Schedule: React.FC = () => {
             </Fab>
           </>
         )}
-        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <DialogTitle id="alert-dialog-title">
-            {ADMIN.errorModal.title}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {ADMIN.errorModal.content}
-            </DialogContentText>
-          </DialogContent>
+        <ErrorModal
+          isOpen={isModalOpen}
+          title={ADMIN.errorModal.title}
+          message={ADMIN.errorModal.content}
+          detailedMessage={errorMessage}
+          onClose={() => setIsModalOpen(false)}
+        >
           <DialogActions>
-            <Button
-              onClick={() => setIsModalOpen(false)}
-              variant="contained"
-              autoFocus
-            >
+            <Button variant="contained" onClick={() => setIsModalOpen(false)}>
               {ADMIN.errorModal.closeButton}
             </Button>
           </DialogActions>
-        </Dialog>
+        </ErrorModal>
       </Paper>
     </Container>
   );

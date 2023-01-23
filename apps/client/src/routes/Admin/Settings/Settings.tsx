@@ -29,6 +29,7 @@ import { useAsync } from 'react-use';
 import type { SettingsDto } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { DesktopDatePickerElement } from '../../../components/DesktopDatePickerElement';
+import { ErrorModal } from '../../../components/ErrorModal';
 import { TextFieldElement } from '../../../components/TextFieldElement';
 import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { htmlService, settingsService } from '../../../services';
@@ -45,6 +46,7 @@ export const Settings: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const form = useForm<Serialized<SettingsDto>>();
   const [addresses, setAddresses] = useState(EditorState.createEmpty());
 
@@ -121,6 +123,7 @@ export const Settings: React.FC = () => {
           localStorage.removeItem(ACCESS_TOKEN);
           return navigate(ROUTES.LOGIN.path, { replace: true });
         }
+        setErrorMessage(error.response?.data.message);
       }
       setLoading(false);
       setIsModalOpen(false);
@@ -140,7 +143,19 @@ export const Settings: React.FC = () => {
         infoResponse.error?.stack ||
         infoResponse.error,
     );
-    return <Typography variant="h3">{ERROR_MESSAGES.unknown}</Typography>;
+    return (
+      <ErrorModal
+        isOpen={true}
+        title={ADMIN.errorModal.title}
+        message={(settingsResponse.error || infoResponse.error)!.message}
+      >
+        <DialogActions>
+          <Button variant="contained" onClick={() => setIsModalOpen(false)}>
+            {ADMIN.errorModal.closeButton}
+          </Button>
+        </DialogActions>
+      </ErrorModal>
+    );
   }
 
   return (
@@ -266,25 +281,19 @@ export const Settings: React.FC = () => {
             </Fab>
           </Box>
         )}
-        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <DialogTitle id="alert-dialog-title">
-            {ADMIN.errorModal.title}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {ADMIN.errorModal.content}
-            </DialogContentText>
-          </DialogContent>
+        <ErrorModal
+          isOpen={isModalOpen}
+          title={ADMIN.errorModal.title}
+          message={ADMIN.errorModal.content}
+          detailedMessage={errorMessage}
+          onClose={() => setIsModalOpen(false)}
+        >
           <DialogActions>
-            <Button
-              onClick={() => setIsModalOpen(false)}
-              variant="contained"
-              autoFocus
-            >
+            <Button variant="contained" onClick={() => setIsModalOpen(false)}>
               {ADMIN.errorModal.closeButton}
             </Button>
           </DialogActions>
-        </Dialog>
+        </ErrorModal>
       </Paper>
     </Container>
   );

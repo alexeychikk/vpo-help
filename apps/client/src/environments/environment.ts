@@ -1,7 +1,7 @@
 export const environment = {
   production: process.env.CLIENT_ENV === 'production',
   url: process.env.API_URL,
-  emailVerificationEnabled: !!process.env.EMAIL_VERIFICATION_ENABLED,
+  emailVerificationEnabled: process.env.EMAIL_VERIFICATION_ENABLED === 'true',
 };
 
 declare global {

@@ -1,13 +1,10 @@
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import {
   Box,
   Button,
   CircularProgress,
   Container,
-  Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Paper,
   Step,
   StepLabel,
@@ -28,6 +25,7 @@ import type {
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
+import { ErrorModal } from '../../components/ErrorModal';
 import { NavLinkButton } from '../../components/NavLinkButton';
 import { BOOKING, ERROR_MESSAGES } from '../../constants';
 import { environment } from '../../environments/environment';
@@ -57,6 +55,7 @@ export const Booking = () => {
   const [submitting, setSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [detailedErrorMessage, setDetailedErrorMessage] = useState('');
   const [vpoUser, setVpoUser] = useState<Serialized<VpoUserModel> | null>(null);
   const form = useForm<VpoForm>({
     mode: 'onBlur',
@@ -121,6 +120,11 @@ export const Booking = () => {
           verificationCode,
           mainVpo: {
             ...formValues,
+            firstName: formValues.firstName.trim(),
+            middleName: formValues.middleName.trim(),
+            lastName: formValues.lastName.trim(),
+            addressOfResidence: formValues.addressOfRegistration.trim(),
+            phoneNumber: formValues.phoneNumber.replace(/[\s()-]/g, ''),
             numberOfRelatives:
               parseInt(formValues.numberOfRelatives?.toString() || '') || 0,
             numberOfRelativesBelow16:
@@ -132,7 +136,13 @@ export const Booking = () => {
           },
           relativeVpos: relativeVpos.map((values) => ({
             ...values,
-            phoneNumber: values.phoneNumber || undefined,
+            firstName: values.firstName.trim(),
+            middleName: values.middleName.trim(),
+            lastName: values.lastName.trim(),
+            addressOfResidence: values.addressOfRegistration.trim(),
+            phoneNumber: values.phoneNumber
+              ? values.phoneNumber.replace(/[\s()-]/g, '')
+              : undefined,
             taxIdNumber: values.taxIdNumber || undefined,
           })),
         });
@@ -157,6 +167,12 @@ export const Booking = () => {
             } else {
               clientMessage = BOOKING.errorMessages[serverMessage];
             }
+            const detailedError = Array.isArray(serverMessage)
+              ? serverMessage.join(', ')
+              : serverMessage;
+            setDetailedErrorMessage(
+              `${error.response?.data.error}: ${detailedError}`,
+            );
           } else if (error.response?.status === 401) {
             clientMessage = BOOKING.errorMessages['verificationCode'];
           }
@@ -203,19 +219,40 @@ export const Booking = () => {
             variant="outlined"
             sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
           >
-            <Typography component="h1" variant="h4" align="center">
-              {BOOKING.title}
-            </Typography>
-            <Stepper
-              activeStep={activeStep}
-              sx={{ flexWrap: { xs: 'wrap', md: 'nowrap' }, pt: 3, pb: 5 }}
-            >
-              {steps.map((label) => (
-                <Step key={label} sx={{ pb: { xs: 1, md: 0 } }}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
+            {activeStep === steps.length && vpoUser ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  my: 3,
+                }}
+              >
+                <CheckCircleOutlineIcon
+                  color="success"
+                  sx={{ fontSize: '4rem', mr: 2 }}
+                />
+                <Typography component="h1" variant="h4" align="center">
+                  {BOOKING.finishTitle}
+                </Typography>
+              </Box>
+            ) : (
+              <>
+                <Typography component="h1" variant="h4" align="center">
+                  {BOOKING.title}
+                </Typography>
+                <Stepper
+                  activeStep={activeStep}
+                  sx={{ flexWrap: { xs: 'wrap', md: 'nowrap' }, pt: 3, pb: 5 }}
+                >
+                  {steps.map((label) => (
+                    <Step key={label} sx={{ pb: { xs: 1, md: 0 } }}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
+              </>
+            )}
             <FormProvider<VpoForm> {...form}>
               <Box
                 noValidate
@@ -286,15 +323,13 @@ export const Booking = () => {
           </Paper>
         )}
       </Container>
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <DialogTitle id="alert-dialog-title">
-          {BOOKING.errorModalTitle}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {errorMessage}
-          </DialogContentText>
-        </DialogContent>
+      <ErrorModal
+        isOpen={isModalOpen}
+        title={BOOKING.errorModalTitle}
+        message={errorMessage}
+        detailedMessage={detailedErrorMessage}
+        onClose={() => setIsModalOpen(false)}
+      >
         <DialogActions>
           <Button onClick={() => setIsModalOpen(false)} sx={{ mr: 2 }}>
             {BOOKING.prevStep}
@@ -303,7 +338,7 @@ export const Booking = () => {
             {BOOKING.gotoMain}
           </NavLinkButton>
         </DialogActions>
-      </Dialog>
+      </ErrorModal>
     </Container>
   );
 };

@@ -40,10 +40,12 @@ export const MAIN = {
   },
   startBooking: 'Забронювати місце в черзі',
   backToMain: 'Повернутися на головну',
+  details: 'Додаткова інформація',
 };
 
 export const BOOKING = {
   title: 'Бронювання',
+  finishTitle: 'Вас зареєстровано',
   stepper: [
     'Інформація',
     'Виберіть час бронювання',
@@ -206,7 +208,8 @@ export const ADMIN = {
       title: 'Фільтри',
       search: 'Повнотекстовий пошук',
       searchError: 'Для пошуку введіть не меньше 3 символів',
-      scheduleDate: 'Заброньована дата',
+      minScheduleDate: 'Мін. заброньована дата',
+      maxScheduleDate: 'Макс. заброньована дата',
       minReceivedHelp: 'Мін. дата отримання допомоги',
       maxReceivedHelp: 'Макс. дата отримання допомоги',
       reset: 'Скинути фільтри',
