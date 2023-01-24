@@ -51,7 +51,10 @@ export class CsvService {
     const file = stringifyCsv({
       header: query.header,
       cast: {
-        date: (value) => formatDate(value, 'dd.MM.yyyy'),
+        date: (value) => {
+          this.logger.log(`==AAA== ${typeof value} | ${value}`);
+          return formatDate(value, 'dd.MM.yyyy');
+        },
       },
       columns: query.columns,
     });
@@ -60,6 +63,7 @@ export class CsvService {
       cursor.stream({
         transform: (doc: VpoEntity) => {
           const { scheduleDate, ...rest } = doc;
+          this.logger.log(`==BBB== ${typeof scheduleDate} | ${scheduleDate}`);
           return {
             ...rest,
             scheduleDate: formatDate(scheduleDate, 'dd.MM.yyyy HH:mm'),
