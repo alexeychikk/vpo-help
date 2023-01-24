@@ -52,7 +52,6 @@ export class CsvService {
       header: query.header,
       cast: {
         date: (value) => {
-          this.logger.warn(`==AAA== ${typeof value} | ${value}`);
           return formatDate(value, 'dd.MM.yyyy');
         },
       },
@@ -63,7 +62,6 @@ export class CsvService {
       cursor.stream({
         transform: (doc: VpoEntity) => {
           const { scheduleDate, ...rest } = doc;
-          this.logger.warn(`==BBB== ${typeof scheduleDate} | ${scheduleDate}`);
           return {
             ...rest,
             scheduleDate: formatDate(scheduleDate, 'dd.MM.yyyy HH:mm'),
