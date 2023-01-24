@@ -7,8 +7,8 @@ import { testApp } from '../../testApp';
 test('available schedule slots depend on start/end registration dates', async () => {
   await testApp.settingsService.updateCommonSettings({
     scheduleDaysAvailable: 10,
-    startOfRegistrationDate: new Date('2022-11-22 13:30'),
-    endOfRegistrationDate: new Date('2022-11-22 15:30'),
+    startOfRegistrationDate: new Date('2022-11-22 13:30'), // Tuesday
+    endOfRegistrationDate: new Date('2022-11-22 15:30'), // Tuesday
   });
   advanceTo(new Date('2022-11-22 12:00')); // Tuesday
 
@@ -29,16 +29,8 @@ test('available schedule slots depend on start/end registration dates', async ()
 
   expect(body.items).toEqual([
     {
-      dateFrom: new Date('2022-11-22 13:00').toISOString(),
-      dateTo: new Date('2022-11-22 14:00').toISOString(),
-    },
-    {
       dateFrom: new Date('2022-11-22 14:00').toISOString(),
       dateTo: new Date('2022-11-22 15:00').toISOString(),
-    },
-    {
-      dateFrom: new Date('2022-11-22 15:00').toISOString(),
-      dateTo: new Date('2022-11-22 16:00').toISOString(),
     },
   ]);
 });

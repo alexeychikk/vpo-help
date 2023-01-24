@@ -160,7 +160,9 @@ export class VpoService {
     const startDate = new Date();
     if (!isBefore(startDate, common.endOfRegistrationDate)) return result;
 
-    const vpoList = await this.vpoRepository.findByScheduleDate(startDate);
+    const vpoList = await this.vpoRepository.findByScheduleDate(
+      startOfDay(startDate),
+    );
     const groupedVpoList = groupBy(vpoList, (vpo) =>
       vpo.scheduleDate.toISOString(),
     );
@@ -174,10 +176,10 @@ export class VpoService {
 
       for (const slot of slots) {
         const slotDateFrom = setTimeOnDate(slot.timeFrom, date);
-        if (!isBefore(slotDateFrom, common.endOfRegistrationDate)) break;
+        if (isBefore(slotDateFrom, common.startOfRegistrationDate)) continue;
+        if (isBefore(slotDateFrom, date)) continue;
         const slotDateTo = setTimeOnDate(slot.timeTo, date);
-        if (!isAfter(slotDateTo, common.startOfRegistrationDate)) continue;
-        if (!isAfter(slotDateTo, date)) continue;
+        if (isAfter(slotDateTo, common.endOfRegistrationDate)) break;
 
         const takenSlotsCount =
           groupedVpoList[slotDateFrom.toISOString()]?.length || 0;

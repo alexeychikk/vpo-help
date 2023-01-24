@@ -140,7 +140,9 @@ class TestApp {
 
   async getAvailableScheduleSlot(index = 0): Promise<ScheduleSlotAvailableDto> {
     const { items } = await this.vpoService.getAvailableSchedule();
-    return items[index];
+    const slot = items[index];
+    if (!slot) throw new Error(`Slot with index ${index} does not exist`);
+    return slot;
   }
 
   async getAvailableDateSlot(index = 0): Promise<Date> {

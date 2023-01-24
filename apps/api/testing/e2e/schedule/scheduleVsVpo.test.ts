@@ -1,3 +1,4 @@
+import { endOfDay, startOfDay } from 'date-fns';
 import { advanceTo } from 'jest-date-mock';
 import type { ScheduleAvailableDto } from '@vpo-help/model';
 import { ScheduleDto } from '@vpo-help/model';
@@ -7,10 +8,10 @@ import { testApp } from '../../testApp';
 test('takes into account registered vpo-s', async () => {
   await testApp.settingsService.updateCommonSettings({
     scheduleDaysAvailable: 2,
-    startOfRegistrationDate: new Date('2022-11-22'),
-    endOfRegistrationDate: new Date('2022-11-30'),
+    startOfRegistrationDate: startOfDay(new Date('2022-11-22')), // Tuesday
+    endOfRegistrationDate: endOfDay(new Date('2022-11-30')), // Wednesday
   });
-  advanceTo(new Date('2022-11-22')); // Tuesday
+  advanceTo(new Date('2022-11-22 12:00')); // Tuesday
 
   await testApp.settingsService.updateSchedule(
     new ScheduleDto({

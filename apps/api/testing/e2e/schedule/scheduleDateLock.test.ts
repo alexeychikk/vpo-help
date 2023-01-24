@@ -1,3 +1,4 @@
+import { endOfDay, startOfDay } from 'date-fns';
 import { advanceTo } from 'jest-date-mock';
 import { times } from 'lodash';
 import { ScheduleDto } from '@vpo-help/model';
@@ -5,10 +6,10 @@ import { testApp } from '../../testApp';
 
 test('registering multiple accounts on the same time slot', async () => {
   await testApp.settingsService.updateCommonSettings({
-    startOfRegistrationDate: new Date('2022-11-27'),
-    endOfRegistrationDate: new Date('2022-11-30'),
+    startOfRegistrationDate: startOfDay(new Date('2022-11-27')), // Sunday
+    endOfRegistrationDate: endOfDay(new Date('2022-11-30')), // Wednesday
   });
-  advanceTo(new Date('2022-11-27')); // Sunday
+  advanceTo(new Date('2022-11-27 12:00')); // Sunday
 
   await testApp.settingsService.updateSchedule(
     new ScheduleDto({
