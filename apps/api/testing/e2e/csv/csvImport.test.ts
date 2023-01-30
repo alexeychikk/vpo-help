@@ -1,5 +1,6 @@
-import { parse as parseCsv } from 'csv/sync';
 import { format as formatDate } from 'date-fns';
+import { sortBy } from 'lodash';
+import type { VpoModel } from '@vpo-help/model';
 import { CSV_COLUMN_KEYS } from '@vpo-help/model';
 import { testApp } from '../../testApp';
 
@@ -8,30 +9,29 @@ test('auth', async () => {
 });
 
 test('updates multiple vpo-s from a csv file', async () => {
-  const vpos = await testApp.populateVpo(8);
+  const vpos = sortBy(await testApp.populateVpo(8), ['vpoReferenceNumber']);
   const newVpo = testApp.getFakeVpoRaw({
     vpoReferenceNumber: '9999-9999999999',
   });
-  const newVpoRow = CSV_COLUMN_KEYS.slice(0, -1)
-    .map((col) => {
-      const value = newVpo[col as keyof typeof newVpo];
-      if (value instanceof Date) {
-        return col === 'scheduleDate'
-          ? formatDate(value, 'dd.MM.yyyy HH:mm')
-          : formatDate(value, 'dd.MM.yyyy');
-      }
-      return value;
-    })
-    .join(',');
+  const newVpoRow = vpoToCsvRow(newVpo);
+  const getVpoRow = (index: number) => vpoToCsvRow(vpos[index]);
 
-  const { text } = await testApp
-    .asUser()
-    .requestApiWithAuth((req) =>
-      req.get(`/vpo/export?sort[vpoReferenceNumber]=asc`).buffer(),
-    );
-  const parsedList = parseCsv(text).slice(1);
-
-  const getVpoRow = (index: number) => parsedList[index].slice(0, -1).join(',');
+  // updating fields of vpo#1
+  const vpo1UpdatedFields = {
+    firstName: 'Foo',
+    lastName: 'Bar',
+    middleName: 'Baz',
+    dateOfBirth: new Date('1995-02-12T22:00:00.000Z'),
+    phoneNumber: '+380978888888',
+    taxIdNumber: '1234567890',
+    email: 'vpo@happyold.com',
+    addressOfRegistration: 'Луганськ',
+    addressOfResidence: 'Київ',
+    numberOfRelatives: 3,
+    numberOfRelativesBelow16: 2,
+    numberOfRelativesAbove65: 1,
+  };
+  Object.assign(vpos[1], vpo1UpdatedFields);
 
   const file = Buffer.from(
     `${CSV_COLUMN_KEYS.join(',')},aid kits,щось смачненьке,guns
@@ -74,6 +74,7 @@ ${newVpoRow},11.01.2022
   updatedList.slice(1, 7).forEach((vpo) => {
     expect(vpo.receivedGoods?.length).toBeGreaterThan(0);
   });
+  expect(updatedList[1]).toMatchObject(vpo1UpdatedFields);
   expect(updatedList[6].receivedGoods).toEqual([
     { name: 'aid kits', amount: 0 },
     { name: 'щось смачненьке', amount: 0 },
@@ -90,3 +91,17 @@ ${newVpoRow},11.01.2022
     vpoIssueDate: expect.any(Date),
   });
 });
+
+function vpoToCsvRow(vpo: Partial<VpoModel>): string {
+  return CSV_COLUMN_KEYS.slice(0, -1)
+    .map((col) => {
+      const value = vpo[col as keyof typeof vpo];
+      if (value instanceof Date) {
+        return col === 'scheduleDate'
+          ? formatDate(value, 'dd.MM.yyyy HH:mm')
+          : formatDate(value, 'dd.MM.yyyy');
+      }
+      return value;
+    })
+    .join(',');
+}

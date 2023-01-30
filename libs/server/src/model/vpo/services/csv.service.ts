@@ -13,7 +13,7 @@ import {
   parse as parseDate,
   set as setDate,
 } from 'date-fns';
-import { pick } from 'lodash';
+import { omit } from 'lodash';
 import type {
   BaseModel,
   PaginationSearchSortDto,
@@ -198,7 +198,13 @@ export class CsvService {
   private async upsertVpo(record: ImportedVpoRecord) {
     const { matchedCount } = await this.vpoRepository.updateOne(
       { vpoReferenceNumber: record.vpoReferenceNumber },
-      { $set: pick(record, ['receivedHelpDate', 'receivedGoods']) },
+      {
+        $set: omit(record, [
+          'mainVpoReferenceNumber',
+          'vpoReferenceNumber',
+          'scheduleDate',
+        ]),
+      },
     );
     if (matchedCount) return;
     const model = await validateEntity(VpoModel, record);
