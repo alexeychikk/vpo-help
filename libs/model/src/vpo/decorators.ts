@@ -10,6 +10,6 @@ export const IsVpoIssueDate = () =>
   );
 
 export const IsVpoReferenceNumber = () =>
-  composeDecorators(Matches(/^(\d{4}-)?\d{10}$/i));
+  composeDecorators(Matches(/^\d{4}-\d{10}$/i));
 
 export const IsTaxIdNumber = () => composeDecorators(Matches(/^\d{7,20}$/i));

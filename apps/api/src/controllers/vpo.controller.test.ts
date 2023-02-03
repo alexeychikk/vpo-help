@@ -13,7 +13,7 @@ describe('POST /vpo', () => {
         "error": "Bad Request",
         "message": Array [
           "minimal allowed date for vpoIssueDate is 2022-01-01",
-          "vpoReferenceNumber must match /^(\\\\d{4}-)?\\\\d{10}$/i regular expression",
+          "vpoReferenceNumber must match /^\\\\d{4}-\\\\d{10}$/i regular expression",
           "firstName must be longer than or equal to 1 characters",
           "lastName must be longer than or equal to 1 characters",
           "middleName must be longer than or equal to 1 characters",

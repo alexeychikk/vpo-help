@@ -113,7 +113,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({ index, arrayKey }) => {
           control={control}
           rules={{
             pattern: {
-              value: /^(\d{4}-)?\d{10}$/i,
+              value: /^\d{4}-\d{10}$/i,
               message: ERROR_MESSAGES.patternVpoReferenceNumber,
             },
           }}

@@ -72,7 +72,7 @@ describe('POST /auth/login/vpo', () => {
       Object {
         "error": "Bad Request",
         "message": Array [
-          "vpoReferenceNumber must match /^(\\\\d{4}-)?\\\\d{10}$/i regular expression",
+          "vpoReferenceNumber must match /^\\\\d{4}-\\\\d{10}$/i regular expression",
         ],
         "statusCode": 400,
       }
