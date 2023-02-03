@@ -5,8 +5,6 @@ import { ScheduleDto } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { testApp } from '../../testApp';
 
-jest.setTimeout(999999999);
-
 test('takes into account current time', async () => {
   await testApp.settingsService.updateCommonSettings({
     scheduleDaysAvailable: 2,

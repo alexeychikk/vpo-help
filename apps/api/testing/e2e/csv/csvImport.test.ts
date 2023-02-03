@@ -8,7 +8,6 @@ test('auth', async () => {
   await testApp.expectAdmin((req) => req.post(`/vpo/import`));
 });
 
-jest.setTimeout(999999999);
 test('updates multiple vpo-s from a csv file', async () => {
   const vpos = sortBy(await testApp.populateVpo(8), ['vpoReferenceNumber']);
   const newVpo = testApp.getFakeVpoRaw({
