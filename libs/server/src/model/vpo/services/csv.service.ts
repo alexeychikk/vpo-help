@@ -1,6 +1,7 @@
 import { pipeline, Writable } from 'stream';
 import { promisify } from 'util';
 import type { MultipartFile } from '@fastify/multipart';
+import type { HttpException } from '@nestjs/common';
 import {
   Injectable,
   Logger,
@@ -22,6 +23,7 @@ import type {
 import {
   CSV_COLUMN_KEYS,
   ReceivedHelpDto,
+  VpoImportError,
   VpoImportResultDto,
   VpoModel,
 } from '@vpo-help/model';
@@ -84,6 +86,11 @@ export class CsvService {
   }
 
   async updateVpoListFromFile(fileData: MultipartFile) {
+    const result = new VpoImportResultDto({
+      total: 0,
+      processed: 0,
+      failed: {},
+    });
     const referenceDate = setDate(new Date(), {
       hours: 0,
       minutes: 0,
@@ -91,8 +98,6 @@ export class CsvService {
       milliseconds: 0,
     });
     let rowsCounter = 0;
-    let recordsProcessed = 0;
-    const recordsFailed: string[] = [];
     let header: string[];
 
     const parseCsvDate = (dateStr: string, format = 'dd.MM.yyyy') =>
@@ -177,22 +182,24 @@ export class CsvService {
             // TODO: bulk update
             await this.upsertVpo(record);
 
-            recordsProcessed++;
+            result.processed++;
           } catch (error) {
-            recordsFailed.push(`${rowsCounter}:${vpoReferenceNumber}`);
+            result.failed[rowsCounter + 1] = new VpoImportError({
+              vpoReferenceNumber,
+              error:
+                (error as HttpException)['response']?.message?.toString() ||
+                (error as Error).toString(),
+            });
           }
 
           rowsCounter++;
+          result.total++;
           callback();
         },
       }),
     );
 
-    return new VpoImportResultDto({
-      total: recordsProcessed + recordsFailed.length,
-      processed: recordsProcessed,
-      failed: recordsFailed,
-    });
+    return result;
   }
 
   private async upsertVpo(record: ImportedVpoRecord) {

@@ -58,11 +58,22 @@ ${newVpoRow},11.01.2022
         .expect(200),
     );
 
-  expect(body).toEqual({
-    total: 11,
-    processed: 9,
-    failed: ['9:vpo_invalid', '10:'],
-  });
+  expect(body).toMatchInlineSnapshot(`
+    Object {
+      "failed": Object {
+        "10": Object {
+          "e": "email must be an email,phoneNumber must be a valid phone number,taxIdNumber must match /^\\\\d{7,20}$/i regular expression,vpoReferenceNumber must match /^\\\\d{4}-\\\\d{10}$/i regular expression,firstName must be longer than or equal to 1 characters,lastName must be longer than or equal to 1 characters,middleName must be longer than or equal to 1 characters,dateOfBirth must be a Date instance,addressOfRegistration must be longer than or equal to 1 characters,addressOfResidence must be longer than or equal to 1 characters,scheduleDate must be a Date instance,receivedHelpDate must be a Date instance",
+          "v": "vpo_invalid",
+        },
+        "11": Object {
+          "e": "Not Found",
+          "v": "",
+        },
+      },
+      "processed": 9,
+      "total": 11,
+    }
+  `);
 
   const updatedList = await testApp.vpoService.vpoRepository.find({
     order: { vpoReferenceNumber: 1 },

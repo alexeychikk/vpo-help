@@ -16,7 +16,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import type { Optional } from 'utility-types';
 import type { ScheduleDto } from '@vpo-help/model';
-import { ErrorModal } from '../../../components/ErrorModal';
+import { InfoDialog } from '../../../components/InfoDialog';
 import { Scheduler } from '../../../components/Scheduler';
 import { ACCESS_TOKEN, ADMIN } from '../../../constants';
 import { scheduleService } from '../../../services';
@@ -128,17 +128,17 @@ export const Schedule: React.FC = () => {
     }
     console.error(scheduleResponse.error.stack || scheduleResponse.error);
     return (
-      <ErrorModal
+      <InfoDialog
         isOpen={true}
-        title={ADMIN.errorModal.title}
+        title={ADMIN.infoDialog.errorTitle}
         message={scheduleResponse.error.message}
       >
         <DialogActions>
           <Button variant="contained" onClick={() => setIsModalOpen(false)}>
-            {ADMIN.errorModal.closeButton}
+            {ADMIN.infoDialog.closeButton}
           </Button>
         </DialogActions>
-      </ErrorModal>
+      </InfoDialog>
     );
   }
 
@@ -183,19 +183,19 @@ export const Schedule: React.FC = () => {
             </Fab>
           </>
         )}
-        <ErrorModal
+        <InfoDialog
           isOpen={isModalOpen}
-          title={ADMIN.errorModal.title}
-          message={ADMIN.errorModal.content}
+          title={ADMIN.infoDialog.errorTitle}
+          message={ADMIN.infoDialog.errorContent}
           detailedMessage={errorMessage}
           onClose={() => setIsModalOpen(false)}
         >
           <DialogActions>
             <Button variant="contained" onClick={() => setIsModalOpen(false)}>
-              {ADMIN.errorModal.closeButton}
+              {ADMIN.infoDialog.closeButton}
             </Button>
           </DialogActions>
-        </ErrorModal>
+        </InfoDialog>
       </Paper>
     </Container>
   );

@@ -28,7 +28,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
 import type { SortDirection } from '@vpo-help/model';
 import { ButtonWithLoading } from '../../../components/ButtonWithLoading';
-import { ErrorModal } from '../../../components/ErrorModal';
+import { InfoDialog } from '../../../components/InfoDialog';
 import { ACCESS_TOKEN, ADMIN } from '../../../constants';
 import { vpoService } from '../../../services';
 import { formatISOEndOfDay, formatISOStartOfDay } from '../../../utils';
@@ -38,7 +38,9 @@ import { HeadTableCell } from './HeadTableCell';
 export const VpoTable: React.FC = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [modalTitle, setModalTitle] = useState<React.ReactNode>('');
+  const [errorMessage, setErrorMessage] = useState<React.ReactNode>('');
+  const [detailedMessage, setDetailedMessage] = useState<React.ReactNode>('');
   const [exportLimit, setExportLimit] = useState(1000);
   const [exportLoading, setExportLoading] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
@@ -111,17 +113,17 @@ export const VpoTable: React.FC = () => {
     console.error(vpoResponse.error.stack || vpoResponse.error);
 
     return (
-      <ErrorModal
+      <InfoDialog
         isOpen={true}
-        title={ADMIN.errorModal.title}
+        title={ADMIN.infoDialog.errorTitle}
         message={vpoResponse.error.message}
       >
         <DialogActions>
           <Button variant="contained" onClick={() => setIsModalOpen(false)}>
-            {ADMIN.errorModal.closeButton}
+            {ADMIN.infoDialog.closeButton}
           </Button>
         </DialogActions>
-      </ErrorModal>
+      </InfoDialog>
     );
   }
 
@@ -221,8 +223,22 @@ export const VpoTable: React.FC = () => {
       setImportLoading(true);
       const data = await vpoService.uploadFile(file);
 
-      if (data.failed?.length) {
-        setErrorMessage(`${ADMIN.vpo.import.error} - ${data.failed}`);
+      if (Object.keys(data.failed).length) {
+        setErrorMessage(ADMIN.vpo.import.error);
+        setDetailedMessage(
+          <>
+            {Object.entries(data.failed).map(([index, error]) => (
+              <div>
+                #{index} ({error.v || 'unknown'}): {error.e}
+              </div>
+            ))}
+          </>,
+        );
+        setIsModalOpen(true);
+      } else {
+        // don't blame me, just extending existing BS
+        setModalTitle(ADMIN.infoDialog.successTitle);
+        setErrorMessage(ADMIN.vpo.import.success);
         setIsModalOpen(true);
       }
     } catch (error) {
@@ -234,12 +250,15 @@ export const VpoTable: React.FC = () => {
       }
       setIsModalOpen(true);
     }
+    event.target.value = '';
     setImportLoading(false);
   };
 
   const handleCloseModal = () => {
-    setErrorMessage('');
     setIsModalOpen(false);
+    setModalTitle('');
+    setErrorMessage('');
+    setDetailedMessage('');
   };
 
   return (
@@ -603,18 +622,19 @@ export const VpoTable: React.FC = () => {
             </Box>
           </>
         )}
-        <ErrorModal
+        <InfoDialog
           isOpen={isModalOpen}
-          title={ADMIN.errorModal.title}
-          message={errorMessage || ADMIN.errorModal.content}
+          title={modalTitle || ADMIN.infoDialog.errorTitle}
+          message={errorMessage || ADMIN.infoDialog.errorContent}
+          detailedMessage={detailedMessage}
           onClose={handleCloseModal}
         >
           <DialogActions>
             <Button variant="contained" onClick={handleCloseModal}>
-              {ADMIN.errorModal.closeButton}
+              {ADMIN.infoDialog.closeButton}
             </Button>
           </DialogActions>
-        </ErrorModal>
+        </InfoDialog>
       </Paper>
     </Container>
   );

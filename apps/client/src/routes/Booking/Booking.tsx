@@ -25,7 +25,7 @@ import type {
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
-import { ErrorModal } from '../../components/ErrorModal';
+import { InfoDialog } from '../../components/InfoDialog';
 import { NavLinkButton } from '../../components/NavLinkButton';
 import { BOOKING, ERROR_MESSAGES } from '../../constants';
 import { environment } from '../../environments/environment';
@@ -323,7 +323,7 @@ export const Booking = () => {
           </Paper>
         )}
       </Container>
-      <ErrorModal
+      <InfoDialog
         isOpen={isModalOpen}
         title={BOOKING.errorModalTitle}
         message={errorMessage}
@@ -338,7 +338,7 @@ export const Booking = () => {
             {BOOKING.gotoMain}
           </NavLinkButton>
         </DialogActions>
-      </ErrorModal>
+      </InfoDialog>
     </Container>
   );
 };

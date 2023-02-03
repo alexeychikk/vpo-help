@@ -10,18 +10,18 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { BOOKING, MAIN } from '../../constants';
+import { MAIN } from '../../constants';
 
-export type ErrorModalProps = {
+export type InfoDialogProps = {
   isOpen: boolean;
-  title: string;
-  message: string;
-  detailedMessage?: string;
+  title: React.ReactNode;
+  message: React.ReactNode;
+  detailedMessage?: React.ReactNode;
   onClose?: () => unknown;
   children: React.ReactElement;
 };
 
-export const ErrorModal: React.FC<ErrorModalProps> = (props) => {
+export const InfoDialog: React.FC<InfoDialogProps> = (props) => {
   const [expandedForm, setExpandedForm] = useState<string | false>(false);
 
   const handleAccordionChange =
@@ -34,23 +34,29 @@ export const ErrorModal: React.FC<ErrorModalProps> = (props) => {
   };
 
   return (
-    <Dialog open={props.isOpen} onClose={handleModalClose}>
+    <Dialog
+      open={props.isOpen}
+      onClose={handleModalClose}
+      transitionDuration={{ exit: 0 }}
+    >
       <DialogTitle id="alert-dialog-title">{props.title}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description" sx={{ mb: 2 }}>
           {props.message}
         </DialogContentText>
-        <Accordion
-          key="details"
-          expanded={expandedForm === 'details'}
-          sx={{ width: '100%' }}
-          onChange={handleAccordionChange('details')}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>{MAIN.details}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>{props.detailedMessage}</AccordionDetails>
-        </Accordion>
+        {props.detailedMessage && (
+          <Accordion
+            key="details"
+            expanded={expandedForm === 'details'}
+            sx={{ width: '100%' }}
+            onChange={handleAccordionChange('details')}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>{MAIN.details}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>{props.detailedMessage}</AccordionDetails>
+          </Accordion>
+        )}
       </DialogContent>
       {props.children}
     </Dialog>

@@ -5,7 +5,7 @@ import type {
   PaginatedListDto,
   RegisterVpoBulkDto,
   RegisterVpoDto,
-  VpoImportResultDto,
+  VpoImportResultPlain,
   VpoModel,
   VpoUserModel,
 } from '@vpo-help/model';
@@ -64,10 +64,10 @@ export class Vpo {
     FileDownload(data, `vpo_list_${params.limit}.csv`);
   }
 
-  async uploadFile(file: File): Promise<Serialized<VpoImportResultDto>> {
+  async uploadFile(file: File): Promise<Serialized<VpoImportResultPlain>> {
     const formData = new FormData();
     formData.append('file', file);
-    const { data } = await this.http.post<Serialized<VpoImportResultDto>>(
+    const { data } = await this.http.post<Serialized<VpoImportResultPlain>>(
       '/import',
       formData,
       {

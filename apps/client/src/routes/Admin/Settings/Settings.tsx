@@ -29,7 +29,7 @@ import { useAsync } from 'react-use';
 import type { SettingsDto } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { DesktopDatePickerElement } from '../../../components/DesktopDatePickerElement';
-import { ErrorModal } from '../../../components/ErrorModal';
+import { InfoDialog } from '../../../components/InfoDialog';
 import { TextFieldElement } from '../../../components/TextFieldElement';
 import { ACCESS_TOKEN, ADMIN, ERROR_MESSAGES } from '../../../constants';
 import { htmlService, settingsService } from '../../../services';
@@ -144,17 +144,17 @@ export const Settings: React.FC = () => {
         infoResponse.error,
     );
     return (
-      <ErrorModal
+      <InfoDialog
         isOpen={true}
-        title={ADMIN.errorModal.title}
+        title={ADMIN.infoDialog.errorTitle}
         message={(settingsResponse.error || infoResponse.error)!.message}
       >
         <DialogActions>
           <Button variant="contained" onClick={() => setIsModalOpen(false)}>
-            {ADMIN.errorModal.closeButton}
+            {ADMIN.infoDialog.closeButton}
           </Button>
         </DialogActions>
-      </ErrorModal>
+      </InfoDialog>
     );
   }
 
@@ -281,19 +281,19 @@ export const Settings: React.FC = () => {
             </Fab>
           </Box>
         )}
-        <ErrorModal
+        <InfoDialog
           isOpen={isModalOpen}
-          title={ADMIN.errorModal.title}
-          message={ADMIN.errorModal.content}
+          title={ADMIN.infoDialog.errorTitle}
+          message={ADMIN.infoDialog.errorContent}
           detailedMessage={errorMessage}
           onClose={() => setIsModalOpen(false)}
         >
           <DialogActions>
             <Button variant="contained" onClick={() => setIsModalOpen(false)}>
-              {ADMIN.errorModal.closeButton}
+              {ADMIN.infoDialog.closeButton}
             </Button>
           </DialogActions>
-        </ErrorModal>
+        </InfoDialog>
       </Paper>
     </Container>
   );
