@@ -54,12 +54,17 @@ export class AuthService implements OnModuleInit {
   }
 
   async createAdmin(dto: CreateAdminDto): Promise<UserEntity> {
-    const entity = new UserEntity({
-      email: dto.email,
-      passwordHash: await this.passwordService.hashPassword(dto.password),
-      role: Role.Admin,
-    });
-    return this.userService.create(entity);
+    try {
+      const entity = new UserEntity({
+        email: dto.email,
+        passwordHash: await this.passwordService.hashPassword(dto.password),
+        role: Role.Admin,
+      });
+      const admin = await this.userService.create(entity);
+      return admin;
+    } catch (error) {
+      return this.userService.findByEmail(dto.email);
+    }
   }
 
   async loginAsUser(dto: LoginAsUserDto): Promise<LoginAsUserResponseDto> {
