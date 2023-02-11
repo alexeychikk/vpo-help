@@ -149,8 +149,8 @@ export const VpoTable: React.FC = () => {
     const newFilters: Record<string, string> = {};
     const minScheduleDateKey = 'min[scheduleDate]';
     const maxScheduleDateKey = 'max[scheduleDate]';
-    const minReceivedHelpKey = 'min-[receivedHelpDate]';
-    const maxReceivedHelpKey = 'max-[receivedHelpDate]';
+    const minReceivedHelpKey = 'min[receivedHelpDate]';
+    const maxReceivedHelpKey = 'max[receivedHelpDate]';
 
     if (search && search.length >= 3) {
       newFilters['q'] = search;
