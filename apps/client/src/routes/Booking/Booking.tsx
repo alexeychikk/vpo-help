@@ -123,7 +123,7 @@ export const Booking = () => {
             firstName: formValues.firstName.trim(),
             middleName: formValues.middleName.trim(),
             lastName: formValues.lastName.trim(),
-            addressOfResidence: formValues.addressOfRegistration.trim(),
+            addressOfRegistration: formValues.addressOfRegistration.trim(),
             phoneNumber: formValues.phoneNumber.replace(/[\s()-]/g, ''),
             numberOfRelatives:
               parseInt(formValues.numberOfRelatives?.toString() || '') || 0,
@@ -131,7 +131,7 @@ export const Booking = () => {
               parseInt(formValues.numberOfRelativesBelow16?.toString() || '') ||
               0,
             numberOfRelativesAbove65:
-              parseInt(formValues.numberOfRelativesBelow16?.toString() || '') ||
+              parseInt(formValues.numberOfRelativesAbove65?.toString() || '') ||
               0,
           },
           relativeVpos: relativeVpos.map((values) => ({
@@ -139,7 +139,7 @@ export const Booking = () => {
             firstName: values.firstName.trim(),
             middleName: values.middleName.trim(),
             lastName: values.lastName.trim(),
-            addressOfResidence: values.addressOfRegistration.trim(),
+            addressOfRegistration: values.addressOfRegistration.trim(),
             phoneNumber: values.phoneNumber
               ? values.phoneNumber.replace(/[\s()-]/g, '')
               : undefined,
