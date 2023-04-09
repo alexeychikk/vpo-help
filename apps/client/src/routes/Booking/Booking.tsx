@@ -12,17 +12,12 @@ import {
   Typography,
 } from '@mui/material';
 import { AxiosError } from 'axios';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Navigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
-import type {
-  RegisterVpoBulkDto,
-  RegisterVpoDto,
-  VpoRelativeModel,
-  VpoUserModel,
-} from '@vpo-help/model';
+import type { RegisterVpoDto, VpoRelativeModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
@@ -85,6 +80,13 @@ export const Booking = () => {
   });
 
   const settingsResponse = useAsync(() => settingsService.getSettings());
+
+  const registeredVpoReferenceNumbers = useMemo(() => {
+    if (!registeredVpoData) return [];
+    return [registeredVpoData.mainVpo.vpoReferenceNumber].concat(
+      registeredVpoData.relativeVpos.map((item) => item.vpoReferenceNumber),
+    );
+  }, [registeredVpoData]);
 
   const getStepContent = useCallback(
     (step: number) => {
@@ -264,13 +266,7 @@ export const Booking = () => {
               >
                 {activeStep === steps.length && registeredVpoData ? (
                   <BookingInfo
-                    vpoReferenceNumbers={[
-                      registeredVpoData.mainVpo.vpoReferenceNumber,
-                    ].concat(
-                      registeredVpoData.relativeVpos.map(
-                        (item) => item.vpoReferenceNumber,
-                      ),
-                    )}
+                    vpoReferenceNumbers={registeredVpoReferenceNumbers}
                     bookingDate={registeredVpoData.mainVpo.scheduleDate}
                     receivedHelpDate={
                       registeredVpoData.mainVpo.receivedHelpDate
