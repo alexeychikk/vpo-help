@@ -101,7 +101,6 @@ export const Main = () => {
               }}
             >
               <BookingInfo
-                vpoReferenceNumber={user.vpoReferenceNumber}
                 bookingDate={user.scheduleDate}
                 receivedHelpDate={user.receivedHelpDate}
               />

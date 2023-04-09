@@ -97,6 +97,7 @@ export const BOOKING = {
   },
   hint: 'Примітка: реєстрація одного члена сім‘ї означає, що ви зареєстрували в черзі усю сім‘ю.',
   bookingInfoTitle: 'Ваше бронювання (для одного або сім‘ї)',
+  bookingInfoReferenceNumbers: 'Зареєстровані довідки: ',
   helpReceived: (
     settings: Partial<Serialized<SettingsDto>> = {},
     user: Partial<Serialized<VpoUserModel>> = {},

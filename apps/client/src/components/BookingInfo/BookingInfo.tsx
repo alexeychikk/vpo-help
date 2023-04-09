@@ -8,13 +8,13 @@ import { htmlService, settingsService } from '../../services';
 import { BookingInfoItem } from './BookingInfoItem';
 
 export type BookingInfoProps = {
-  vpoReferenceNumber: string;
+  vpoReferenceNumbers?: string[];
   bookingDate: string;
   receivedHelpDate?: string;
 };
 
 export const BookingInfo: React.FC<BookingInfoProps> = ({
-  vpoReferenceNumber,
+  vpoReferenceNumbers,
   bookingDate,
   receivedHelpDate,
 }) => {
@@ -74,6 +74,12 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
             data={bookingMomentDate.format('HH:mm - DD MMMM YYYY')}
             sx={{ alignItems: 'center', mb: 2 }}
           />
+          {vpoReferenceNumbers?.length && (
+            <Typography variant="h6" mb={4}>
+              {BOOKING.bookingInfoReferenceNumbers}
+              {vpoReferenceNumbers.join(', ')}
+            </Typography>
+          )}
           {infoResponse.value?.['addresses'] && (
             <Box
               sx={{
