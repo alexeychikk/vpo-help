@@ -77,7 +77,11 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
           {vpoReferenceNumbers?.length && (
             <Typography variant="h6" mb={4}>
               {BOOKING.bookingInfoReferenceNumbers}
-              {vpoReferenceNumbers.join(', ')}
+              <ul style={{ margin: 0 }}>
+                {vpoReferenceNumbers.map((number) => (
+                  <li>{number}</li>
+                ))}
+              </ul>
             </Typography>
           )}
           {infoResponse.value?.['addresses'] && (
