@@ -12,16 +12,12 @@ import {
   Typography,
 } from '@mui/material';
 import { AxiosError } from 'axios';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Navigate } from 'react-router-dom';
 import { useAsync } from 'react-use';
-import type {
-  RegisterVpoDto,
-  VpoRelativeModel,
-  VpoUserModel,
-} from '@vpo-help/model';
+import type { RegisterVpoDto, VpoRelativeModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo } from '../../components/BookingInfo';
 import { ButtonWithLoading } from '../../components/ButtonWithLoading';
@@ -29,6 +25,7 @@ import { InfoDialog } from '../../components/InfoDialog';
 import { NavLinkButton } from '../../components/NavLinkButton';
 import { BOOKING, ERROR_MESSAGES } from '../../constants';
 import { environment } from '../../environments/environment';
+import type { RegisterVpoBulkResponseData } from '../../services';
 import {
   htmlService,
   scheduleService,
@@ -56,7 +53,8 @@ export const Booking = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [detailedErrorMessage, setDetailedErrorMessage] = useState('');
-  const [vpoUser, setVpoUser] = useState<Serialized<VpoUserModel> | null>(null);
+  const [registeredVpoData, setRegisteredVpoData] =
+    useState<RegisterVpoBulkResponseData | null>(null);
   const form = useForm<VpoForm>({
     mode: 'onBlur',
     defaultValues: {
@@ -82,6 +80,13 @@ export const Booking = () => {
   });
 
   const settingsResponse = useAsync(() => settingsService.getSettings());
+
+  const registeredVpoReferenceNumbers = useMemo(() => {
+    if (!registeredVpoData) return [];
+    return [registeredVpoData.mainVpo.vpoReferenceNumber].concat(
+      registeredVpoData.relativeVpos.map((item) => item.vpoReferenceNumber),
+    );
+  }, [registeredVpoData]);
 
   const getStepContent = useCallback(
     (step: number) => {
@@ -146,7 +151,7 @@ export const Booking = () => {
             taxIdNumber: values.taxIdNumber || undefined,
           })),
         });
-        setVpoUser(data.mainVpo);
+        setRegisteredVpoData(data);
         setActiveStep(activeStep + 1);
       } catch (error) {
         setSubmitting(false);
@@ -219,7 +224,7 @@ export const Booking = () => {
             variant="outlined"
             sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
           >
-            {activeStep === steps.length && vpoUser ? (
+            {activeStep === steps.length && registeredVpoData ? (
               <Box
                 sx={{
                   display: 'flex',
@@ -259,11 +264,13 @@ export const Booking = () => {
                 component="form"
                 onSubmit={form.handleSubmit(nextStepOrSubmit)}
               >
-                {activeStep === steps.length && vpoUser ? (
+                {activeStep === steps.length && registeredVpoData ? (
                   <BookingInfo
-                    vpoReferenceNumber={vpoUser.vpoReferenceNumber}
-                    bookingDate={vpoUser.scheduleDate}
-                    receivedHelpDate={vpoUser.receivedHelpDate}
+                    vpoReferenceNumbers={registeredVpoReferenceNumbers}
+                    bookingDate={registeredVpoData.mainVpo.scheduleDate}
+                    receivedHelpDate={
+                      registeredVpoData.mainVpo.receivedHelpDate
+                    }
                   />
                 ) : availableSlotsResponse.loading || infoResponse.loading ? (
                   <Box sx={{ display: 'flex', justifyContent: 'center' }}>
