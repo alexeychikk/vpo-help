@@ -109,7 +109,12 @@ export const Booking = () => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [availableSlotsResponse.value, infoResponse.value?.['addresses']],
+    [
+      availableSlotsResponse.value,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      infoResponse.value?.['addresses'],
+      settingsResponse.value,
+    ],
   );
 
   const nextStepOrSubmit: SubmitHandler<VpoForm> = async ({
