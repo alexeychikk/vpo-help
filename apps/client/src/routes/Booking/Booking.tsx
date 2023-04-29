@@ -15,8 +15,7 @@ import { AxiosError } from 'axios';
 import { useCallback, useMemo, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
-import { Navigate } from 'react-router-dom';
-import { useAsync } from 'react-use';
+import { useAsync, useAsyncFn, useMount } from 'react-use';
 import type { RegisterVpoDto, VpoRelativeModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfo } from '../../components/BookingInfo';
@@ -49,6 +48,7 @@ export type VpoForm = Serialized<RegisterVpoDto> & {
 
 export const Booking = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [savedStep, setSavedStep] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -64,7 +64,7 @@ export const Booking = () => {
     },
   });
 
-  const availableSlotsResponse = useAsync(async () => {
+  const [availableSlotsResponse, fetchAvailableSlots] = useAsyncFn(async () => {
     const slots = await scheduleService.getAvailableSlots();
     return slots.reduce((acc, value) => {
       const key = value.dateFrom.format('dddd (DD.MM.yy)');
@@ -73,6 +73,10 @@ export const Booking = () => {
       return acc;
     }, {} as Record<string, ScheduleSlotAvailableDto[]>);
   }, []);
+
+  useMount(async () => {
+    await fetchAvailableSlots();
+  });
 
   const infoResponse = useAsync(async () => {
     const info = await htmlService.getPage('info');
@@ -159,7 +163,6 @@ export const Booking = () => {
         setRegisteredVpoData(data);
         setActiveStep(activeStep + 1);
       } catch (error) {
-        setSubmitting(false);
         let clientMessage = ERROR_MESSAGES.unknown;
         // shitcode overload
         if (error instanceof AxiosError) {
@@ -176,6 +179,13 @@ export const Booking = () => {
               clientMessage = BOOKING.helpRestriction.getText(days);
             } else {
               clientMessage = BOOKING.errorMessages[serverMessage];
+
+              if (BOOKING.timeSlotErrors.includes(serverMessage)) {
+                form.resetField('scheduleDate', { defaultValue: '' });
+                void fetchAvailableSlots();
+                setSavedStep(activeStep);
+                setActiveStep(1);
+              }
             }
             const detailedError = Array.isArray(serverMessage)
               ? serverMessage.join(', ')
@@ -194,18 +204,40 @@ export const Booking = () => {
         setErrorMessage(finalErrorMessage);
         setIsModalOpen(true);
       }
+      setSubmitting(false);
     } else {
-      setActiveStep(activeStep + 1);
+      setActiveStep(savedStep !== null ? savedStep : activeStep + 1);
     }
+    if (savedStep !== null) setSavedStep(null);
   };
 
   const handleBack = () => {
-    setActiveStep(activeStep - 1);
+    setActiveStep(savedStep !== null ? savedStep : activeStep - 1);
   };
 
   if (availableSlotsResponse.error || infoResponse.error) {
     console.error(availableSlotsResponse.error, infoResponse.error);
-    return <Navigate to={ROUTES.MAIN.path} />;
+    const errorMessageText = availableSlotsResponse.error
+      ? availableSlotsResponse.error.message
+      : infoResponse.error?.message;
+    return (
+      <InfoDialog
+        isOpen={true}
+        title={BOOKING.errorModalTitle}
+        message={ERROR_MESSAGES.unknown}
+        detailedMessage={errorMessageText}
+      >
+        <DialogActions>
+          <NavLinkButton
+            variant="outlined"
+            to={ROUTES.MAIN.path}
+            sx={{ mt: 3, ml: 1 }}
+          >
+            {BOOKING.gotoMain}
+          </NavLinkButton>
+        </DialogActions>
+      </InfoDialog>
+    );
   }
 
   return (
@@ -343,12 +375,16 @@ export const Booking = () => {
         onClose={() => setIsModalOpen(false)}
       >
         <DialogActions>
-          <Button onClick={() => setIsModalOpen(false)} sx={{ mr: 2 }}>
-            {BOOKING.prevStep}
-          </Button>
-          <NavLinkButton to={ROUTES.MAIN.path} variant="contained" autoFocus>
+          <NavLinkButton to={ROUTES.MAIN.path} sx={{ mr: 2 }}>
             {BOOKING.gotoMain}
           </NavLinkButton>
+          <Button
+            onClick={() => setIsModalOpen(false)}
+            variant="contained"
+            autoFocus
+          >
+            {BOOKING.close}
+          </Button>
         </DialogActions>
       </InfoDialog>
     </Container>
