@@ -392,15 +392,17 @@ export const Booking = () => {
         onClose={() => setIsModalOpen(false)}
       >
         <DialogActions>
-          <NavLinkButton to={ROUTES.MAIN.path} sx={{ mr: 2 }}>
-            {BOOKING.gotoMain}
-          </NavLinkButton>
+          {savedStep === null && (
+            <NavLinkButton to={ROUTES.MAIN.path} sx={{ mr: 2 }}>
+              {BOOKING.gotoMain}
+            </NavLinkButton>
+          )}
           <Button
             onClick={() => setIsModalOpen(false)}
             variant="contained"
             autoFocus
           >
-            {BOOKING.close}
+            {savedStep === null ? BOOKING.close : BOOKING.chooseAnotherTime}
           </Button>
         </DialogActions>
       </InfoDialog>

@@ -69,6 +69,7 @@ export const BOOKING = {
   sendVerification: 'Відправити код підтвердження',
   resendVerification: 'Повторно відправити код підтвердження',
   verificationTitle: 'Код підтвердження було відправлено на пошту',
+  chooseAnotherTime: 'Вибрати інший час',
   form: {
     email: 'Електронна пошта',
     verificationCode: 'Код підтвердження',
