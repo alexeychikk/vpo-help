@@ -43,6 +43,11 @@ export const MAIN = {
   details: 'Додаткова інформація',
 };
 
+const TIME_SLOT_ERRORS = {
+  slotMissed: 'Slot with such time was not found in schedule',
+  slotBooked: 'Selected time slot is no longer available',
+};
+
 export const BOOKING = {
   title: 'Бронювання',
   finishTitle: 'Вас зареєстровано',
@@ -64,6 +69,7 @@ export const BOOKING = {
   sendVerification: 'Відправити код підтвердження',
   resendVerification: 'Повторно відправити код підтвердження',
   verificationTitle: 'Код підтвердження було відправлено на пошту',
+  chooseAnotherTime: 'Вибрати інший час',
   form: {
     email: 'Електронна пошта',
     verificationCode: 'Код підтвердження',
@@ -132,15 +138,16 @@ export const BOOKING = {
     verificationCodeLength: 'Код підтвердження має містити 6 символів.',
     'Registration has been already scheduled':
       'Ви вже зареєстровані. Ви можете знайти інформацію про ваше бронювання на головній сторінці за номером довідки ВПО.',
-    'Slot with such time was not found in schedule':
-      'Вибраний час бронювання не дійсний. Перезавантажте сторінку та спробуйте знову.',
-    'Selected time slot is no longer available':
-      'Вибраний час бронювання вже зайнятий. Перезавантажте сторінку та спробуйте знову.',
+    [TIME_SLOT_ERRORS.slotMissed]:
+      'Вибраний час бронювання не дійсний. Спробуйте вибрати інший час.',
+    [TIME_SLOT_ERRORS.slotBooked]:
+      'Вибраний час бронювання вже зайнятий. Спробуйте вибрати інший час.',
     'minimal allowed date for vpoIssueDate is 2022-01-01':
       'Бронювання можливе тільки для власників довідок ВПО від 2022 року.',
     'You have already registered in current registration period':
       'Ви вже реєструвалися у поточний період реєстрації. Ви можете знайти інформацію про ваше бронювання на головній сторінці за номером довідки ВПО.',
   } as Record<string, string>,
+  timeSlotErrors: Object.values(TIME_SLOT_ERRORS),
   address: 'Адресa центру:',
   noSlots: (settings: Partial<Serialized<SettingsDto>> = {}) =>
     `На даний момент немає вільних місць у черзі.
