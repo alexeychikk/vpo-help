@@ -61,6 +61,23 @@ export const Booking = () => {
       numberOfRelatives: 0,
       numberOfRelativesBelow16: 0,
       numberOfRelativesAbove65: 0,
+      ...(process.env['NODE_ENV'] === 'development'
+        ? {
+            addressOfRegistration: 'Донецьк',
+            addressOfResidence: 'Київ',
+            dateOfBirth: '1993-05-02T00:00:00.000Z',
+            email: 'user@example.com',
+            firstName: 'Джон',
+            lastName: 'Доу',
+            middleName: 'Поттерович',
+            taxIdNumber: Math.random().toString().slice(2, 12),
+            phoneNumber: `+38097${Math.random().toString().slice(2, 9)}`,
+            vpoIssueDate: '2022-12-12T00:00:00.000Z',
+            vpoReferenceNumber: `${Math.random()
+              .toString()
+              .slice(2, 6)}-${Math.random().toString().slice(2, 12)}`,
+          }
+        : undefined),
     },
   });
 
