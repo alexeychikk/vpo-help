@@ -19,7 +19,9 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
   receivedHelpDate,
 }) => {
   const bookingMomentDate = moment(bookingDate);
-  const isHelpReceived = !!receivedHelpDate;
+  const isHelpReceived =
+    !!receivedHelpDate &&
+    moment(receivedHelpDate).isSameOrAfter(bookingMomentDate);
   const isExpired = !isHelpReceived && bookingMomentDate.isBefore(moment());
   const isScheduled = !isHelpReceived && !isExpired;
   const infoResponse = useAsync(async () => {
