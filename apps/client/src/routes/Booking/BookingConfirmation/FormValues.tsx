@@ -4,6 +4,7 @@ import type { VpoModel, VpoRelativeModel } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { BookingInfoItem } from '../../../components/BookingInfo/BookingInfoItem';
 import { BOOKING } from '../../../constants';
+import { environment } from '../../../environments/environment';
 
 export type FormValuesProps =
   | Serialized<VpoModel>
@@ -78,32 +79,34 @@ export const FormValues: React.FC<FormValuesProps> = (formValues) => {
           data={formValues.addressOfResidence}
         />
       </Stack>
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        spacing={{ xs: 2, lg: 5 }}
-        sx={{ mb: 3 }}
-      >
-        {'numberOfRelatives' in formValues && (
-          <BookingInfoItem
-            label={BOOKING.form.numberOfRelatives}
-            data={`${formValues.numberOfRelatives} ${BOOKING.peopleSuffix}`}
-          />
-        )}
-        {'numberOfRelativesBelow16' in formValues &&
-          !!formValues.numberOfRelativesBelow16 && (
+      {environment.showRelativesFields && (
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          spacing={{ xs: 2, lg: 5 }}
+          sx={{ mb: 3 }}
+        >
+          {'numberOfRelatives' in formValues && (
             <BookingInfoItem
-              label={BOOKING.form.numberOfRelativesBelow16}
-              data={`${formValues.numberOfRelativesBelow16} ${BOOKING.peopleSuffix}`}
+              label={BOOKING.form.numberOfRelatives}
+              data={`${formValues.numberOfRelatives} ${BOOKING.peopleSuffix}`}
             />
           )}
-        {'numberOfRelativesAbove65' in formValues &&
-          !!formValues.numberOfRelativesAbove65 && (
-            <BookingInfoItem
-              label={BOOKING.form.numberOfRelativesAbove65}
-              data={`${formValues.numberOfRelativesAbove65} ${BOOKING.peopleSuffix}`}
-            />
-          )}
-      </Stack>
+          {'numberOfRelativesBelow16' in formValues &&
+            !!formValues.numberOfRelativesBelow16 && (
+              <BookingInfoItem
+                label={BOOKING.form.numberOfRelativesBelow16}
+                data={`${formValues.numberOfRelativesBelow16} ${BOOKING.peopleSuffix}`}
+              />
+            )}
+          {'numberOfRelativesAbove65' in formValues &&
+            !!formValues.numberOfRelativesAbove65 && (
+              <BookingInfoItem
+                label={BOOKING.form.numberOfRelativesAbove65}
+                data={`${formValues.numberOfRelativesAbove65} ${BOOKING.peopleSuffix}`}
+              />
+            )}
+        </Stack>
+      )}
     </Box>
   );
 };

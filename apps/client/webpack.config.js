@@ -15,6 +15,9 @@ module.exports = (config) => {
         'process.env.EMAIL_VERIFICATION_ENABLED': JSON.stringify(
           process.env.EMAIL_VERIFICATION_ENABLED,
         ),
+        'process.env.SHOW_RELATIVES_FIELDS': JSON.stringify(
+          process.env.SHOW_RELATIVES_FIELDS,
+        ),
       }),
     ],
   };

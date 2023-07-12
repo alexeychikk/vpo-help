@@ -202,6 +202,7 @@ export const BookingConfirmation: React.FC = () => {
         </Accordion>
         {formValues.relativeVpos?.map((nestedFormValues) => (
           <Accordion
+            key={nestedFormValues.vpoReferenceNumber}
             expanded={expandedForm === nestedFormValues.vpoReferenceNumber}
             sx={{ width: '100%' }}
             onChange={handleAccordionChange(

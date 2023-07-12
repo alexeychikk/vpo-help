@@ -80,8 +80,8 @@ export const BookingInfo: React.FC<BookingInfoProps> = ({
             <Typography variant="h6" mb={4}>
               {BOOKING.bookingInfoReferenceNumbers}
               <ul style={{ margin: 0 }}>
-                {vpoReferenceNumbers.map((number) => (
-                  <li>{number}</li>
+                {vpoReferenceNumbers.map((vpoRefNum) => (
+                  <li key={vpoRefNum}>{vpoRefNum}</li>
                 ))}
               </ul>
             </Typography>

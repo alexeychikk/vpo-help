@@ -8,6 +8,7 @@ import { PhoneNumberField } from '../../../components/PhoneNumberField';
 import { SelectElement } from '../../../components/SelectElement';
 import { TextFieldElement } from '../../../components/TextFieldElement';
 import { BOOKING, ERROR_MESSAGES } from '../../../constants';
+import { environment } from '../../../environments/environment';
 import { formatISOStartOfDay } from '../../../utils';
 
 export type FormFieldsProps = {
@@ -196,7 +197,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({ index, arrayKey }) => {
           control={control}
         />
       </Stack>
-      {!isArrayFields && (
+      {environment.showRelativesFields && !isArrayFields && (
         <Stack
           direction={{ xs: 'column', md: 'row' }}
           spacing={{ xs: 1, lg: 3 }}
