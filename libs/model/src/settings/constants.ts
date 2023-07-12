@@ -6,6 +6,7 @@ export const DEFAULT_SETTINGS = new SettingsDto({
   daysToNextVpoRegistration: 180,
   startOfRegistrationDate: endOfYesterday(),
   endOfRegistrationDate: endOfDay(addMonths(new Date(), 2)),
+  isLastRegistration: false,
   scheduleDaysAvailable: 5,
 });
 

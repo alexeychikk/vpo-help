@@ -21,11 +21,15 @@ export const NoSlots: React.FC<NoSlotsProps> = (props) => {
       }}
     >
       <Typography variant="h5" textAlign="center" mb={2}>
-        <span
-          dangerouslySetInnerHTML={{
-            __html: BOOKING.noSlots(props.settings),
-          }}
-        />
+        <span>
+          {BOOKING.noSlots}
+          {!props.settings?.isLastRegistration && (
+            <>
+              <br />
+              {BOOKING.nextRegistrationAt(props.settings)}
+            </>
+          )}
+        </span>
       </Typography>
       <NavLinkButton to={ROUTES.MAIN.path} variant="contained">
         {BOOKING.gotoMain}

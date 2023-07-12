@@ -149,9 +149,9 @@ export const BOOKING = {
   } as Record<string, string>,
   timeSlotErrors: Object.values(TIME_SLOT_ERRORS),
   address: 'Адресa центру:',
-  noSlots: (settings: Partial<Serialized<SettingsDto>> = {}) =>
-    `На даний момент немає вільних місць у черзі.
-    <br/> Наступна реєстрація доступна з ${nextDayLoader(
+  noSlots: `На даний момент немає вільних місць у черзі.`,
+  nextRegistrationAt: (settings: Partial<Serialized<SettingsDto>> = {}) =>
+    `Наступна реєстрація доступна з ${nextDayLoader(
       settings.endOfRegistrationDate,
     )}.`,
   infoTitle:
@@ -250,6 +250,7 @@ export const ADMIN = {
       endOfRegistrationDate: 'Дата кінця реєстрації',
       endOfRegistrationDateHelper:
         'Не забудьте змінити початкову дату реєстрації',
+      isLastRegistration: 'Останній період',
       scheduleDaysAvailable:
         'Кількість днів, яка доступна на вибір для ВПО при реєстрації',
       addresses: BOOKING.address,

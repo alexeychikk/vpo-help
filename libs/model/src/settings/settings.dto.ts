@@ -1,4 +1,11 @@
-import { IsDate, IsInt, IsOptional, Max, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsInt,
+  IsOptional,
+  Max,
+  Min,
+} from 'class-validator';
 import type { Optional } from 'utility-types';
 
 export class SettingsDto {
@@ -11,6 +18,9 @@ export class SettingsDto {
 
   @IsDate()
   endOfRegistrationDate!: Date;
+
+  @IsBoolean()
+  isLastRegistration!: boolean;
 
   @IsInt()
   @Min(1)
@@ -35,6 +45,10 @@ export class UpdateSettingsDto {
   @IsDate()
   @IsOptional()
   endOfRegistrationDate?: Date;
+
+  @IsBoolean()
+  @IsOptional()
+  isLastRegistration?: boolean;
 
   @IsInt()
   @Min(1)

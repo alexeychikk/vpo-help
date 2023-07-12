@@ -2,14 +2,13 @@ import SaveIcon from '@mui/icons-material/Save';
 import {
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   Container,
-  Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Fab,
+  FormControl,
+  FormControlLabel,
   Paper,
   Stack,
   Typography,
@@ -23,9 +22,9 @@ import { useRef, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import type { SubmitHandler } from 'react-hook-form';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { useAsync } from 'react-use';
+import { useAsync, useAsyncFn } from 'react-use';
 import type { SettingsDto } from '@vpo-help/model';
 import type { Serialized } from '@vpo-help/utils';
 import { DesktopDatePickerElement } from '../../../components/DesktopDatePickerElement';
@@ -75,47 +74,31 @@ export const Settings: React.FC = () => {
     return info.content;
   });
 
-  const isSettingsChanged = (formValues: Serialized<SettingsDto>) =>
-    settingsResponse.value?.daysToNextVpoRegistration !==
-      formValues.daysToNextVpoRegistration ||
-    settingsResponse.value?.startOfRegistrationDate !==
-      formValues.startOfRegistrationDate ||
-    settingsResponse.value?.endOfRegistrationDate !==
-      formValues.endOfRegistrationDate ||
-    settingsResponse.value?.scheduleDaysAvailable !==
-      formValues.scheduleDaysAvailable;
-
-  const isInfoChanged = () =>
-    addresses &&
-    infoResponse.value?.['addresses'] !==
-      draftToHtml(convertToRaw(addresses.getCurrentContent()));
-
   const saveSettings: SubmitHandler<Serialized<SettingsDto>> = async (
     formValues,
   ) => {
     try {
       setLoading(true);
-      if (isSettingsChanged(formValues)) {
-        const data = await settingsService.saveSettings({
-          daysToNextVpoRegistration:
-            parseInt(formValues.daysToNextVpoRegistration.toString()) || 0,
-          startOfRegistrationDate: formValues.startOfRegistrationDate,
-          endOfRegistrationDate: formValues.endOfRegistrationDate,
-          scheduleDaysAvailable:
-            parseInt(formValues.scheduleDaysAvailable.toString()) || 0,
-        });
-        form.reset(data);
-      }
 
-      if (isInfoChanged()) {
-        const content: Record<string, string> = {};
-        if (addresses) {
-          content['addresses'] = draftToHtml(
-            convertToRaw(addresses.getCurrentContent()),
-          );
-        }
-        await htmlService.updatePage('info', { content });
+      const data = await settingsService.saveSettings({
+        daysToNextVpoRegistration:
+          parseInt(formValues.daysToNextVpoRegistration.toString()) || 0,
+        startOfRegistrationDate: formValues.startOfRegistrationDate,
+        endOfRegistrationDate: formValues.endOfRegistrationDate,
+        isLastRegistration: formValues.isLastRegistration,
+        scheduleDaysAvailable:
+          parseInt(formValues.scheduleDaysAvailable.toString()) || 0,
+      });
+      form.reset(data);
+
+      const content: Record<string, string> = {};
+      if (addresses) {
+        content['addresses'] = draftToHtml(
+          convertToRaw(addresses.getCurrentContent()),
+        );
       }
+      await htmlService.updatePage('info', { content });
+
       setLoading(false);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -251,6 +234,25 @@ export const Settings: React.FC = () => {
                 transform={formatISOEndOfDay}
                 sx={{ width: { xs: '100%', md: '400px' } }}
               />
+              <Controller
+                name="isLastRegistration"
+                control={form.control}
+                render={({ field }) => (
+                  <FormControl component="fieldset" variant="standard">
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={field.value}
+                          name={field.name}
+                          onChange={field.onChange}
+                        />
+                      }
+                      label={ADMIN.settings.form.isLastRegistration}
+                      sx={{ width: { xs: '100%', md: '200px' } }}
+                    />
+                  </FormControl>
+                )}
+              />
             </Stack>
             <Box pb={2}>
               <Typography variant="h6" sx={{ mb: 2 }}>
@@ -270,7 +272,6 @@ export const Settings: React.FC = () => {
               type="submit"
               color="primary"
               title={ADMIN.saveButton}
-              disabled={!form.formState.isDirty && !isInfoChanged()}
               sx={{
                 position: 'fixed',
                 top: 'calc(100vh - 72px)',
